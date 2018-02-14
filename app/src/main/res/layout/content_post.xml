@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="5dp"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    >
+    <ImageView
+        android:id="@+id/imgPostUserImage"
+        android:src="@drawable/user"
+        android:layout_width="30dp"
+        android:layout_marginRight="5dp"
+        android:layout_height="30dp" />
+    <TextView
+        android:id="@+id/txtPostUser"
+        android:text="username"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+    <ImageView
+        android:id="@+id/imgPostImage"
+        android:maxHeight="300dp"
+        android:src="@drawable/blur"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="30dp"
+            android:id="@+id/imgPostLike"
+            android:src="@drawable/like"
+            android:layout_height="30dp"
+            android:layout_marginRight="5dp"
+            />
+        <ImageView
+            android:layout_width="30dp"
+            android:id="@+id/imgPostComment"
+            android:src="@drawable/comment"
+            android:layout_height="30dp"
+            android:layout_marginRight="5dp"/>
+        <TextView
+            android:id="@+id/txtPostView"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        >
+    <TextView
+        android:id="@+id/txtPostComment"
+        android:text="متن پست "
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/imgPostSend"
+        android:src="@drawable/ic_post_send"
+        android:layout_gravity="center_vertical"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+    <TextView
+            android:id="@+id/edtPostComment"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/black"
+            android:background="@drawable/round_rec"
+            android:layout_width="0dp"
+            android:layout_weight=".8"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <TextView
+        android:id="@+id/txtPostdetail"
+        android:text="5 روز پیش"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

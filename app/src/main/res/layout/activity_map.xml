@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+     Copyright (C) 2012 The Android Open Source Project
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+          http://www.apache.org/licenses/LICENSE-2.0
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="50dp"
+    android:orientation="vertical">
+
+
+
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.SupportMapFragment" />
+
+        <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+android:background="@color/lightblue"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+
+
+        <CheckBox
+            android:id="@+id/chkShowTraffic"
+            android:layout_width="wrap_content"
+            android:text="نمایش ترافیک"
+            android:checked="true"
+            android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/chkShowPlaces"
+            android:layout_width="wrap_content"
+            android:text="دریافت اماکن"
+            android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/chkShowSat"
+            android:layout_width="wrap_content"
+            android:text="نقشه ماهواره ای"
+            android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/chkShowCar"
+                android:layout_width="wrap_content"
+                android:text="خودروهای شهری"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:onClick="onResetMap"
+                    android:text="ثبت مکان" />
+            </LinearLayout>
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+android:background="@color/lightblue"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtCat"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="دسته بندی " />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/chkIEdu"
+                android:layout_width="wrap_content"
+                android:text="فرهنگی"
+                android:checked="true"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/chkIShop"
+                android:layout_width="wrap_content"
+
+                android:text="فروشگاه"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/chkIHealth"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:text="سلامت"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/chkIReligion"
+                android:layout_width="wrap_content"
+                android:text="مذهبی"
+
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/chkIService"
+
+                android:layout_width="wrap_content"
+                android:text="خدماتی"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/chkISport"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:text="ورزشی"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/chkIfood"
+
+                android:layout_width="wrap_content"
+                android:text="غذا"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>

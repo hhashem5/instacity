@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <EditTextPreference
+            android:summary="نام و نام خانوادگی (اختیاری)"
+            android:title="نام"
+            android:key="myname"
+            />
+
+        <EditTextPreference
+            android:summary="جنسیت"
+            android:title="جنسیت"
+            android:key="gender"
+            />
+
+        <EditTextPreference
+            android:summary="کلمه عبور"
+            android:title="رمز"
+            android:key="pass"
+            />
+
+        <EditTextPreference
+            android:summary="شماره ملی "
+            android:title="شماره ملی"
+            android:key="melliid"
+            />
+        <EditTextPreference
+            android:summary="شماره موبایل "
+            android:title="شماره موبایل"
+            android:key="mobile"
+            />
+
+        <EditTextPreference
+            android:summary="سال تولد شما"
+            android:title="سال تولد"
+            android:key="age"
+            />
+        <EditTextPreference
+            android:summary="جنسیت"
+            android:title="جنسیت"
+            android:key="gen"
+            />
+        <EditTextPreference
+            android:summary="آدرس(اختیاری)"
+            android:title="آدرس منزل یا محل کار"
+            android:key="address"
+            />
+        <EditTextPreference
+                android:key="notification"
+                android:title="خبر فوری"
+                android:summary="متن آخرین خبر را ببینید"
+                android:editable="false"
+                />
+        <EditTextPreference
+                android:key="lat"
+                android:title="عرض جغرافیایی"
+                android:summary="مختصات محله من برای دریافت اطلاعات"
+                android:editable="false"
+                />
+        <EditTextPreference
+            android:key="lng"
+            android:title="طول جغرافیایی"
+            android:summary="مختصات محله من برای دریافت اطلاعات"
+            android:editable="false"
+            />
+        <CheckBoxPreference
+                android:key="alarm"
+                android:title="هشدار"
+                android:summary="هشدار نزدیک شدن خودرو حمل زباله"
+                />
+        <CheckBoxPreference
+            android:key="msg"
+            android:title="پیام نمایش داده شود"
+            android:summary="تنظیم نمایش پیام در اعلان ها"
+            android:defaultValue="true"
+            />
+        <EditTextPreference
+                android:key="alarm_len"
+                android:title="فاصله خودرو"
+            android:summary="تنظیم فاصله نزدیک شدن خودرو جهت هشدار"
+            />
+        <EditTextPreference
+            android:key="fav"
+            android:title="علاقمندی"
+            android:summary="کدعلاقمندیها"
+            />
+        <EditTextPreference
+            android:key="edu"
+            android:title="علاقمندی"
+            android:summary="کدعلاقمندیها"
+            />
+        <EditTextPreference
+            android:key="edub"
+            android:title="علاقمندی"
+            android:summary="کدعلاقمندیها"
+            />
+        <EditTextPreference
+            android:key="job"
+            android:title="علاقمندی"
+            android:summary="کدعلاقمندیها"
+            />
+        <EditTextPreference
+            android:key="jobb"
+            android:title="علاقمندی"
+            android:summary="کدعلاقمندیها"
+            />
+        <EditTextPreference
+            android:key="money"
+            android:title="علاقمندی"
+            android:summary="کدعلاقمندیها"
+            />
+    <EditTextPreference
+        android:key="pic"
+        android:title="عکس"
+        android:summary="pic"
+        />
+    <EditTextPreference
+        android:key="server"
+        android:title="سرور"
+        android:summary="سرور"
+        />
+        <EditTextPreference
+            android:key="numPosts"
+            android:title="فاصله خودرو"
+            android:summary="تنظیم فاصله نزدیک شدن خودرو جهت هشدار"
+            />
+
+</PreferenceScreen>

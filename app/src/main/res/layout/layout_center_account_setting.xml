@@ -1,0 +1,34 @@
+<merge
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<RelativeLayout
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:padding="20dp"
+    android:background="@color/white"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textSetting"
+        android:text="تنظیمات حساب"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:background="@drawable/gray_border_bottom"
+        />
+<ListView
+    android:layout_width="match_parent"
+    android:layout_below="@+id/textSetting"
+    android:layout_height="match_parent"
+    android:id="@+id/lvAccountSetting">
+
+</ListView>
+
+</RelativeLayout>
+
+
+
+</merge>

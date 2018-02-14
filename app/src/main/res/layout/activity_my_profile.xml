@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_gravity="right"
+    android:layout_margin="10dp"
+    android:gravity="right"
+    android:layout_height="match_parent"
+    tools:context=".Profile.MyProfileActivity">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/myProfile_photoLikes"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/user"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        app:civ_border_color="@color/black"
+        app:civ_border_width="0.5dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint=""
+            android:ems="10"
+            android:id="@+id/txtCitizenName"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="نام و نام خانوادگی"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob1"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text=""
+            android:hint="مثال: 091234567890"
+            android:ems="10"
+            android:id="@+id/txtCtNumber"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="شماره موبایل"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob2"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text=""
+            android:hint="مثال: 01234567890"
+            android:ems="10"
+            android:id="@+id/txtCtmelliid"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="شماره ملی"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob21"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rbZan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="زن"
+                />
+            <RadioButton
+                android:id="@+id/rbMard"
+                android:layout_width="wrap_content"
+                android:text="مرد"
+                android:checked="true"
+                android:layout_height="wrap_content" />
+
+        </RadioGroup>
+
+
+        <TextView
+            android:text="جنسیت"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob4"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text=""
+            android:hint="مثال:1375"
+            android:ems="10"
+            android:id="@+id/txtCtBirth"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="سال تولد"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvCtBirth"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:gravity="right"
+        android:layout_gravity="right"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/spEdu"
+            android:layout_width="wrap_content"
+            android:entries="@array/edu"
+            android:layout_height="wrap_content">
+        </Spinner>
+
+
+
+        <TextView
+            android:text="تحصیلات"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob6"
+            />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint="مثال: حسابداری صنعتی"
+            android:ems="10"
+            android:id="@+id/txtEduB"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="رشته تحصیلی"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob7"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="right"
+
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/spJob"
+                android:layout_width="wrap_content"
+                android:entries="@array/job"
+                android:layout_height="wrap_content">
+
+            </Spinner>
+        </LinearLayout>
+
+        <TextView
+            android:text="شغل"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob8"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint="مثال: مشاور املاک"
+            android:ems="10"
+            android:id="@+id/txtJobB"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="نام شغل"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob3"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav1"
+                    android:text="ورزشی"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav2"
+                    android:text="علمی"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav3"
+                    android:text="فرهنگی"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav4"
+                    android:text="تکنولوژی"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav5"
+                    android:text="سیاسی"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav6"
+                    android:text="اجتماعی"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav7"
+                    android:text="سلامت"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFav8"
+                    android:text="مذهبی"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <TextView
+            android:text="علاقمندی"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvFav"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <Button
+            android:text="بروزرسانی"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnCzReg"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="61dp" />
+
+        <Button
+            android:id="@+id/btnCzExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="خروج از حساب"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="40dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txtczStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

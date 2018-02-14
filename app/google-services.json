@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "158041777402",
+    "firebase_url": "https://reliable-airway-157805.firebaseio.com",
+    "project_id": "reliable-airway-157805",
+    "storage_bucket": "reliable-airway-157805.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158041777402:android:d696be9d466a54e0",
+        "android_client_info": {
+          "package_name": "com.idpz.instacity"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158041777402-v96o7qjjm4msc05a5e2avsoqfh6qa88m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.idpz.instacity",
+            "certificate_hash": "f4be01cc7a69301db188a231f8446ef413d57697"
+          }
+        },
+        {
+          "client_id": "158041777402-buiov8ngfhat467qp98n63oiui3e30d7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3OhkVfgLRQXlmGvtFN0ZClcplNcL-cC4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158041777402-buiov8ngfhat467qp98n63oiui3e30d7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
