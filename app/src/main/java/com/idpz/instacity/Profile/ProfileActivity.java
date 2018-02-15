@@ -78,7 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
 //        progressBar=(ProgressBar)findViewById(R.id.profileProgressBar);
 //        progressBar.setVisibility(View.GONE);
         fullServer = getString(R.string.server)+"/i/socialgal.php";
-        REG_USER_LAT=getString(R.string.server)+"/i/latprofile.php";
+
         mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
         mFrameLayout = (FrameLayout) findViewById(R.id.container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
@@ -280,40 +280,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void regLat() {
-//        Toast.makeText(MainActivity.this, " reqUser", Toast.LENGTH_SHORT).show();
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = REG_USER_LAT;
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        userRegFlag=true;
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String>params = new HashMap<String,String>();
-                params.put("lat",lat);
-                params.put("lng",lng);
-                params.put("mob",mobile);
-                params.put("pas",pas);
-                return params;
-            }
-        };
-        queue.add(postRequest);
-
-    }
 
 }
 

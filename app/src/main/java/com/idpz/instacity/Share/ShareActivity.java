@@ -3,6 +3,7 @@ package com.idpz.instacity.Share;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,8 +32,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.Home.HomeActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
@@ -61,8 +70,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 public class ShareActivity extends AppCompatActivity {
     private static final String TAG = "ShareActivity";
@@ -72,29 +79,33 @@ public class ShareActivity extends AppCompatActivity {
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
     private static final int REQUEST_ACCESS_LOCATION = 0;
     private static final int  CAMERA_REQUEST_CODE = 5;
-
+    private static final int REQUEST_CAMERA = 6;
+    private static final int SELECT_FILE = 7;
+    private int PROFILE_PIC_COUNT=0;
 //    private ViewPager mViewPager;
 
 
 
-    String ImageName = "image_name" ;
+    String ImageName = "image_name" ,mobile,pas;
 
     String ImagePath = "image_path",mstatus="0",gov="6",myname="",myphone="",mytext="" ;
 
-    String ServerUploadPath ="" ;
+    String ServerUploadPath ="", REG_USER_LAT ="" ;
     //widgets
     private EditText mCaption;
     boolean check = true;
     ProgressDialog progressDialog;
     //vars
     private String mAppend = "file:/";
-    private int imageCount = 0,cmprs=50;
+    private int imageCount = 0,cmprs=70;
     private String imgUrl,lat="",lng="",oldLat="0",oldLng="0";
     private Bitmap bitmap;
     private Intent intent;
-    Button share,btnShareGallery,btnShareCamera;
+    Button share,btnShareCamera;
     RadioButton radioTashakor,radioPishnahad,radioEnteghad,radioShekayat;
     Spinner spnMoavenat;
+    TextView tvMessage;
+    ImageView image;
     private Context mContext = ShareActivity.this;
 
     @Override
@@ -102,7 +113,7 @@ public class ShareActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         Log.d(TAG, "onCreate: started.");
-
+        REG_USER_LAT=getString(R.string.server)+"/i/latprofile.php";
         if (checkPermissionsArray(Permissions.PERMISSIONS)) {
 
         } else {
@@ -118,23 +129,47 @@ public class ShareActivity extends AppCompatActivity {
         radioEnteghad=(RadioButton)findViewById(R.id.radioButton3);
         radioShekayat=(RadioButton)findViewById(R.id.radioButton4);
         spnMoavenat=(Spinner)findViewById(R.id.spnMoavenat);
+        image=(ImageView) findViewById(R.id.imgSharePic);
+        tvMessage=(TextView) findViewById(R.id.shareTextMessage);
+
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        mobile=SP.getString("mobile", "0");
+        pas=SP.getString("pass", "0");
 
         btnShareCamera=(Button)findViewById(R.id.btnShareCamera);
-        btnShareGallery=(Button)findViewById(R.id.btnShareGallery);
 
         btnShareCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final CharSequence[] items = {"دوربین", "گالری", "انصراف"};
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShareActivity.this);
+                builder.setTitle("Add Photo!");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+
+                        if (items[item].equals("دوربین")) {
+                            PROFILE_PIC_COUNT = 1;
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, REQUEST_CAMERA);
+                        } else if (items[item].equals("گالری")) {
+                            PROFILE_PIC_COUNT = 1;
+                            Intent intent = new Intent(
+                                    Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(intent,SELECT_FILE);
+                        } else if (items[item].equals("انصراف")) {
+                            PROFILE_PIC_COUNT = 0;
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
 
             }
         });
 
-        btnShareGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
 
         mstatus="0";
         radioTashakor.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +199,7 @@ public class ShareActivity extends AppCompatActivity {
 
         share=(Button)findViewById(R.id.btnShareSocial);
 
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+//        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname=SP.getString("myname", "0");
         myphone=SP.getString("mobile", "0");
         oldLng=SP.getString("lng", "0");
@@ -205,11 +240,13 @@ public class ShareActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to the final share screen.");
                 //upload the image to
-                Toast.makeText(ShareActivity.this, "درحال ارسال اطلاعات", Toast.LENGTH_SHORT).show();
+
+
                 mytext = mCaption.getText().toString();
-
-                ImageUploadToServerFunction();
-
+                if (mytext.length()>4) {
+                    Toast.makeText(ShareActivity.this, "درحال ارسال اطلاعات", Toast.LENGTH_SHORT).show();
+                    ImageUploadToServerFunction();
+                }
 
             }
         });
@@ -290,39 +327,31 @@ public class ShareActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == this.RESULT_CANCELED) {
+            return;
+        }
 
-        if(requestCode == CAMERA_REQUEST_CODE){
+        if(requestCode == REQUEST_CAMERA){
             Log.d(TAG, "onActivityResult: done taking a photo.");
-            Log.d(TAG, "onActivityResult: attempting to navigate to final share screen.");
 
-            Bitmap bitmap=null;
+            bitmap = (Bitmap) data.getExtras().get("data");
+            image.setImageBitmap(bitmap);
+
+        }else if (requestCode==SELECT_FILE){
+            Log.d(TAG, "onActivityResult: done taking a photo.");
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+//                    Log.e("The image", imageToString(bitmap));
+                    image.setImageBitmap(bitmap);
 
 
-            if(isRootTask()){
-                try{
-                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    Intent intent = new Intent(ShareActivity.this, NextActivity.class);
-                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
-                    intent.putExtra("lat",lat);
-                    intent.putExtra("lng",lng);
-                    startActivity(intent);
-                }catch (NullPointerException e){
-                    Log.d(TAG, "onActivityResult: NullPointerException: " + e.getMessage());
-                }
-            }else{
-                try{
-                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    Intent intent = new Intent(ShareActivity.this, NextActivity.class);
-                    intent.putExtra(getString(R.string.selected_bitmap), bitmap);
-                    intent.putExtra("lat",lat);
-                    intent.putExtra("lng",lng);
-                    startActivity(intent);
-                }catch (NullPointerException e){
-                    Log.d(TAG, "onActivityResult: NullPointerException: " + e.getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
+
 
         }
     }
@@ -333,7 +362,7 @@ public class ShareActivity extends AppCompatActivity {
      */
     private void setImage() throws IOException {
         intent = getIntent();
-        ImageView image = (ImageView) findViewById(R.id.imageShare);
+//        ImageView image = (ImageView) findViewById(R.id.imgSharePic);
 
         if(intent.hasExtra(getString(R.string.selected_image))){
             imgUrl = intent.getStringExtra(getString(R.string.selected_image));
@@ -374,6 +403,11 @@ public class ShareActivity extends AppCompatActivity {
 
     public void ImageUploadToServerFunction(){
 
+        if (PROFILE_PIC_COUNT==0){
+            regSocial();
+            return;
+        }
+
         ByteArrayOutputStream byteArrayOutputStreamObject ;
 
         byteArrayOutputStreamObject = new ByteArrayOutputStream();
@@ -405,7 +439,7 @@ public class ShareActivity extends AppCompatActivity {
                 // Printing uploading success message coming from server on android app.
                 Intent intent =new Intent(ShareActivity.this, HomeActivity.class);
                 startActivity(intent);
-
+                finish();
                 // Setting image as transparent after done uploading.
 //                imageView.setImageResource(android.R.color.transparent);
 
@@ -419,7 +453,7 @@ public class ShareActivity extends AppCompatActivity {
 
                 HashMap<String,String> HashMapParams = new HashMap<String,String>();
 
-                HashMapParams.put(ImageName, "camera_take");
+                HashMapParams.put(ImageName, myphone);
 
                 HashMapParams.put(ImagePath, ConvertImage);
                 HashMapParams.put("status", mstatus);
@@ -557,11 +591,10 @@ public class ShareActivity extends AppCompatActivity {
         lng=String.valueOf(gps.getLongitude());
         if (oldLat.equals("0")){
             SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-
             SP.putString("lat", String.valueOf(lat));
             SP.putString("lng",String.valueOf(lat));
             SP.commit();
-
+            regLat();
         }
 
 //        Toast.makeText(MainActivity.this, "location ="+myLocation.getLatitude()+","+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
@@ -607,5 +640,77 @@ public class ShareActivity extends AppCompatActivity {
 
     }
 
+    public void regSocial() {
+//        Toast.makeText(MainActivity.this, " reqUser", Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = ServerUploadPath;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        tvMessage.setText("پیام با موفقیت ارسال شد");
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
 
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+
+                params.put("status", mstatus);
+                params.put("gov", gov);
+                params.put("lat", lat);
+                params.put("lng", lng);
+                params.put("name", myname);
+                params.put("phone", myphone);
+                params.put("text", mytext);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+    }
+
+    public void regLat() {
+//        Toast.makeText(MainActivity.this, " reqUser", Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = REG_USER_LAT;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+//                        userRegFlag=true;
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+                params.put("lat",lat);
+                params.put("lng",lng);
+                params.put("mob",mobile);
+                params.put("pas",pas);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+    }
 }

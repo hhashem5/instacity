@@ -32,6 +32,8 @@ public class SignupActivity extends AppCompatActivity {
     String myname,melli,mob,sal,pass,gender;
     TextView txtmsg;
     String REGISTER_URL="";
+    Boolean kansel=false;
+    View focusView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,18 +90,28 @@ public class SignupActivity extends AppCompatActivity {
 
                 if(myname.length()<2){
                     txtName.setError("نام کوتاه است");
+                    focusView=txtName;
+                    kansel=true;
                 }
                 if(mob.length()!=11){
-                    txtName.setError("شماره موبایل 11رقمی است");
+                    txtMobile.setError("شماره موبایل 11رقمی است");
+                    focusView=txtMobile;
+                    kansel=true;
                 }
                 if(melli.length()!=10){
-                    txtName.setError("شماره ملی 10 رقمی است");
+                    txtMelli.setError("شماره ملی 10 رقمی است");
+                    focusView=txtMelli;
+                    kansel=true;
                 }
                 if(sal.length()!=4){
-                    txtName.setError("سال تولد 4 رقمی است");
+                    txtYear.setError("سال تولد 4 رقمی است");
+                    focusView=txtYear;
+                    kansel=true;
                 }
                 if(pass.length()<4){
-                    txtName.setError("کلمه عبور حداقل 5 رقم");
+                    txtPass.setError("کلمه عبور حداقل 5 رقم");
+                    focusView=txtPass;
+                    kansel=true;
                 }
 
                 if (rbMard.isChecked()){
@@ -107,8 +119,11 @@ public class SignupActivity extends AppCompatActivity {
                 }else {
                     gender="0";
                 }
-
-regUserInfo();
+                if (!kansel) {
+                    regUserInfo();
+                }else {
+                    focusView.requestFocus();
+                }
             }
         });
 

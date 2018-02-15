@@ -70,7 +70,6 @@
         <activity android:name=".Profile.AccountSettingActivity" />
         <activity android:name=".Share.UploadActivity" />
         <activity android:name=".Home.CommentActivity" />
-        <activity android:name=".Share.NextActivity" />
         <activity android:name=".Profile.SinglePostActivity" />
         <activity android:name=".Profile.MyProfileActivity" />
         <activity android:name=".Home.LoginActivity" />
