@@ -528,7 +528,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 HashMapParams.put(ImageName, mobile);
 
                 HashMapParams.put(ImagePath, ConvertImage);
-
+                HashMapParams.put("old", profileImgUrl);
                 HashMapParams.put("mob", mobile);
                 HashMapParams.put("pas", pas);
 
