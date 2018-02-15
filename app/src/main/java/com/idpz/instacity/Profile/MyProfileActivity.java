@@ -6,9 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,13 +38,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MyProfileActivity extends AppCompatActivity {
 
+    private static final String TAG = "MyProfileChangePicture";
     TextView txtCitizenName, txtCtNumber,txtEduB,txtJobB,txtCtBirth,txtCtMelliid,txtczstatus;
     RadioButton rbZan, rbMard;
     Spinner spEdu,spJob;
@@ -49,9 +67,16 @@ public class MyProfileActivity extends AppCompatActivity {
     ProgressDialog pd;
     private DisplayImageOptions options;
     CircleImageView imgProfile;
-    Boolean userFlag=false;
+    Boolean userFlag=false,check=true;
+    Bitmap bitmap=null;
+    String ImageName = "image_name";
+    String ImagePath = "image_path";
+    ProgressDialog progressDialog;
+    private static final int REQUEST_CAMERA = 6;
+    private static final int SELECT_FILE = 7;
     String requrl = "",profileImgUrl="";
     String REGISTER_URL="",server="";
+    String ServerUploadPath ="";
     String eduTitle="0",jobTitle="0",serial="0.jpg",lat="0",lng="0",melliid="0",myname="0";
     String name="0",pas="", mobile="0", birth="0", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
     @Override
@@ -86,6 +111,17 @@ public class MyProfileActivity extends AppCompatActivity {
         btnreg=(Button)findViewById(R.id.btnCzReg);
         btnexit=(Button)findViewById(R.id.btnCzExit);
         imgProfile=(CircleImageView)findViewById(R.id.myProfile_photoLikes);
+        ServerUploadPath =getString(R.string.server)+"/i/imgprofile.php" ;
+
+        imgProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK,
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent,SELECT_FILE);
+            }
+        });
 
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -99,7 +135,7 @@ public class MyProfileActivity extends AppCompatActivity {
         txtCtBirth.setText(birth);
         fav=SP1.getString("fav", "0");
         profileImgUrl = SP1.getString("pic", "0");
-        Toast.makeText(this, "pic-url"+profileImgUrl, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "pic-url"+profileImgUrl, Toast.LENGTH_LONG).show();
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)
                 .showImageForEmptyUri(R.drawable.ic_empty)
@@ -109,7 +145,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        ImageLoader.getInstance().displayImage(profileImgUrl,imgProfile,options);
+        ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
         txtCitizenName.setText(name);
         txtCtNumber.setText(mobile);
         txtCtBirth.setText(birth);
@@ -406,4 +442,196 @@ public class MyProfileActivity extends AppCompatActivity {
         queue.add(postRequest);
 
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode==SELECT_FILE) {
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+//                    Log.e("The image", imageToString(bitmap));
+                    imgProfile.setImageBitmap(bitmap);
+                    ImageUploadToServerFunction();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(requestCode == REQUEST_CAMERA){
+            Log.d(TAG, "onActivityResult: done taking a photo.");
+
+             bitmap = (Bitmap) data.getExtras().get("data");
+            imgProfile.setImageBitmap(bitmap);
+            ImageUploadToServerFunction();
+        }
+    }
+
+
+
+    public void ImageUploadToServerFunction(){
+
+
+        ByteArrayOutputStream byteArrayOutputStreamObject ;
+
+        byteArrayOutputStreamObject = new ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStreamObject);
+
+        byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
+
+        final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
+
+        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
+
+            @Override
+            protected void onPreExecute() {
+
+                super.onPreExecute();
+
+                progressDialog = ProgressDialog.show(MyProfileActivity.this,"درحال ارسال عکس","کمی صبر کنید",false,false);
+            }
+
+            @Override
+            protected void onPostExecute(String string1) {
+
+                super.onPostExecute(string1);
+
+                // Dismiss the progress dialog after done uploading.
+                progressDialog.dismiss();
+                SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                SP2.putString("pic", string1);
+                SP2.apply();
+                // Printing uploading success message coming from server on android app.
+                Intent intent =new Intent(MyProfileActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                finish();
+                // Setting image as transparent after done uploading.
+//                imageView.setImageResource(android.R.color.transparent);
+
+
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+
+                MyProfileActivity.ImageProcessClass imageProcessClass = new MyProfileActivity.ImageProcessClass();
+
+                HashMap<String,String> HashMapParams = new HashMap<String,String>();
+
+                HashMapParams.put(ImageName, mobile);
+
+                HashMapParams.put(ImagePath, ConvertImage);
+
+                HashMapParams.put("mob", mobile);
+                HashMapParams.put("pas", pas);
+
+
+                String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
+
+                return FinalData;
+            }
+        }
+        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
+
+        AsyncTaskUploadClassOBJ.execute();
+    }
+
+    public class ImageProcessClass{
+
+        public String ImageHttpRequest(String requestURL,HashMap<String, String> PData) {
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            try {
+
+                URL url;
+                HttpURLConnection httpURLConnectionObject ;
+                OutputStream OutPutStream;
+                BufferedWriter bufferedWriterObject ;
+                BufferedReader bufferedReaderObject ;
+                int RC ;
+
+                url = new URL(requestURL);
+
+                httpURLConnectionObject = (HttpURLConnection) url.openConnection();
+
+                httpURLConnectionObject.setReadTimeout(19000);
+
+                httpURLConnectionObject.setConnectTimeout(19000);
+
+                httpURLConnectionObject.setRequestMethod("POST");
+
+                httpURLConnectionObject.setDoInput(true);
+
+                httpURLConnectionObject.setDoOutput(true);
+
+                OutPutStream = httpURLConnectionObject.getOutputStream();
+
+                bufferedWriterObject = new BufferedWriter(
+
+                        new OutputStreamWriter(OutPutStream, "UTF-8"));
+
+                bufferedWriterObject.write(bufferedWriterDataFN(PData));
+
+                bufferedWriterObject.flush();
+
+                bufferedWriterObject.close();
+
+                OutPutStream.close();
+
+                RC = httpURLConnectionObject.getResponseCode();
+
+                if (RC == HttpsURLConnection.HTTP_OK) {
+
+                    bufferedReaderObject = new BufferedReader(new InputStreamReader(httpURLConnectionObject.getInputStream()));
+
+                    stringBuilder = new StringBuilder();
+
+                    String RC2;
+
+                    while ((RC2 = bufferedReaderObject.readLine()) != null){
+
+                        stringBuilder.append(RC2);
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return stringBuilder.toString();
+        }
+
+        private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
+
+            StringBuilder stringBuilderObject;
+
+            stringBuilderObject = new StringBuilder();
+
+            for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
+
+                if (check)
+
+                    check = false;
+                else
+                    stringBuilderObject.append("&");
+
+                stringBuilderObject.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
+
+                stringBuilderObject.append("=");
+
+                stringBuilderObject.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
+            }
+
+            return stringBuilderObject.toString();
+        }
+
+    }
+
 }

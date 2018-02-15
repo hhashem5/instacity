@@ -106,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         imgProfile=(CircleImageView)findViewById(R.id.profile_photoProfile);
-        ImageLoader.getInstance().displayImage(profileImgUrl,imgProfile,options);
+        ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         txtNumPosts.setText(SP.getString("numPosts", "0"));

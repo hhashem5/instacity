@@ -1,5 +1,6 @@
 package com.idpz.instacity.Like;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.idpz.instacity.Profile.MyProfileActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.GiftPlace;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
@@ -76,7 +79,15 @@ public class LikesActivity extends AppCompatActivity {
         txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
         imgProfile=(CircleImageView)findViewById(R.id.profile_photoLikes);
 
-        ImageLoader.getInstance().displayImage(profileImgUrl,imgProfile,options);
+        imgProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in1=new Intent(LikesActivity.this, MyProfileActivity.class);
+                startActivity(in1);
+            }
+        });
+
+        ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
 
         dataModels = new ArrayList<>();
         lvGiftPlaces=(ListView)findViewById(R.id.listPlaces);

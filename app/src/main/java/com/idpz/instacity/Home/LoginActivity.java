@@ -264,7 +264,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (img.equals("null")||img.isEmpty()||img.length()<4){
                                     img="0.jpg";
                                 }
-                                String pic= getString(R.string.server)+"/assets/images/users/"+img;
+                                String pic= img;
 
                                 SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                                 SP2.putString("myname", name);
