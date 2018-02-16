@@ -117,6 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/shareTextMessage"
+                android:text="ما را با بیان مشکلات، ایده ها، نظرات همراه با راهکارهای خود یاری کنید"
                 android:layout_marginTop="5dp"/>
 
                 <ImageView

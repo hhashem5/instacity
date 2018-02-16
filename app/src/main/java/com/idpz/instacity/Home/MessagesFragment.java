@@ -48,7 +48,7 @@ public class MessagesFragment extends Fragment {
         ProgressDialog pd;
         ArrayList<Post> dataModels;
         //    DBLastData dbLastData;
-        NewsAdapter postAdapter;
+        NewsAdapter newsAdapter;
         String server="",fullServer="";
         int lim1=0,lim2=20;
         Boolean reqFlag=false,connected=false;
@@ -67,13 +67,13 @@ public class MessagesFragment extends Fragment {
             pd = new ProgressDialog(view.getContext());
             dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
-            postAdapter = new NewsAdapter(getActivity(), dataModels);
+            newsAdapter = new NewsAdapter(getActivity(), dataModels);
 
 //            pd.show();
 
 //        server = dbLastData.getLastData(1).getValue();
             fullServer = getString(R.string.server)+"/i/newsread.php";
-            lvContentPost.setAdapter(postAdapter);
+            lvContentPost.setAdapter(newsAdapter);
 
 
             new Thread() {
@@ -185,7 +185,7 @@ public class MessagesFragment extends Fragment {
 
                                 count++;
                             }
-                            postAdapter.notifyDataSetChanged();
+                            newsAdapter.notifyDataSetChanged();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
