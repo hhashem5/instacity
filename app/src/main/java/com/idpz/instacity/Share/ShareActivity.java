@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -49,12 +48,9 @@ import com.idpz.instacity.utils.GPSTracker;
 import com.idpz.instacity.utils.Permissions;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -336,16 +332,20 @@ public class ShareActivity extends AppCompatActivity {
 
             bitmap = (Bitmap) data.getExtras().get("data");
             image.setImageBitmap(bitmap);
+            cmprs=90;
+            PROFILE_PIC_COUNT = 1;
 
         }else if (requestCode==SELECT_FILE){
             Log.d(TAG, "onActivityResult: done taking a photo.");
             if (data != null) {
                 Uri contentURI = data.getData();
+                cmprs=15;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
 //                    Log.e("The image", imageToString(bitmap));
                     image.setImageBitmap(bitmap);
 
+//                    String filePath=getRealPathFromURI(ShareActivity.this,contentURI);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -356,44 +356,6 @@ public class ShareActivity extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * gets the image url from the incoming intent and displays the chosen image
-     */
-    private void setImage() throws IOException {
-        intent = getIntent();
-//        ImageView image = (ImageView) findViewById(R.id.imgSharePic);
-
-        if(intent.hasExtra(getString(R.string.selected_image))){
-            imgUrl = intent.getStringExtra(getString(R.string.selected_image));
-            lat=intent.getStringExtra("lat");
-            lng=intent.getStringExtra("lng");
-            Log.d(TAG, "setImage: got new image url: " + imgUrl+lat);
-//            UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
-            image.setImageBitmap(bitmap);
-            cmprs=70;
-            FileInputStream in = null;
-            try {
-                in = new FileInputStream(imgUrl);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            BufferedInputStream buf = new BufferedInputStream(in);
-            byte[] bMapArray= new byte[buf.available()];
-            buf.read(bMapArray);
-            bitmap = BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
-        }
-        else if(intent.hasExtra(getString(R.string.selected_bitmap))){
-            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
-            lat=intent.getStringExtra("lat");
-            lng=intent.getStringExtra("lng");
-            Log.d(TAG, "setImage: got new bitmap"+lat+lng);
-            image.setImageBitmap(bitmap);
-            cmprs=70;
-        }else {
-            finish();
-        }
-    }
 
      /*
      ------------------------------------ send post to server ---------------------------------------------
