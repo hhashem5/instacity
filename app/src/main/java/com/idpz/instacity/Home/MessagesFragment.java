@@ -2,6 +2,8 @@ package com.idpz.instacity.Home;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -49,7 +51,7 @@ public class MessagesFragment extends Fragment {
         NewsAdapter postAdapter;
         String server="",fullServer="";
         int lim1=0,lim2=20;
-        Boolean reqFlag=true,connected=false;
+        Boolean reqFlag=false,connected=false;
         Context context;
 
         @Nullable
@@ -66,15 +68,47 @@ public class MessagesFragment extends Fragment {
             dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
             postAdapter = new NewsAdapter(getActivity(), dataModels);
-            pd.setMessage("دریافت اطلاعات...");
-            pd.setCancelable(true);
+
 //            pd.show();
 
 //        server = dbLastData.getLastData(1).getValue();
             fullServer = getString(R.string.server)+"/i/newsread.php";
             lvContentPost.setAdapter(postAdapter);
 
-            reqPosts();
+
+            new Thread() {
+                @Override
+                public void run() {
+                    while (!reqFlag) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                                if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                        connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                                    //we are connected to a network
+                                    connected = true;
+                                } else {
+                                    connected = false;
+
+                                }
+
+                                if (connected && !reqFlag) {
+                                    pd.setMessage("دریافت اطلاعات...");
+                                    pd.setCancelable(true);
+                                    reqPosts();
+                                }
+
+                            }
+                        });
+                        try {
+                            sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }.start();
 
 
 

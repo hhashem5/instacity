@@ -3,16 +3,20 @@ package com.idpz.instacity.Home;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -39,7 +43,8 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+    private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "HomeFragment";
 
     ListView lvContentPost;
@@ -51,6 +56,7 @@ public class HomeFragment extends Fragment {
     int lim1=0,lim2=20;
     Boolean reqFlag=true,connected=false;
     Context context;
+    Boolean postRcvFlag=false,videoRcvFlag=false;
 
     @Nullable
     @Override
@@ -58,7 +64,8 @@ public class HomeFragment extends Fragment {
         View view=inflater.inflate(R.layout.fragment_home,container,false);
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getContext());
         mob=SP.getString("mobile", "0");
-
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
 
 
@@ -67,15 +74,48 @@ public class HomeFragment extends Fragment {
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
         postAdapter = new PostAdapter(getActivity(), dataModels);
-        pd.setMessage("دریافت اطلاعات...");
-        pd.setCancelable(true);
-        pd.show();
+
 
 //        server = dbLastData.getLastData(1).getValue();
         fullServer = getString(R.string.server)+"/i/social2.php";
         lvContentPost.setAdapter(postAdapter);
 
-        reqPosts();
+        new Thread() {
+            @Override
+            public void run() {
+                while (!postRcvFlag) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                                //we are connected to a network
+                                connected = true;
+                            } else {
+                                connected = false;
+                                Toast.makeText(getActivity().getApplicationContext(), "اینترنت وصل نیست!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            if (connected && !postRcvFlag) {
+                                pd.setMessage("دریافت اطلاعات...");
+                                pd.setCancelable(true);
+                                pd.show();
+                                reqPosts();
+                            }
+
+                        }
+                    });
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
+
 
 
 
@@ -118,8 +158,9 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         reqFlag=true;
+                        postRcvFlag=true;
                         pd.dismiss();
-
+                        swipeRefreshLayout.setRefreshing(false);
 
                         JSONArray jsonArray = null;
                         try {
@@ -199,9 +240,12 @@ public class HomeFragment extends Fragment {
     }
 
 
-
-
-
-
+    @Override
+    public void onRefresh() {
+        lim1=0;lim2=20;
+        dataModels = new ArrayList<>();
+        swipeRefreshLayout.setRefreshing(true);
+        reqPosts();
     }
+}
 
