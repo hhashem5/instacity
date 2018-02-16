@@ -97,9 +97,6 @@ public class HomeActivity extends AppCompatActivity implements
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
 
 
-
-
-
         initImageLoader();
         setupBottomNavigationView();
         setupViewPager();
@@ -153,6 +150,7 @@ public class HomeActivity extends AppCompatActivity implements
         adapter.addFragment(new HomeFragment()); //index 1
         adapter.addFragment(new MessagesFragment()); //index 2
         mViewPager.setAdapter(adapter);
+        mViewPager.setOffscreenPageLimit(2);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);

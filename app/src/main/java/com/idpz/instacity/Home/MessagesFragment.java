@@ -57,13 +57,9 @@ public class MessagesFragment extends Fragment {
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-            View view=inflater.inflate(R.layout.fragment_home,container,false);
+            View view=inflater.inflate(R.layout.fragment_messages,container,false);
 
-
-
-
-
-            lvContentPost = (ListView) view.findViewById(R.id.lvHomeContent);
+            lvContentPost = (ListView) view.findViewById(R.id.lvMsgContent);
             pd = new ProgressDialog(view.getContext());
             dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
@@ -150,14 +146,14 @@ public class MessagesFragment extends Fragment {
                     public void onResponse(String response) {
                         reqFlag=true;
                         pd.dismiss();
-                        int count = 0;
+                        Log.d(TAG, "onResponse: MSG received");
 
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
                             Post post;
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            count = 0;
+
 
                             for (int i =0;i< jsonArray.length(); i++) {
                                 jsonObject = jsonArray.getJSONObject(i);
@@ -183,7 +179,7 @@ public class MessagesFragment extends Fragment {
                                 dataModels.add(post);
 
 
-                                count++;
+
                             }
                             newsAdapter.notifyDataSetChanged();
 

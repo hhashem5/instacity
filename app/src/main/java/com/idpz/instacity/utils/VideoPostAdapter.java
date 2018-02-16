@@ -90,6 +90,7 @@ public class VideoPostAdapter extends BaseAdapter {
 //        });
 
 
+
         txtComment.setText(m.getComment());
 
         txtVideoDate.setText(m.getDetail());

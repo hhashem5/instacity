@@ -2,6 +2,8 @@ package com.idpz.instacity.Home;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -45,39 +47,68 @@ public class CameraFragment extends Fragment {
     VideoPostAdapter videoPostAdapter;
     String server="",fullServer="";
     int lim1=0,lim2=20;
-    Boolean reqFlag=true,connected=false;
+    Boolean reqVideoFlag =false,connected=false;
     Context context;
+    VideoView videoView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_video,container,false);
 
-
-
-
-
         lvVideoPost = (ListView) view.findViewById(R.id.lvVideoContent);
         pd = new ProgressDialog(view.getContext());
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
         videoPostAdapter = new VideoPostAdapter(getActivity(), dataModels);
-        pd.setMessage("دریافت اطلاعات...");
-        pd.setCancelable(true);
+        videoView = (VideoView)view.findViewById(R.id.vidPostVideo);
 //        pd.show();
 
 //        server = dbLastData.getLastData(1).getValue();
         fullServer = getString(R.string.server)+"/i/videoread.php";
         lvVideoPost.setAdapter(videoPostAdapter);
 
-        reqPosts();
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (!reqVideoFlag) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                                //we are connected to a network
+                                connected = true;
+                            } else {
+                                connected = false;
+
+                            }
+
+                            if (connected && !reqVideoFlag) {
+                                pd.setMessage("دریافت اطلاعات...");
+                                pd.setCancelable(true);
+                                reqVideos();
+                            }
+
+                        }
+                    });
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
 
 
 
         lvVideoPost.setRecyclerListener(new AbsListView.RecyclerListener() {
             @Override
             public void onMovedToScrapHeap(View view) {
-                VideoView videoView = (VideoView)view.findViewById(R.id.vidPostVideo);
+
                 if (videoView.isPlaying()){
                     videoView.pause();
                 }else {
@@ -100,11 +131,11 @@ public class CameraFragment extends Fragment {
 
                 if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
                 {
-                    if (reqFlag) {
-                        reqFlag=false;
+                    if (reqVideoFlag) {
+                        reqVideoFlag =false;
                         lim1 += 20;
 
-                        reqPosts();
+                        reqVideos();
                     }
                 }
             }
@@ -114,7 +145,7 @@ public class CameraFragment extends Fragment {
     }
 
 
-    public void reqPosts() {
+    public void reqVideos() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = fullServer;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -122,17 +153,16 @@ public class CameraFragment extends Fragment {
                 {
                     @Override
                     public void onResponse(String response) {
-                        reqFlag=true;
+                        reqVideoFlag =true;
                         pd.dismiss();
-                        int count = 0;
-                        pd.dismiss();
+                        Log.d(TAG, "onResponse: videos recived");
 
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
                             Video video;
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            count = 0;
+
 
                             for (int i = jsonArray.length(); i > 0; i--) {
                                 jsonObject = jsonArray.getJSONObject(i - 1);
@@ -155,8 +185,6 @@ public class CameraFragment extends Fragment {
 
                                 dataModels.add(video);
 
-
-                                count++;
                             }
                             videoPostAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
@@ -189,7 +217,22 @@ public class CameraFragment extends Fragment {
 
     }
 
+    public void setUserVisibleHint(boolean isVisibleToUser)
+    {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (this.isVisible())
+        {
+            if (!isVisibleToUser)   // If we are becoming invisible, then...
+            {
+                videoView.pause();
+            }
 
+            if (isVisibleToUser) // If we are becoming visible, then...
+            {
+
+            }
+        }
+    }
 
 
 
