@@ -243,7 +243,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         lim1=0;lim2=20;
-        dataModels = new ArrayList<>();
+        dataModels .clear();
         swipeRefreshLayout.setRefreshing(true);
         reqPosts();
     }

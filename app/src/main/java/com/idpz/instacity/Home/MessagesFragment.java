@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +40,8 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class MessagesFragment extends Fragment {
+public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+    private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "MessagesFragment";
 
 
@@ -58,6 +60,9 @@ public class MessagesFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
             View view=inflater.inflate(R.layout.fragment_messages,container,false);
+
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+            swipeRefreshLayout.setOnRefreshListener(this);
 
             lvContentPost = (ListView) view.findViewById(R.id.lvMsgContent);
             pd = new ProgressDialog(view.getContext());
@@ -147,7 +152,7 @@ public class MessagesFragment extends Fragment {
                         reqFlag=true;
                         pd.dismiss();
                         Log.d(TAG, "onResponse: MSG received");
-
+                        swipeRefreshLayout.setRefreshing(false);
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
@@ -213,6 +218,13 @@ public class MessagesFragment extends Fragment {
 
     }
 
+    @Override
+    public void onRefresh() {
+        lim1=0;lim2=20;
+        dataModels.clear();
+        swipeRefreshLayout.setRefreshing(true);
+        reqPosts();
+    }
 
 }
 

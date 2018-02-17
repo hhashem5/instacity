@@ -68,6 +68,7 @@ android:background="@color/lightblue"
 
 
                 <Button
+                    android:id="@+id/btnMapStoreReg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"

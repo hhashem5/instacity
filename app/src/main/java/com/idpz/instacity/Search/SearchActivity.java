@@ -2,6 +2,7 @@ package com.idpz.instacity.Search;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -72,6 +74,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     CheckBox chkIEdu,chkIShop,chkISport,chkIService,chkIRepaire,chkIHealth,chkIReligion,chkIFood,chkCars;
     Boolean Iedu=true,Ishop=false,Isport=true,Iservice=false,Irepair=false,Ihealth=true,Ireligion=false,Ifood=false,Icar=false;
     TextView txtcat;
+    Button btnRegStore;
 
 
 
@@ -100,6 +103,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIFood=(CheckBox)findViewById(R.id.chkIfood);
         chkCars=(CheckBox)findViewById(R.id.chkShowCar);
         txtcat=(TextView) findViewById(R.id.txtCat);
+        btnRegStore=(Button)findViewById(R.id.btnMapStoreReg);
 
         chkPlaces.setText("دریافت اماکن");
         chkIEdu.setVisibility(View.GONE);
@@ -114,6 +118,14 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkPlaces.setEnabled(false);
 
         SHOP_URL=getString(R.string.server)+"/i/shoprec.php";
+
+        btnRegStore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in2=new Intent(SearchActivity.this,StoreRegActivity.class);
+                startActivity(in2);
+            }
+        });
 
         chkISport.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

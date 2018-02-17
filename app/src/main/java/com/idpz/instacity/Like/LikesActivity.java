@@ -1,8 +1,11 @@
 package com.idpz.instacity.Like;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -50,6 +53,7 @@ public class LikesActivity extends AppCompatActivity {
     TextView txtDisplayName,txtDescription, txtScore,txtTabUserName,txtMyMobile;
     CircleImageView imgProfile;
     private DisplayImageOptions options;
+    Boolean giftFlag=false,connected=false;
 
 
     @Override
@@ -107,7 +111,37 @@ public class LikesActivity extends AppCompatActivity {
         txtMyMobile.setText("شماره موبایل:"+SP.getString("mobile", ""));
 
 
-    reqGifts();
+        new Thread() {
+            @Override
+            public void run() {
+                while (!giftFlag) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                                //we are connected to a network
+                                connected = true;
+                            } else {
+                                connected = false;
+                            }
+
+                            if (connected && !giftFlag) {
+                                reqGifts();
+                            }
+
+                        }
+                    });
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
 
 
 
@@ -132,15 +166,16 @@ public class LikesActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
 
+                        giftFlag=true;
 
-                        int count = 0;
+
 
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
                             GiftPlace giftPlace;
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            count = 0;
+
 
                             for (int i = jsonArray.length(); i > 0; i--) {
                                 jsonObject = jsonArray.getJSONObject(i - 1);
@@ -154,7 +189,7 @@ public class LikesActivity extends AppCompatActivity {
                                 dataModels.add(giftPlace);
 
 
-                                count++;
+
                             }
                             giftPlacesAdapter.notifyDataSetChanged();
 

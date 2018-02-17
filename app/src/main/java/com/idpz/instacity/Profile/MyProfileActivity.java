@@ -79,6 +79,7 @@ public class MyProfileActivity extends AppCompatActivity {
     String ServerUploadPath ="";
     String eduTitle="0",jobTitle="0",serial="0.jpg",lat="0",lng="0",melliid="0",myname="0";
     String name="0",pas="", mobile="0", birth="0", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -183,10 +184,7 @@ public class MyProfileActivity extends AppCompatActivity {
         btnexit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(MyProfileActivity.this);
-
                 builder.setTitle("از حساب کاربری خارج می شوید");
                 builder.setMessage("نیاز به ورود مجدد هست آیا مطمئن هستید ?");
 
@@ -194,7 +192,6 @@ public class MyProfileActivity extends AppCompatActivity {
 
                     public void onClick(DialogInterface dialog, int which) {
                         // Yes selected but close the dialog
-
                         SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                         SP2.putString("myname", "0");
                         SP2.putString("mobile", "0");
@@ -218,7 +215,6 @@ public class MyProfileActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-
                 builder.setNegativeButton("انصراف", new DialogInterface.OnClickListener() {
 
                     @Override
@@ -228,15 +224,11 @@ public class MyProfileActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-
                 AlertDialog alert = builder.create();
                 alert.show();
-
-
-
-
             }
         });
+
 
         btnreg.setOnClickListener(new View.OnClickListener() {
             @Override

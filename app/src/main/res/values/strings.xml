@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">شهرینو</string>
-    <string name="server">http://servicefz.ir</string>
+    <string name="server">http://mscity.ir</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="edit_profile">ویرایش پروفایل</string>
     <string name="sign_out">خروج از حساب کاربری</string>
@@ -122,4 +122,14 @@
         <item>اجتماعی</item>
         <item>کارگر</item>
     </string-array>
+    <string-array name="Store_tag">
+        <item>فرهنگی</item>
+        <item>فروشگاه</item>
+        <item>سلامت</item>
+        <item>مذهبی</item>
+        <item>خدمات</item>
+        <item>ورزشی</item>
+        <item>غذا</item>
+    </string-array>
+
 </resources>

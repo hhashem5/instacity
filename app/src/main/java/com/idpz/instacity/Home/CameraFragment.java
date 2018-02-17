@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,8 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class CameraFragment extends Fragment {
+public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+    private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "CameraFragment";
     ListView lvVideoPost;
     ProgressDialog pd;
@@ -55,6 +57,9 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_video,container,false);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         lvVideoPost = (ListView) view.findViewById(R.id.lvVideoContent);
         pd = new ProgressDialog(view.getContext());
@@ -105,19 +110,19 @@ public class CameraFragment extends Fragment {
 
 
 
-        lvVideoPost.setRecyclerListener(new AbsListView.RecyclerListener() {
-            @Override
-            public void onMovedToScrapHeap(View view) {
-
-                if (videoView.isPlaying()){
-                    videoView.pause();
-                }else {
-                    videoView.pause();
-                }
-
-            }
-
-        });
+//        lvVideoPost.setRecyclerListener(new AbsListView.RecyclerListener() {
+//            @Override
+//            public void onMovedToScrapHeap(View view) {
+//
+//                if (videoView.isPlaying()){
+//                    videoView.pause();
+//                }else {
+//                    videoView.pause();
+//                }
+//
+//            }
+//
+//        });
 
         lvVideoPost.setOnScrollListener(new AbsListView.OnScrollListener() {
 
@@ -155,6 +160,7 @@ public class CameraFragment extends Fragment {
                     public void onResponse(String response) {
                         reqVideoFlag =true;
                         pd.dismiss();
+                        swipeRefreshLayout.setRefreshing(false);
                         Log.d(TAG, "onResponse: videos recived");
 
                         JSONArray jsonArray = null;
@@ -224,7 +230,8 @@ public class CameraFragment extends Fragment {
         {
             if (!isVisibleToUser)   // If we are becoming invisible, then...
             {
-                videoView.pause();
+//                videoView=(VideoView);
+//                videoView.pause();
             }
 
             if (isVisibleToUser) // If we are becoming visible, then...
@@ -234,6 +241,12 @@ public class CameraFragment extends Fragment {
         }
     }
 
-
+    @Override
+    public void onRefresh() {
+        lim1=0;lim2=20;
+        dataModels.clear();
+        swipeRefreshLayout.setRefreshing(true);
+        reqVideos();
+    }
 
 }

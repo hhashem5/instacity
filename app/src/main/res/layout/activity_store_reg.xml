@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_job_reg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context=".Search.StoreRegActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint="مثال: فروشگاه ثامن"
+            android:ems="10"
+            android:id="@+id/txtShopName"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="نام وحد صنفی"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob1"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint="نام و نام خانوادگی"
+            android:ems="10"
+            android:id="@+id/txtShopOwner"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="مالک"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob2"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text=""
+            android:ems="10"
+            android:id="@+id/txtShopTel"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="تلفن ثابت"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob4"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="09"
+            android:ems="10"
+            android:id="@+id/txtShopMobile"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="شماره همراه"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob5"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint="خیابان امام کوچه "
+            android:ems="10"
+            android:id="@+id/txtShopAddress"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="آدرس"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob6"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint="مثال: آموزش و بیمه"
+            android:ems="10"
+            android:id="@+id/txtShopKey"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="توضیحات"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob7"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:entries="@array/Store_tag"
+            android:ems="10"
+            android:id="@+id/spnShopTag"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="نوع مکان"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob8"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text=""
+            android:hint=""
+            android:ems="10"
+            android:id="@+id/txtShopMemo"
+            android:layout_weight="1" />
+
+        <TextView
+            android:text="توضیحات"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob3"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnShopPic"
+            android:text="انتخاب عکس از گالری"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="عکس فروشگاه"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob99"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <Button
+            android:text="ثبت آگهی"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnShopReg" />
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/txtJobStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/imgShop"
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+</LinearLayout>
