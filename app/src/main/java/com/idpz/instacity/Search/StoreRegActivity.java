@@ -2,10 +2,12 @@ package com.idpz.instacity.Search;
 
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -31,7 +34,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.R;
-import com.idpz.instacity.Share.ShareActivity;
 import com.idpz.instacity.utils.GPSTracker;
 
 import java.io.BufferedReader;
@@ -70,7 +72,7 @@ public class StoreRegActivity extends AppCompatActivity {
     String ServerUploadPath ="";
     String shopName,owner,tel,mobile,address,shopKey,memo,shoptag,lat="0",lng="0";
     View focusView = null;
-    boolean kansel=false,check=true;
+    boolean kansel=false,check=true,hasImage=false;
     Bitmap bitmap=null;
     String ImageName = "image_name";
     String ImagePath = "image_path";
@@ -93,8 +95,10 @@ public class StoreRegActivity extends AppCompatActivity {
         txtJobStatus=(TextView) findViewById(R.id.txtJobStatus);
         spnShopTag=(Spinner) findViewById(R.id.spnShopTag);
 
+        populateGPS();
+
         REGISTER_URL=getString(R.string.server)+"/i/shopreg.php";
-        ServerUploadPath =getString(R.string.server)+"/i/imgshop.php" ;
+        ServerUploadPath =getString(R.string.server)+"/i/imgplace.php" ;
 
         btnShopPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +113,7 @@ public class StoreRegActivity extends AppCompatActivity {
         btnShopReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(StoreRegActivity.this, "lat="+lat+" lng="+lng, Toast.LENGTH_LONG).show();
                 shopName=txtShopName.getText().toString();
                 owner=txtShopOwner.getText().toString();
                 tel=txtShopTel.getText().toString();
@@ -168,12 +173,12 @@ public class StoreRegActivity extends AppCompatActivity {
                     focusView=txtShopMobile;
                     kansel=true;
                 }
-                if(tel.length()!=10){
-                    txtShopTel.setError("شماره ثابت حداقل 10 رقمی است");
+                if(tel.length()<4){
+                    txtShopTel.setError("شماره ثابت حداقل 4 رقمی است");
                     focusView=txtShopTel;
                     kansel=true;
                 }
-                if(address.length()!=4){
+                if(address.length()<4){
                     txtShopAddress.setError("آدرس کوتاه است");
                     focusView=txtShopAddress;
                     kansel=true;
@@ -186,7 +191,12 @@ public class StoreRegActivity extends AppCompatActivity {
 
 
                 if (!kansel) {
-                    regShopInfo();
+                    if (hasImage){
+                        ImageUploadToServerFunction();
+                    }else {
+                        regShopInfo();
+                    }
+
                 }else {
                     focusView.requestFocus();
                 }
@@ -265,7 +275,7 @@ public class StoreRegActivity extends AppCompatActivity {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
 //                    Log.e("The image", imageToString(bitmap));
                     imgShop.setImageBitmap(bitmap);
-                    ImageUploadToServerFunction();
+                    hasImage=true;
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -317,7 +327,7 @@ public class StoreRegActivity extends AppCompatActivity {
                 SP2.putString("pic", string1);
                 SP2.apply();
                 // Printing uploading success message coming from server on android app.
-                Intent intent =new Intent(StoreRegActivity.this, ShareActivity.class);
+                Intent intent =new Intent(StoreRegActivity.this, SearchActivity.class);
                 startActivity(intent);
                 finish();
                 // Setting image as transparent after done uploading.
@@ -453,15 +463,46 @@ public class StoreRegActivity extends AppCompatActivity {
             return;
         }
         GPSTracker gps =new GPSTracker(this);
+        lat=String.valueOf(gps.getLatitude());
+        lng=String.valueOf(gps.getLongitude());
+        if (!lat.equals("0.0")) {
+            SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+            SP.putString("lat", String.valueOf(gps.getLatitude()));
+            SP.putString("lng", String.valueOf(gps.getLongitude()));
+            SP.commit();
+            btnShopReg.setTextColor(Color.BLACK);
+            btnShopReg.setEnabled(true);
+            txtJobStatus.setText("");
+            txtJobStatus.setTextColor(Color.BLACK);
+        }else{
+            btnShopReg.setTextColor(Color.RED);
+            btnShopReg.setEnabled(false);
+            txtJobStatus.setText("جی چی اس خاموش است امکان ثبت مکان نیست");
+            txtJobStatus.setTextColor(Color.RED);
+            final CharSequence[] items = {"بله", "خیر"};
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(StoreRegActivity.this);
+            builder.setTitle("آیا جی پی اس را روشن می کنید");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int item) {
 
-        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-        SP.putString("lat", String.valueOf(gps.getLatitude()));
-        SP.putString("lng",String.valueOf(gps.getLongitude()));
-        SP.commit();
-        Log.d(TAG, "populateGPS: "+String.valueOf(gps.getLatitude()));
-//        Toast.makeText(MainActivity.this, "location ="+myLocation.getLatitude()+","+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                    if (items[item].equals("بله")) {
+                        Intent i = new
+                                Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(i);
+                    } else if (items[item].equals("خیر")) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            builder.show();
 
-    }
+        }
+
+
+        }
+
+
 
     private boolean mayRequestLocation() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -486,5 +527,9 @@ public class StoreRegActivity extends AppCompatActivity {
         return false;
     }
 
-
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        populateGPS();
+    }
 }

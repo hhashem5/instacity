@@ -129,13 +129,13 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text=""
-            android:hint="مثال: آموزش و بیمه"
+            android:hint="مثال: ابزار یراق لوازم_بهداشتی ساختمانی"
             android:ems="10"
             android:id="@+id/txtShopKey"
             android:layout_weight="1" />
 
         <TextView
-            android:text="توضیحات"
+            android:text="کلیدواژه"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob7"
@@ -222,6 +222,7 @@
     <TextView
         android:id="@+id/txtJobStatus"
         android:layout_width="match_parent"
+        android:gravity="center"
         android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/imgShop"
