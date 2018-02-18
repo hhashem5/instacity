@@ -32,7 +32,7 @@
         <EditTextPreference
             android:summary="سال تولد شما"
             android:title="سال تولد"
-            android:key="age"
+            android:key="birth"
             />
         <EditTextPreference
             android:summary="جنسیت"

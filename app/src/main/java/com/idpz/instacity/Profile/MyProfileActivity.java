@@ -131,12 +131,18 @@ public class MyProfileActivity extends AppCompatActivity {
         melliid = SP1.getString("melliid", "0");
         lat=SP1.getString("lat", "0");
         lng=SP1.getString("lng", "0");
-        birth=SP1.getString("age", "0");
-        pas=SP1.getString("pass", "0");
-        txtCtBirth.setText(birth);
+        birth=SP1.getString("birth", "0");
+        edu=SP1.getString("edu", "0");
+        edub=SP1.getString("edub", "0");
+        job=SP1.getString("job", "0");
+        jobb=SP1.getString("jobb", "0");
         fav=SP1.getString("fav", "0");
+        pas=SP1.getString("pass", "0");
+
+        txtCtBirth.setText(birth);
+
         profileImgUrl = SP1.getString("pic", "0");
-        Toast.makeText(this, "pic-url"+profileImgUrl, Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "pic-url"+profileImgUrl, Toast.LENGTH_LONG).show();
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)
                 .showImageForEmptyUri(R.drawable.ic_empty)
@@ -147,7 +153,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
-        txtCitizenName.setText(name);
+        txtCitizenName.setText(myname);
         txtCtNumber.setText(mobile);
         txtCtBirth.setText(birth);
         txtEduB.setText(edub);
