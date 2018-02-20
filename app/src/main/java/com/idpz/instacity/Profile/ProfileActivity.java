@@ -54,7 +54,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
-    String fullServer = "";
+    String fullServer = "",ctName;
     private static final int ACTIVITY_NUM = 4;
     ArrayList<Post> dataModels;
 
@@ -71,7 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FrameLayout mFrameLayout;
     private RelativeLayout mRelativeLayout;
     GridView grid;
-    TextView txtNumPosts,txtbonus,txtDisplayName,txtDescription,txtMobile,txtEditPrifile,txtTabUserName,txtMosharekat;
+    TextView txtNumPosts,txtbonus,txtDisplayName,txtDescription,txtMobile,txtEditPrifile,txtTabUserName,txtMosharekat,txtCurCt;
     ImageView imgPostMenu;
     String mob="0",profileImgUrl="", REG_USER_LAT ="";
     private DisplayImageOptions options;
@@ -91,6 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
+        ctName=SP1.getString("ctname", "0");
         fullServer = server+"/i/socialgal.php";
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
@@ -104,11 +105,13 @@ public class ProfileActivity extends AppCompatActivity {
         txtDescription=(TextView)findViewById(R.id.txtDescription);
         txtMosharekat=(TextView)findViewById(R.id.txtMosharekat);
         txtMobile=(TextView)findViewById(R.id.website);
+        txtCurCt=(TextView)findViewById(R.id.txtCurrentCTProfile);
         txtEditPrifile=(TextView)findViewById(R.id.textEditProfile);
         txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
         imgPostMenu=(ImageView)findViewById(R.id.imgProfileMenu);
         btnChangeCT=(Button) findViewById(R.id.btnChangeCTPofile);
 
+        txtCurCt.setText(ctName);
 
         btnChangeCT.setOnClickListener(new View.OnClickListener() {
             @Override

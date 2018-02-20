@@ -123,7 +123,11 @@
         android:title="شهر"
         android:summary="شهر"
         />
-
+    <EditTextPreference
+        android:key="ctname"
+        android:title="نام شهر"
+        android:summary="نام شهر"
+        />
         <EditTextPreference
             android:key="numPosts"
             android:title="فاصله خودرو"

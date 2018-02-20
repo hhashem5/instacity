@@ -122,6 +122,7 @@ public class HomeActivity extends AppCompatActivity implements
         birth=SP1.getString("birth", "0");
         edu=SP1.getString("edu", "0");
         edub=SP1.getString("edub", "0");
+        gender=SP1.getString("gender", "0");
         job=SP1.getString("job", "0");
         jobb=SP1.getString("jobb", "0");
         fav=SP1.getString("fav", "0");
@@ -181,15 +182,15 @@ public class HomeActivity extends AppCompatActivity implements
                             }
 
 
-                            if (connected && !areaFlag) {
-                                reqArea();   //یافتن منطقه کاربر و اتصال به سوور هماه منطقه
-                            }
-                            if (areaFlag){
+//                            if (connected && !areaFlag) {
+//                                reqArea();   //یافتن منطقه کاربر و اتصال به سوور هماه منطقه
+//                            }
+                            if (!userRegFlag&&connected){
                                 reqUser();  //register user on server
-                                regUserProfile();  // save user info on server
                                 showLayout();
                             }
-
+                            if (!userProfileFlag&&connected)
+                                regUserProfile();  // save user info on server
                         }
                     });
                     try {
@@ -524,7 +525,8 @@ public class HomeActivity extends AppCompatActivity implements
             if (server.equals(SP1.getString("server", "0"))){
                 server=SP1.getString("server", "0");
             }else {
-                Toast.makeText(HomeActivity.this, "منطقه شما:"+myArea.getAfname(), Toast.LENGTH_LONG).show();
+                Toast.makeText(HomeActivity.this, "نزدیکترین منطقه شما:"+myArea.getAfname(), Toast.LENGTH_LONG).show();
+
             }
 
 

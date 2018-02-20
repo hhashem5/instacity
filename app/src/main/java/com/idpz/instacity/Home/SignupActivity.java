@@ -42,7 +42,7 @@ public class SignupActivity extends AppCompatActivity {
     EditText txtName,txtMobile,txtPass;
     RadioButton rbMard;
     Button btnReg,btnSignIn;
-    String myname,melli,mob,sal,pass,gender;
+    String myname,melli,mob,sal,pass,gender,ctName;
     TextView txtmsg;
     String REGISTER_URL="",server="";
     Boolean kansel=false;
@@ -80,6 +80,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 server=areaArrayList.get(position).getServer();
+                ctName=areaArrayList.get(position).getAfname();
 //                Toast.makeText(SignupActivity.this, "select:"+position+" "+server, Toast.LENGTH_SHORT).show();
             }
 
@@ -208,6 +209,7 @@ public class SignupActivity extends AppCompatActivity {
                         SP2.putString("server", server);
                         SP2.putString("numPosts", "0");
                         SP2.putString("gen", gender);
+                        SP2.putString("ctname", ctName);
                         SP2.apply();
                         Intent intent=new Intent(SignupActivity.this,HomeActivity.class);
                         startActivity(intent);
@@ -265,7 +267,6 @@ public class SignupActivity extends AppCompatActivity {
                             areaFlag=true;
                             JSONObject jsonObject=jsonArray.getJSONObject(0);
 
-                            String all="";
                             for (int i=jsonArray.length();i>0;i--) {
                                 jsonObject = jsonArray.getJSONObject(i-1);
                                 float myDistance=0;
@@ -290,6 +291,7 @@ public class SignupActivity extends AppCompatActivity {
                                     .simple_spinner_dropdown_item);
                             spCity.setAdapter(spinnerArrayAdapter);
                             server=areaArrayList.get(0).getServer();
+                            ctName=areaArrayList.get(0).getAfname();
                             REGISTER_URL=server+"/i/profile.php";
 
 

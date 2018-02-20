@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.idpz.instacity.Area;
+import com.idpz.instacity.Home.HomeActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.GPSTracker;
 
@@ -62,7 +63,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
     private GoogleMap mMap;
     String server="",lat,lng;
     Location myLocation, mycity;
-    Boolean areaFlag=false,connected=false;
+    Boolean areaFlag=false,connected=false,mapFlag=false;
     ArrayList<Area> areaArrayList=new ArrayList<>();
     String AREA_URL="http://myzibadasht.ir/i/getarea.php";
     Button btnChangeCT;
@@ -120,8 +121,12 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                     server=myArea.getServer();
                     SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                     SP2.putString("server", server);
+                    SP2.putString("ctname", myArea.getAfname());
                     SP2.apply();
-
+                    finishAffinity();
+                    Intent intent=new Intent(ChangeCityActivity.this,HomeActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
                 }
             }
         });
@@ -129,7 +134,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         new Thread() {
             @Override
             public void run() {
-                while (!areaFlag) {
+                while (!areaFlag||!mapFlag) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -147,6 +152,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                             if (connected && !areaFlag) {
                                 reqArea();   //یافتن منطقه کاربر و اتصال به سوور هماه منطقه
                             }
+                            if (mapFlag)initilizeMap();
 
 
 
@@ -166,6 +172,13 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 myArea=areaArrayList.get(position);
+                if (mapFlag){
+                    initilizeMap();
+                    LatLng cityLatLng=new LatLng(myArea.getAlat(),myArea.getAlng());
+                    mMap.addMarker(new MarkerOptions().position(cityLatLng).title(myArea.getAfname()));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cityLatLng,15));
+                }
+
             }
 
             @Override
@@ -313,24 +326,28 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
+        if (mMap == null) {
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(ChangeCityActivity.this);}
+            // Add a marker in Sydney, Australia, and move the camera.
+            LatLng cityLatLng = new LatLng(Double.valueOf(lat), Double.valueOf(lng));
 
-        // Add a marker in Sydney, Australia, and move the camera.
-        LatLng cityLatLng = new LatLng(Double.valueOf(lat),Double.valueOf(lng));
+            mMap.addMarker(new MarkerOptions().position(cityLatLng).title("موقعیت شما-500متر"));
+            CircleOptions circleOptions = new CircleOptions().center(cityLatLng)
+                    .radius(500)
+                    .strokeColor(Color.BLUE)
+                    .fillColor(0x30ff0000)
+                    .strokeWidth(2);
 
-        mMap.addMarker(new MarkerOptions().position(cityLatLng).title("موقعیت شما-500متر"));
-        CircleOptions circleOptions=new CircleOptions().center(cityLatLng)
-                .radius(500)
-                .strokeColor(Color.BLUE)
-                .fillColor(0x30ff0000)
-                .strokeWidth(2);
+            mMap.addCircle(circleOptions);
+            mMap.addCircle(circleOptions);
+            mMap.setTrafficEnabled(true);
 
-        mMap.addCircle(circleOptions);
-        mMap.addCircle(circleOptions);
-        mMap.setTrafficEnabled(true);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cityLatLng, 15));
+            mapFlag = true;
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cityLatLng,15));
-
-    }
+        }
 
     private void initilizeMap() {
 
@@ -339,15 +356,11 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(ChangeCityActivity.this);
             // check if map is created successfully or not
-            if (mMap == null) {
-//                Toast.makeText(getApplicationContext(),
-//                        "لطفا کمی صبر کنید...", Toast.LENGTH_SHORT)
-//                        .show();
-            }
+
 
 
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            LatLngBounds bounds;
+
 
             for (Area area:areaArrayList){
                 LatLng node = new LatLng(area.getAlat(),area.getAlng());
@@ -355,14 +368,16 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                 markerOptions.position(node).title(area.getAfname());
                 mMap.addMarker(markerOptions);
                 builder.include(node);
-
             }
-            bounds = builder.build();
+            LatLngBounds bounds = builder.build();
                 int padding = 0; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
             mMap.animateCamera(cu);
 //            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(lat),Double.valueOf(lng)), 14));
-
+            for (Area area:areaArrayList){
+                LatLng node = new LatLng(area.getAlat(),area.getAlng());
+                mMap.addMarker(new MarkerOptions().position(node).title(area.getAfname()));
+            }
         }
     }
 

@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "Login activity";
     String requrl="";
     TextView txtInfo;
-    String mob="",pas="",server="";
+    String mob="",pas="",server="",ctName;
     Boolean areaFlag=false,connected=false;
 
     ArrayList<Area>areaArrayList=new ArrayList<>();
@@ -106,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 server=areaArrayList.get(position).getServer();
+                ctName=areaArrayList.get(position).getAfname();
 //                Toast.makeText(LoginActivity.this, "select:"+position+" "+server, Toast.LENGTH_SHORT).show();
             }
 
@@ -339,6 +340,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SP2.putString("lat", lat);
                                 SP2.putString("lng", lng);
                                 SP2.putString("server", server);
+                                SP2.putString("ctname", ctName);
                                 SP2.putString("birth", birth);
                                 SP2.putString("gen", gender);
                                 SP2.putString("fav", fav);
@@ -430,7 +432,7 @@ public class LoginActivity extends AppCompatActivity {
                                         .simple_spinner_dropdown_item);
                                 spCity.setAdapter(spinnerArrayAdapter);
                             server=areaArrayList.get(0).getServer();
-
+                            ctName=areaArrayList.get(0).getAfname();
 
 
 
