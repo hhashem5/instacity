@@ -75,6 +75,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     Boolean Iedu=true,Ishop=false,Isport=true,Iservice=false,Irepair=false,Ihealth=true,Ireligion=false,Ifood=false,Icar=false;
     TextView txtcat;
     Button btnRegStore;
+    String server="";
 
 
 
@@ -83,8 +84,10 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         Log.d(TAG, "onCreate: strating");
-
-        SHOP_URL=getString(R.string.server)+"/i/shoprec.php";
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
+        SHOP_URL=server+"/i/shoprec.php";
 
         shops=new ArrayList<>();
         showShops=new ArrayList<>();
@@ -117,7 +120,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         txtcat.setVisibility(View.GONE);
         chkPlaces.setEnabled(false);
 
-        SHOP_URL=getString(R.string.server)+"/i/shoprec.php";
+        SHOP_URL=server+"/i/shoprec.php";
 
         btnRegStore.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -118,6 +118,12 @@
         android:title="سرور"
         android:summary="سرور"
         />
+    <EditTextPreference
+        android:key="city"
+        android:title="شهر"
+        android:summary="شهر"
+        />
+
         <EditTextPreference
             android:key="numPosts"
             android:title="فاصله خودرو"

@@ -16,12 +16,13 @@
         android:textColor="@color/link_blue"
         android:layout_marginBottom="15dp"
         />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
-
         <RadioGroup
             android:layout_width="wrap_content"
             android:orientation="horizontal"
@@ -40,10 +41,6 @@
                 android:layout_height="wrap_content" />
 
         </RadioGroup>
-
-
-
-
     </LinearLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -60,34 +57,7 @@
             android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        >
-        <EditText
-            android:id="@+id/txtSignupMelli"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="شماره ملی"
-            android:inputType="number"
-            android:maxLines="1"
-            android:singleLine="true" />
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        >
-    <EditText
-        android:id="@+id/txtSignupYear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:paddingTop="15dp"
-        android:hint="سال تولد"
-        />
-</android.support.design.widget.TextInputLayout>
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -116,7 +86,32 @@
             android:maxLines="1"
             android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        android:padding="5dp"
+        android:background="@drawable/black_border"
+        android:layout_marginTop="20dp"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:id="@+id/spnLoginSelCity"
+            android:layout_width="wrap_content"
+            android:layout_weight="80"
+            android:layout_height="wrap_content">
 
+        </Spinner>
+        <TextView
+            android:text="شهر خود را انتخاب کنید"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_weight="50"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
     <Button
         android:id="@+id/btnSignupReg"
         android:layout_width="match_parent"

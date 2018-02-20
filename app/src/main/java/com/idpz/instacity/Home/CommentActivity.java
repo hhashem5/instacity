@@ -51,7 +51,11 @@ public class CommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
-        SocialSend_URL=getString(R.string.server)+"/i/regcmnt.php";
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
+        fullServer = server+"/i/comment.php";
+        SocialSend_URL=server+"/i/regcmnt.php";
         imgSend=(ImageView)findViewById(R.id.ivCommentPostSend);
         txtcommentSend=(EditText)findViewById(R.id.txtCommentSend);
         Bundle b = getIntent().getExtras();
@@ -85,7 +89,7 @@ public class CommentActivity extends AppCompatActivity {
         });
 
 //        server = dbLastData.getLastData(1).getValue();
-        fullServer = getString(R.string.server)+"/i/comment.php";
+
         lvComments.setAdapter(commentAdapter);
         Toast.makeText(this, fullServer, Toast.LENGTH_SHORT).show();
         reqPosts();

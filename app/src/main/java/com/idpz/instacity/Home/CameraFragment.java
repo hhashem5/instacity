@@ -2,9 +2,11 @@ package com.idpz.instacity.Home;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -68,9 +70,10 @@ public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRef
         videoPostAdapter = new VideoPostAdapter(getActivity(), dataModels);
         videoView = (VideoView)view.findViewById(R.id.vidPostVideo);
 //        pd.show();
-
-//        server = dbLastData.getLastData(1).getValue();
-        fullServer = getString(R.string.server)+"/i/videoread.php";
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
+        server=SP1.getString("server", "0");
+        fullServer = server+"/i/videoread.php";
         lvVideoPost.setAdapter(videoPostAdapter);
 
 

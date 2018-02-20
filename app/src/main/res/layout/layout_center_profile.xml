@@ -57,44 +57,66 @@
 
             </LinearLayout>
 
-
             <LinearLayout
-                android:id="@+id/linLayout2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_below="@+id/linLayout"
-                android:orientation="vertical"
+                android:id="@+id/linLayout2"
+                android:weightSum="100"
                 android:padding="20dp"
-                android:background="@drawable/white_grey_border_bottom">
+                android:background="@drawable/white_grey_border_bottom"
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/txtDisplay_name"
+                <LinearLayout
+                    android:layout_weight="75"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="نام"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <Button
+                        android:id="@+id/btnChangeCTPofile"
+                        android:text="تغییر شهر"
+                        android:background="@drawable/white_gray_border_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="توضیحات"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="25"
+                        android:orientation="vertical"
+                        >
 
-                <TextView
-                    android:id="@+id/website"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="وبسایت"
-                    android:textColor="@color/link_blue"
-                    android:textSize="16sp"
-                    />
+                        <TextView
+                            android:id="@+id/txtDisplay_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="نام"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
 
+                        <TextView
+                            android:id="@+id/txtDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="توضیحات"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/website"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:text="وبسایت"
+                            android:textColor="@color/link_blue"
+                            android:textSize="16sp"
+                            />
+
+
+                    </LinearLayout>
 
             </LinearLayout>
 

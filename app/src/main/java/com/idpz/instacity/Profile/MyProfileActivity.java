@@ -84,10 +84,11 @@ public class MyProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
-
-         requrl =  getString(R.string.server)+   "/i/srchprofile.php";
-         REGISTER_URL=getString(R.string.server)+"/i/profile.php";
-         server=getString(R.string.server);
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
+         requrl =  server+   "/i/srchprofile.php";
+         REGISTER_URL=server+"/i/profile.php";
 
         txtCitizenName=(TextView)findViewById(R.id.txtCitizenName);
         txtCtNumber=(TextView)findViewById(R.id.txtCtNumber);
@@ -112,7 +113,7 @@ public class MyProfileActivity extends AppCompatActivity {
         btnreg=(Button)findViewById(R.id.btnCzReg);
         btnexit=(Button)findViewById(R.id.btnCzExit);
         imgProfile=(CircleImageView)findViewById(R.id.myProfile_photoLikes);
-        ServerUploadPath =getString(R.string.server)+"/i/imgprofile.php" ;
+        ServerUploadPath =server+"/i/imgprofile.php" ;
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,8 +125,7 @@ public class MyProfileActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences SP1;
-        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
         myname = SP1.getString("myname", "0");
         mobile = SP1.getString("mobile", "0");
         melliid = SP1.getString("melliid", "0");
@@ -152,7 +152,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
+        ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
         txtCitizenName.setText(myname);
         txtCtNumber.setText(mobile);
         txtCtBirth.setText(birth);

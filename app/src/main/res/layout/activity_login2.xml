@@ -62,7 +62,29 @@
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="100"
+    android:layout_marginTop="20dp"
+    android:layout_margin="5dp"
+    android:gravity="center"
+    android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/spnLoginSelCity"
+                android:layout_width="wrap_content"
+                android:layout_weight="80"
+                android:layout_height="wrap_content">
 
+            </Spinner>
+    <TextView
+        android:text="شهر خود را انتخاب کنید"
+        android:layout_width="wrap_content"
+        android:layout_weight="50"
+        android:gravity="center"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"

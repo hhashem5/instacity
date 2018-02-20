@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context="com.idpz.instacity.Profile.ChangeCityActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+
+        android:padding="5dp"
+        android:background="@drawable/black_border"
+        android:layout_marginTop="20dp"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="انتخاب شهر"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/spnLoginSelCity"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content">
+
+        </Spinner>
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnChangeCityChange"
+        android:text="تغییر شهر"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/txtNearestCity"
+                android:text="نزدیک ترین شهر:"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <fragment
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                class="com.google.android.gms.maps.SupportMapFragment" />
+
+        </LinearLayout>
+
+</LinearLayout>

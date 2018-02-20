@@ -2,9 +2,11 @@ package com.idpz.instacity.Home;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -70,10 +72,11 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 //        dbLastData = new DBLastData(this);
             newsAdapter = new NewsAdapter(getActivity(), dataModels);
 
-//            pd.show();
 
-//        server = dbLastData.getLastData(1).getValue();
-            fullServer = getString(R.string.server)+"/i/newsread.php";
+            SharedPreferences SP1;
+            SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
+            server=SP1.getString("server","0");
+            fullServer = server+"/i/newsread.php";
             lvContentPost.setAdapter(newsAdapter);
 
 
@@ -169,7 +172,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                                 post.setPostComment(jsonObject.getString("body"));
                                 String pic=jsonObject.getString("pic");
                                 if(pic.equals("null")|| pic.isEmpty())pic="blur.jpg";
-                                post.setPostImageUrl(getString(R.string.server)+"/assets/images/news/"+pic);
+                                post.setPostImageUrl(server+"/assets/images/news/"+pic);
 
                                 String dtl = jsonObject.getString("ndate");
                                 Calendar mydate = Calendar.getInstance();

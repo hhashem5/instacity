@@ -54,6 +54,7 @@ public class LikesActivity extends AppCompatActivity {
     CircleImageView imgProfile;
     private DisplayImageOptions options;
     Boolean giftFlag=false,connected=false;
+    String server="";
 
 
     @Override
@@ -62,10 +63,14 @@ public class LikesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_like);
         Log.d(TAG, "onCreate: strating");
 
-        fullServer=getString(R.string.server)+"/i/gift.php";
+
+
         setupBottomNavigationView();
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
+        fullServer=server+"/i/gift.php";
+
         profileImgUrl = SP1.getString("pic", "0");
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)
@@ -91,7 +96,7 @@ public class LikesActivity extends AppCompatActivity {
             }
         });
 
-        ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
+        ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
 
         dataModels = new ArrayList<>();
         lvGiftPlaces=(ListView)findViewById(R.id.listPlaces);
@@ -182,7 +187,7 @@ public class LikesActivity extends AppCompatActivity {
                                 giftPlace=new GiftPlace();
                                 giftPlace.setName(jsonObject.getString("name"));
                                 giftPlace.setDiscount(jsonObject.getString("discount"));
-                                giftPlace.setPic(getString(R.string.server)+"/img/places/"+jsonObject.getString("pic"));
+                                giftPlace.setPic(server+"/img/places/"+jsonObject.getString("pic"));
                                 giftPlace.setId(jsonObject.getInt("id"));
 
 

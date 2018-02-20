@@ -86,7 +86,7 @@ public class ShareActivity extends AppCompatActivity {
 
     String ImagePath = "image_path",mstatus="0",gov="6",myname="",myphone="",mytext="" ;
 
-    String ServerUploadPath ="", REG_USER_LAT ="" ;
+    String ServerUploadPath ="", REG_USER_LAT ="",server ;
     //widgets
     private EditText mCaption;
     boolean check = true;
@@ -109,14 +109,19 @@ public class ShareActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         Log.d(TAG, "onCreate: started.");
-        REG_USER_LAT=getString(R.string.server)+"/i/latprofile.php";
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        mobile=SP.getString("mobile", "0");
+        pas=SP.getString("pass", "0");
+        server=SP.getString("server", "0");
+
+        REG_USER_LAT=server+"/i/latprofile.php";
         if (checkPermissionsArray(Permissions.PERMISSIONS)) {
 
         } else {
             verifyPermissions(Permissions.PERMISSIONS);
         }
 
-        ServerUploadPath =getString(R.string.server)+"/i/img1.php" ;
+        ServerUploadPath =server+"/i/img1.php" ;
 
         mCaption = (EditText) findViewById(R.id.textBody) ;
 
@@ -128,9 +133,7 @@ public class ShareActivity extends AppCompatActivity {
         image=(ImageView) findViewById(R.id.imgSharePic);
         tvMessage=(TextView) findViewById(R.id.shareTextMessage);
 
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        mobile=SP.getString("mobile", "0");
-        pas=SP.getString("pass", "0");
+
 
         btnShareCamera=(Button)findViewById(R.id.btnShareCamera);
 

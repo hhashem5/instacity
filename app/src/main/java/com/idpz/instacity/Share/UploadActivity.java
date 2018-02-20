@@ -48,7 +48,7 @@ public class UploadActivity extends AppCompatActivity {
     private static final String TAG = "UploadActivity";
 
     //declare variables
-    String REGISTER_URL="";
+    String REGISTER_URL="",server;
     String myUrl="",myname="0",mob="0";
     private String filepath = null;
     private ImageView image;
@@ -72,8 +72,11 @@ public class UploadActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.upload_layout);
-
-        REGISTER_URL=getString(R.string.server)+"/input/social.php";
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        myname=SP.getString("myname", "0");
+        mob=SP.getString("mobile", "0");
+        server=SP.getString("server", "0");
+        REGISTER_URL=server+"/input/social.php";
 
         image = (ImageView) findViewById(R.id.uploadImage);
         btnBack = (Button) findViewById(R.id.btnBackImage);
@@ -84,9 +87,7 @@ public class UploadActivity extends AppCompatActivity {
         txtMessage = (TextView) findViewById(R.id.txtMessage);
         pathArray = new ArrayList<>();
         mProgressDialog = new ProgressDialog(UploadActivity.this);
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        myname=SP.getString("myname", "0");
-        mob=SP.getString("mobile", "0");
+
 
         checkFilePermissions();
 

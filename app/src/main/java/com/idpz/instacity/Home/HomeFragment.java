@@ -75,9 +75,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 //        dbLastData = new DBLastData(this);
         postAdapter = new PostAdapter(getActivity(), dataModels);
 
-
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
+        server=SP1.getString("server", "0");
 //        server = dbLastData.getLastData(1).getValue();
-        fullServer = getString(R.string.server)+"/i/social2.php";
+        fullServer = server+"/i/social2.php";
         lvContentPost.setAdapter(postAdapter);
 
         new Thread() {
@@ -188,7 +190,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 post.setPostLK(lk);
                                 String pic=jsonObject.getString("pic");
                                 if(pic.equals("null")|| pic.isEmpty())pic="blur.jpg";
-                                post.setPostImageUrl(getString(R.string.server)+"/assets/images/137/"+pic);
+                                post.setPostImageUrl(server+"/assets/images/137/"+pic);
                                 post.setPostLike(jsonObject.getString("seen"));
                                 String dtl = jsonObject.getString("sotime");
                                 Calendar mydate = Calendar.getInstance();

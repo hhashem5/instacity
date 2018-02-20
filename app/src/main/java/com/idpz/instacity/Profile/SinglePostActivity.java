@@ -1,7 +1,9 @@
 package com.idpz.instacity.Profile;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -38,13 +40,16 @@ public class SinglePostActivity extends AppCompatActivity {
     ImageView imgLike,imgComment;
     ImageLoader imageLoader;
 
-    String lk,usrname,comment,likes,detail,imgurl,mob,ans;
+    String lk,usrname,comment,likes,detail,imgurl,mob,ans,server;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_post);
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
 
         cimgUser=(CircleImageView)findViewById(R.id.imgPostUserImage);
         txtusername=(TextView)findViewById(R.id.txtPostUser);
@@ -81,7 +86,7 @@ public class SinglePostActivity extends AppCompatActivity {
             imgLike.setTag("0");
         }
 
-        fullServer =getString(R.string.server)+ "/i/socialpost.php";
+        fullServer =server+ "/i/socialpost.php";
 
 
 
@@ -115,7 +120,7 @@ public class SinglePostActivity extends AppCompatActivity {
 
                 }
                 RequestQueue queue = Volley.newRequestQueue(v.getContext());
-                String url = getString(R.string.server)+"/i/like.php";
+                String url = server+"/i/like.php";
                 StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                         new Response.Listener<String>()
                         {

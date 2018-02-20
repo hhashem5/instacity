@@ -81,8 +81,8 @@
             </intent-filter>
             android:label="دهکده هوشمند">
         </activity>
-        <activity android:name=".Profile.GalleryActivity" />
-        <activity android:name=".Search.StoreRegActivity"></activity>
+        <activity android:name=".Search.StoreRegActivity" />
+        <activity android:name=".Profile.ChangeCityActivity"></activity>
     </application>
 
 </manifest>

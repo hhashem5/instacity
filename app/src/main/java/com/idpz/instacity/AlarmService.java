@@ -47,26 +47,27 @@ public class AlarmService extends Service {
     String msgid="1";
 
     String lastNewsId="1";
-
+    String server="";
     @Override
     public void onCreate() {
 //        Log.i(TAG, "Service onCreate");
-        String server="";
-
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP.getString("server","0");
 //         REGISTER_URL="http://"+server+"/i/rcv.php";
 //         MSG_URL="http://"+server+"/i/msgrcv.php";
 //         MSG_VU="http://"+server+"/i/msgview.php";
 
-//        REGISTER_URL=getString(R.string.server)+"/i/rcv.php";
-         MSG_URL=getString(R.string.server)+"i/msgrcv.php";
-         MSG_VU=getString(R.string.server)+"/i/msgview.php";
+//        REGISTER_URL=server+"/i/rcv.php";
+         MSG_URL=server+"i/msgrcv.php";
+         MSG_VU=server+"/i/msgview.php";
 
 
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
 //         myLat = SP.getString("lat", "0.0");
 //         myLng = SP.getString("lng", "0.0");
 //        alarmDist=Integer.valueOf( SP.getString("alarm_len","300"));
         isRunning=SP.getBoolean("alarm",false);
+
 //        rcode=MainActivity.carCode;
         isMsg=SP.getBoolean("msg",true);
 
@@ -95,9 +96,9 @@ public class AlarmService extends Service {
 
 
                     try {
-//                        REGISTER_URL=getString(R.string.server)+"/i/rcv.php";
-                        MSG_URL=getString(R.string.server)+"/i/msgrcv.php";
-                        MSG_VU=getString(R.string.server)+"/i/msgview.php";
+//                        REGISTER_URL=server+"/i/rcv.php";
+                        MSG_URL=server+"/i/msgrcv.php";
+                        MSG_VU=server+"/i/msgview.php";
 //                        if (isRunning)
 //                        reqRcv();
                         if (isMsg){

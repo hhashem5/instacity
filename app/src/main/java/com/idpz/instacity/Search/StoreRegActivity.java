@@ -75,7 +75,7 @@ public class StoreRegActivity extends AppCompatActivity {
     boolean kansel=false,check=true,hasImage=false;
     Bitmap bitmap=null;
     String ImageName = "image_name";
-    String ImagePath = "image_path";
+    String ImagePath = "image_path",server;
 
 
     @Override
@@ -96,9 +96,11 @@ public class StoreRegActivity extends AppCompatActivity {
         spnShopTag=(Spinner) findViewById(R.id.spnShopTag);
 
         populateGPS();
-
-        REGISTER_URL=getString(R.string.server)+"/i/shopreg.php";
-        ServerUploadPath =getString(R.string.server)+"/i/imgplace.php" ;
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
+        REGISTER_URL=server+"/i/shopreg.php";
+        ServerUploadPath =server+"/i/imgplace.php" ;
 
         btnShopPic.setOnClickListener(new View.OnClickListener() {
             @Override

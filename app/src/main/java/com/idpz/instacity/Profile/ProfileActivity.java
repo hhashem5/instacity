@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
@@ -13,11 +15,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -26,6 +30,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.idpz.instacity.Area;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
@@ -52,10 +57,13 @@ public class ProfileActivity extends AppCompatActivity {
     String fullServer = "";
     private static final int ACTIVITY_NUM = 4;
     ArrayList<Post> dataModels;
-    Boolean reqFlag = true;
+
     galleryAdapter galAdapter;
     Context mContext;
-
+    Boolean areaFlag=false,connected=false;
+    Boolean reqFlag = false;
+    ArrayList<Area> areaArrayList=new ArrayList<>();
+    private static final String AREA_URL = "http://mscity.ir/i/getarea.php";
 //    ProgressBar progressBar;
 
     //widgets
@@ -68,6 +76,9 @@ public class ProfileActivity extends AppCompatActivity {
     String mob="0",profileImgUrl="", REG_USER_LAT ="";
     private DisplayImageOptions options;
     CircleImageView imgProfile;
+    String server="";
+    Button btnChangeCT;
+
 
 
     @Override
@@ -77,7 +88,10 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: strating");
 //        progressBar=(ProgressBar)findViewById(R.id.profileProgressBar);
 //        progressBar.setVisibility(View.GONE);
-        fullServer = getString(R.string.server)+"/i/socialgal.php";
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        server=SP1.getString("server", "0");
+        fullServer = server+"/i/socialgal.php";
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
         mFrameLayout = (FrameLayout) findViewById(R.id.container);
@@ -93,8 +107,17 @@ public class ProfileActivity extends AppCompatActivity {
         txtEditPrifile=(TextView)findViewById(R.id.textEditProfile);
         txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
         imgPostMenu=(ImageView)findViewById(R.id.imgProfileMenu);
-        SharedPreferences SP1;
-        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        btnChangeCT=(Button) findViewById(R.id.btnChangeCTPofile);
+
+
+        btnChangeCT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ProfileActivity.this,ChangeCityActivity.class);
+                startActivity(intent);
+            }
+        });
+
         profileImgUrl = SP1.getString("pic", "0");
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)
@@ -106,7 +129,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         imgProfile=(CircleImageView)findViewById(R.id.profile_photoProfile);
-        ImageLoader.getInstance().displayImage(getString(R.string.server)+"/assets/images/users/"+profileImgUrl,imgProfile,options);
+        ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         txtNumPosts.setText(SP.getString("numPosts", "0"));
@@ -131,7 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
         imgPostMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(ProfileActivity.this,GalleryActivity.class);
+                Intent intent=new Intent(ProfileActivity.this,MyProfileActivity.class);
                 startActivity(intent);
             }
         });
@@ -143,7 +166,41 @@ public class ProfileActivity extends AppCompatActivity {
         grid = (GridView) findViewById(R.id.gridView);
         grid.setAdapter(galAdapter);
 
-        reqPosts();
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (!areaFlag) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                                //we are connected to a network
+                                connected = true;
+                            } else {
+                                connected = false;
+                                Toast.makeText(ProfileActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                            if (connected &&!reqFlag){
+                                reqPosts();
+                            }
+
+
+                        }
+                    });
+                    try {
+                        sleep(7000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
 
     }
 
@@ -220,9 +277,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 post.setPostComment(jsonObject.getString("sotext"));
                                 if (jsonObject.getString("pic").equals("null")||jsonObject.getString("pic").equals(" ")
                                         ||jsonObject.getString("pic").equals("")){
-                                    post.setPostImageUrl(getString(R.string.server)+"/assets/images/137/blur.jpg");
+                                    post.setPostImageUrl(server+"/assets/images/137/blur.jpg");
                                 }else {
-                                    post.setPostImageUrl(getString(R.string.server)+"/assets/images/137/" + jsonObject.getString("pic"));
+                                    post.setPostImageUrl(server+"/assets/images/137/" + jsonObject.getString("pic"));
                                 }
                                 post.setPostLike(jsonObject.getString("seen"));
 
@@ -278,7 +335,6 @@ public class ProfileActivity extends AppCompatActivity {
         queue.add(postRequest);
 
     }
-
 
 
 }
