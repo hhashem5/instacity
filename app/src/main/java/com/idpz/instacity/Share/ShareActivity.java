@@ -142,7 +142,7 @@ public class ShareActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final CharSequence[] items = {"دوربین", "گالری", "انصراف"};
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShareActivity.this);
-                builder.setTitle("Add Photo!");
+                builder.setTitle("افزودن عکس");
                 builder.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
@@ -390,7 +390,7 @@ public class ShareActivity extends AppCompatActivity {
 
                 super.onPreExecute();
 
-                progressDialog = ProgressDialog.show(ShareActivity.this,"Image is Uploading","Please Wait",false,false);
+                progressDialog = ProgressDialog.show(ShareActivity.this,"درحال ارسال عکس","کمی صبر کنید",false,false);
             }
 
             @Override

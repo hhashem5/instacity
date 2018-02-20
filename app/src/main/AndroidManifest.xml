@@ -82,7 +82,8 @@
             android:label="دهکده هوشمند">
         </activity>
         <activity android:name=".Search.StoreRegActivity" />
-        <activity android:name=".Profile.ChangeCityActivity"></activity>
+        <activity android:name=".Profile.ChangeCityActivity" />
+        <activity android:name=".Home.LikersActivity"/>
     </application>
 
 </manifest>

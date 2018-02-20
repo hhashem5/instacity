@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.Home.CommentActivity;
+import com.idpz.instacity.Home.LikersActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -112,7 +113,17 @@ public class PostAdapter extends BaseAdapter {
 
         // rating
         postComment.setText( m.getPostComment());
-        postView.setText("موافق:"+ m.getPostLike());
+        postView.setText("موافق : "+ m.getPostLike());
+        postView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(v.getContext(),LikersActivity.class);
+                Bundle e4 = new Bundle();
+                e4.putString("soid",String.valueOf(postList.get(position).getId())); //Your id
+                intent.putExtras(e4); //Put your id to your next Intent
+                v.getContext().startActivity(intent);
+            }
+        });
 
         if(m.getPostLK().equals("1")) {
             imglike.setImageResource(R.drawable.liked);

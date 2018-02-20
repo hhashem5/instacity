@@ -1,14 +1,19 @@
 package com.idpz.instacity.Profile;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -33,14 +38,14 @@ public class SinglePostActivity extends AppCompatActivity {
 
 
 
-    String fullServer;
+    String fullServer,urlEditPost,mytext;
     CircleImageView cimgUser;
-    TextView txtusername,txtLikes,txtTime,txtComment;
-    ImageView sImgPost;
-    ImageView imgLike,imgComment;
+    TextView txtusername,txtLikes,txtTime;
+    ImageView sImgPost,imgDelPost;
+    ImageView imgLike,imgComment,imgPostSend;
     ImageLoader imageLoader;
-
-    String lk,usrname,comment,likes,detail,imgurl,mob,ans,server;
+    EditText txtComment;
+    String lk,usrname,comment,likes,detail,imgurl,mob,ans,server,delSoUrl;
 
 
     @Override
@@ -50,18 +55,57 @@ public class SinglePostActivity extends AppCompatActivity {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
-
+        urlEditPost=server+"/i/socialedit.php";
         cimgUser=(CircleImageView)findViewById(R.id.imgPostUserImage);
         txtusername=(TextView)findViewById(R.id.txtPostUser);
         sImgPost=(ImageView)findViewById(R.id.imgPostImage);
         imgLike=(ImageView) findViewById(R.id.imgPostLike);
+        imgDelPost=(ImageView) findViewById(R.id.imgDelSinglePost);
         imgComment=(ImageView) findViewById(R.id.imgPostComment);
+        imgPostSend=(ImageView) findViewById(R.id.imgPostSend);
         txtLikes=(TextView)findViewById(R.id.txtPostView);
         txtTime=(TextView)findViewById(R.id.txtPostdetail);
-        txtComment=(TextView)findViewById(R.id.txtPostComment);
+        txtComment=(EditText) findViewById(R.id.txtPostComment);
          TextView editPostComment=(TextView)findViewById(R.id.edtPostComment);
 
         imageLoader = ImageLoader.getInstance(); // Get singleton instance
+
+        imgDelPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(SinglePostActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(SinglePostActivity.this);
+                }
+                builder.setTitle("حذف پست")
+                        .setMessage("آیا از حذف مطلب اطمینان دارید?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                                delSocial();
+                                finish();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
+            }
+        });
+
+        imgPostSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mytext=txtComment.getText().toString();
+                regSocial();
+            }
+        });
 
         intent = getIntent();
 
@@ -87,7 +131,7 @@ public class SinglePostActivity extends AppCompatActivity {
         }
 
         fullServer =server+ "/i/socialpost.php";
-
+        delSoUrl =server+ "/i/socialdel.php";
 
 
 
@@ -165,11 +209,70 @@ public class SinglePostActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    public void regSocial() {
+//        Toast.makeText(MainActivity.this, " reqUser", Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = urlEditPost;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(SinglePostActivity.this, "مطلب ویرایش شد.", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
 
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+                params.put("id", String.valueOf(soid));
+                params.put("txt", mytext);
+                return params;
+            }
+        };
+        queue.add(postRequest);
 
     }
 
+    public void delSocial() {
+//        Toast.makeText(MainActivity.this, " reqUser", Toast.LENGTH_SHORT).show();
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = delSoUrl;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+//                        tvMessage.setText("پیام با موفقیت ارسال شد");
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
 
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+                params.put("id", String.valueOf(soid));
+                return params;
+            }
+        };
+        queue.add(postRequest);
 
+    }
 }
