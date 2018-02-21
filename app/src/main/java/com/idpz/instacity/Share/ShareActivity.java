@@ -98,7 +98,7 @@ public class ShareActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private Intent intent;
     Button share,btnShareCamera;
-    RadioButton radioTashakor,radioPishnahad,radioEnteghad,radioShekayat;
+    RadioButton radioTashakor,radioPishnahad,radioEnteghad,radioShekayat,radNazar;
     Spinner spnMoavenat;
     TextView tvMessage;
     ImageView image;
@@ -129,6 +129,7 @@ public class ShareActivity extends AppCompatActivity {
         radioPishnahad=(RadioButton)findViewById(R.id.radioButton2);
         radioEnteghad=(RadioButton)findViewById(R.id.radioButton3);
         radioShekayat=(RadioButton)findViewById(R.id.radioButton4);
+        radNazar=(RadioButton)findViewById(R.id.radioButton5);
         spnMoavenat=(Spinner)findViewById(R.id.spnMoavenat);
         image=(ImageView) findViewById(R.id.imgSharePic);
         tvMessage=(TextView) findViewById(R.id.shareTextMessage);
@@ -195,7 +196,12 @@ public class ShareActivity extends AppCompatActivity {
                 mstatus="4";
             }
         });
-
+        radNazar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mstatus="5";
+            }
+        });
         share=(Button)findViewById(R.id.btnShareSocial);
 
 //        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

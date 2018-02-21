@@ -31,20 +31,16 @@
                     android:text="شکایت"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textMobile"
-                    android:layout_toLeftOf="@+id/radioButton3"
-                    android:layout_toStartOf="@+id/radioButton3"
                     android:id="@+id/radioButton4" />
 
                 <RadioButton
                     android:text="انتقاد"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:id="@+id/radioButton3" />
 
                 <RadioButton
-                    android:text="پیشنهاد"
+                    android:text="ایده"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/radioButton2"
@@ -54,10 +50,16 @@
                     android:text="تشکر"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
+                    android:id="@+id/radioButton"
+                    android:checked="true" />
+                
+                <RadioButton
+                    android:text="نظر"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="14dp"
                     android:layout_marginEnd="14dp"
-                    android:id="@+id/radioButton"
+                    android:id="@+id/radioButton5"
                     android:checked="true" />
 
             </RadioGroup>
@@ -95,7 +97,6 @@
                     android:gravity="right"
                     android:layout_gravity="right"
                     android:id="@+id/textBody"
-
                     android:hint="متن پیام"
                     />
             </android.support.design.widget.TextInputLayout>

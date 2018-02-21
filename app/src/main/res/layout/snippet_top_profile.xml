@@ -102,7 +102,7 @@
             android:layout_marginBottom="8dp"
             app:layout_constraintVertical_bias="0.0"
             android:textAlignment="center"
-            android:background="@drawable/edt_back_bold" />
+            android:background="@drawable/white_gray_border_bottom" />
     </android.support.constraint.ConstraintLayout>
 
 
