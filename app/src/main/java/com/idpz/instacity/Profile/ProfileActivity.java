@@ -57,11 +57,11 @@ public class ProfileActivity extends AppCompatActivity {
     String fullServer = "",ctName;
     private static final int ACTIVITY_NUM = 4;
     ArrayList<Post> dataModels;
-
+    String mny="0",spend="0";
     galleryAdapter galAdapter;
     Context mContext;
     Boolean areaFlag=false,connected=false;
-    Boolean reqFlag = false;
+    Boolean reqFlag = false,moneyFlag=false;
     ArrayList<Area> areaArrayList=new ArrayList<>();
     private static final String AREA_URL = "http://mscity.ir/i/getarea.php";
 //    ProgressBar progressBar;
@@ -110,7 +110,6 @@ public class ProfileActivity extends AppCompatActivity {
         txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
         imgPostMenu=(ImageView)findViewById(R.id.imgProfileMenu);
         btnChangeCT=(Button) findViewById(R.id.btnChangeCTPofile);
-
         txtCurCt.setText(ctName);
 
         btnChangeCT.setOnClickListener(new View.OnClickListener() {
@@ -136,8 +135,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         txtNumPosts.setText(SP.getString("numPosts", "0"));
-        txtMosharekat.setText(SP.getString("numPosts", "0"));
-        int bonus=Integer.valueOf(SP.getString("numPosts", "0"))*10+100;
+        txtMosharekat.setText(SP.getString("spend", "0"));
+        int bonus=Integer.valueOf(SP.getString("money", "100"));
         txtbonus.setText(String.valueOf(bonus));
         txtDisplayName.setText(SP.getString("myname", "0"));
         txtTabUserName.setText(SP.getString("myname", ""));
@@ -173,7 +172,7 @@ public class ProfileActivity extends AppCompatActivity {
         new Thread() {
             @Override
             public void run() {
-                while (!areaFlag) {
+                while (!areaFlag||!moneyFlag) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -191,6 +190,10 @@ public class ProfileActivity extends AppCompatActivity {
                             if (connected &&!reqFlag){
                                 reqPosts();
                             }
+                            if (connected &&!moneyFlag){
+                                reqScore();
+                            }
+
 
 
                         }
@@ -339,6 +342,63 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    public void reqScore() {
+        RequestQueue queue = Volley.newRequestQueue(ProfileActivity.this);
+        String url = server+"/i/score.php";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        moneyFlag = true;
+
+
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(response);
+
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                            for (int i = jsonArray.length(); i > 0; i--) {
+                                jsonObject = jsonArray.getJSONObject(i - 1);
+
+                                mny =jsonObject.getString("money");
+                                spend =jsonObject.getString("spend");
+
+                            }
+                            txtNumPosts.setText(String.valueOf(jsonArray.length()));
+                            SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                            SP2.putString("money", mny);
+                            SP2.putString("spend", spend);
+                            SP2.apply();
+                            txtbonus.setText(mny);
+                            txtMosharekat.setText(spend);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("ERROR", "error => " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("ph", mob);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+    }
 
 }
 

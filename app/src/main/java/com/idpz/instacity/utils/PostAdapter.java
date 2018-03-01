@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class PostAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
@@ -80,6 +82,7 @@ public class PostAdapter extends BaseAdapter {
 
         ImageView thumbNail = (ImageView) convertView
                 .findViewById(R.id.imgPostImage);
+        CircleImageView userImg=(CircleImageView)convertView.findViewById(R.id.imgPostUserImage);
         TextView userName = (TextView) convertView.findViewById(R.id.txtPostUser);
         TextView postComment = (TextView) convertView.findViewById(R.id.txtPostComment);
         TextView postDetail = (TextView) convertView.findViewById(R.id.txtPostdetail);
@@ -106,14 +109,14 @@ public class PostAdapter extends BaseAdapter {
         // thumbnail image
 //        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
         imageLoader.displayImage(m.getPostImageUrl(), thumbNail,options);
-
+        ImageLoader.getInstance().displayImage(m.getUserImg(),userImg,options);
         editPostComment.setText("پاسخ:"+m.getPostAnswer());
         // title
         userName.setText(m.getUserName());
 
         // rating
         postComment.setText( m.getPostComment());
-        postView.setText("موافق : "+ m.getPostLike());
+        postView.setText("افراد موافق : "+ m.getPostLike());
         postView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +132,7 @@ public class PostAdapter extends BaseAdapter {
             imglike.setImageResource(R.drawable.liked);
             imglike.setTag("1");
         }else {
-            imglike.setImageResource(R.drawable.like);
+            imglike.setImageResource(R.drawable.likei);
             imglike.setTag("0");
         }
 
@@ -141,13 +144,13 @@ public class PostAdapter extends BaseAdapter {
                 soid=String.valueOf(postList.get(position).getId());
                 String lik=postList.get(position).getPostLK();
                 if(lik.equals("1")) {
-                    imglike.setImageResource(R.drawable.like);
+                    imglike.setImageResource(R.drawable.likei);
                     imglike.setTag("0");
                     lk="0";
                     postList.get(position).setPostLK("0");
                     int a=Integer.valueOf(postList.get(position).getPostLike())-1;
                     postList.get(position).setPostLike(String.valueOf(a));
-                    postView.setText("موافق:"+ String.valueOf(a));
+                    postView.setText("افراد موافق:"+ String.valueOf(a));
 
                 }else {
                     imglike.setImageResource(R.drawable.liked);
@@ -156,7 +159,7 @@ public class PostAdapter extends BaseAdapter {
                     postList.get(position).setPostLK("1");
                     int a=Integer.valueOf(postList.get(position).getPostLike())+1;
                     postList.get(position).setPostLike(String.valueOf(a));
-                    postView.setText("موافق:"+ String.valueOf(a));
+                    postView.setText("افراد موافق:"+ String.valueOf(a));
 
                 }
                 RequestQueue queue = Volley.newRequestQueue(v.getContext());
@@ -193,7 +196,7 @@ public class PostAdapter extends BaseAdapter {
             }
         });
 
-        imgComment.setImageResource(R.drawable.comment);
+        imgComment.setImageResource(R.drawable.commenti);
         imgComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

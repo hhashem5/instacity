@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@color/darkGrey"
     android:layout_height="match_parent"
     android:layout_marginBottom="5dp"
     >
@@ -13,7 +14,7 @@
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
     >
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgPostUserImage"
         android:src="@drawable/user"
         android:layout_width="30dp"
@@ -24,7 +25,7 @@
         android:text="username"
         android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>
@@ -48,19 +49,20 @@
         <ImageView
             android:layout_width="30dp"
             android:id="@+id/imgPostLike"
-            android:src="@drawable/like"
+            android:src="@drawable/likei"
             android:layout_height="30dp"
             android:layout_marginRight="5dp"
             />
         <ImageView
             android:layout_width="30dp"
             android:id="@+id/imgPostComment"
-            android:src="@drawable/comment"
+            android:src="@drawable/commenti"
             android:layout_height="30dp"
             android:layout_marginRight="5dp"/>
         <TextView
             android:id="@+id/txtPostView"
             android:layout_gravity="center_vertical"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -76,7 +78,7 @@
         android:id="@+id/txtPostComment"
         android:text="متن پست "
         android:textSize="16sp"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 <LinearLayout
@@ -94,7 +96,7 @@
             android:textSize="16sp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:background="@drawable/round_rec"
             android:layout_width="0dp"
             android:layout_weight=".8"
@@ -104,7 +106,7 @@
     <TextView
         android:id="@+id/txtPostdetail"
         android:text="5 روز پیش"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="14sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

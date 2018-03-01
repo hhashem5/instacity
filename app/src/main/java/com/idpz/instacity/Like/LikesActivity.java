@@ -48,12 +48,13 @@ public class LikesActivity extends AppCompatActivity {
     private static final int ACTIVITY_NUM=3;
     ArrayList<GiftPlace> dataModels;
     ListView lvGiftPlaces;
+    String mny="0",spend="0";
     GiftPlacesAdapter giftPlacesAdapter;
-    String fullServer="",profileImgUrl="";
+    String fullServer="",profileImgUrl="",mob="";
     TextView txtDisplayName,txtDescription, txtScore,txtTabUserName,txtMyMobile;
     CircleImageView imgProfile;
     private DisplayImageOptions options;
-    Boolean giftFlag=false,connected=false;
+    Boolean giftFlag=false,connected=false,moneyFlag=false;
     String server="";
 
 
@@ -109,17 +110,17 @@ public class LikesActivity extends AppCompatActivity {
         if (melli.equals("0"))melli="بدون شماره ملی امکان دریافت جایزه نیست";
         txtDescription.setText("شماره ملی:"+melli);
 
-        int bonus=Integer.valueOf(SP.getString("numPosts", "1"))*10+100;
+        int bonus=Integer.valueOf(SP.getString("money", "100"));
         txtScore.setText("امتیاز="+String.valueOf(bonus));
         txtDisplayName.setText(SP.getString("myname", "هاشم عابدی"));
         txtTabUserName.setText(SP.getString("myname", ""));
-        txtMyMobile.setText("شماره موبایل:"+SP.getString("mobile", ""));
-
+        mob=SP.getString("mobile", "");
+        txtMyMobile.setText("شماره موبایل:"+mob);
 
         new Thread() {
             @Override
             public void run() {
-                while (!giftFlag) {
+                while (!giftFlag||!moneyFlag) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -135,6 +136,7 @@ public class LikesActivity extends AppCompatActivity {
                             if (connected && !giftFlag) {
                                 reqGifts();
                             }
+
 
                         }
                     });
@@ -221,6 +223,62 @@ public class LikesActivity extends AppCompatActivity {
                 Map<String,String>params = new HashMap<String,String>();
 //                params.put("table", "govs");
 //                params.put("limit", "20");
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+    }
+    public void reqScore() {
+        RequestQueue queue = Volley.newRequestQueue(LikesActivity.this);
+        String url = server+"/i/score.php";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        moneyFlag = true;
+
+
+                        JSONArray jsonArray = null;
+                        try {
+                            jsonArray = new JSONArray(response);
+
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                            for (int i = jsonArray.length(); i > 0; i--) {
+                                jsonObject = jsonArray.getJSONObject(i - 1);
+
+                                mny =jsonObject.getString("money");
+                                spend =jsonObject.getString("spend");
+
+                            }
+
+                            SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                            SP2.putString("money", mny);
+                            SP2.putString("spend", spend);
+                            SP2.apply();
+                            txtScore.setText(String.valueOf(Integer.valueOf(mny)-Integer.valueOf(spend)));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.d("ERROR", "error => " + error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("ph", mob);
                 return params;
             }
         };

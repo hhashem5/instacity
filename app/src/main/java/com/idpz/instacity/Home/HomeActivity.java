@@ -82,7 +82,7 @@ public class HomeActivity extends AppCompatActivity implements
     List<Float> distances=new ArrayList<Float>();
     String lat="",lng="",server="";
     String REG_USER_URL="",REGISTER_PROFILE="";
-    String myname="0",melliid="0",pas="", mobile="0", birth="0", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
+    String myname="0",melliid="0",pas="", mobile="0", birth="0",pic="", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
     String upStatus="start";
     Boolean userRegFlag=false,areaFlag=false,connected=false,userProfileFlag=false,gpsCheck=false;
     // declare for popup window
@@ -128,6 +128,7 @@ public class HomeActivity extends AppCompatActivity implements
         fav=SP1.getString("fav", "0");
         pas=SP1.getString("pass", "0");
         server=SP1.getString("server", "0");
+        pic=SP1.getString("pic", "0");
 
         if(server.equals("0"))server=getString(R.string.server);
 
@@ -167,7 +168,7 @@ public class HomeActivity extends AppCompatActivity implements
         new Thread() {
             @Override
             public void run() {
-                while (!areaFlag||!userRegFlag||!userProfileFlag) {
+                while (!userRegFlag||!userProfileFlag) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -265,9 +266,9 @@ public class HomeActivity extends AppCompatActivity implements
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_camera);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_instagram_black);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_arrow);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_news);
         tabLayout.getTabAt(1).select();
     }
 
@@ -408,6 +409,7 @@ public class HomeActivity extends AppCompatActivity implements
                 params.put("eb", edub);
                 params.put("job", job);
                 params.put("jb", jobb);
+                params.put("pic", pic);
                 params.put("fav", fav);
                 params.put("meli",melliid);
                 params.put("mny", money);

@@ -191,6 +191,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 String pic=jsonObject.getString("pic");
                                 if(pic.equals("null")|| pic.isEmpty())pic="blur.jpg";
                                 post.setPostImageUrl(server+"/assets/images/137/"+pic);
+                                pic=jsonObject.getString("usrimg");
+                                if(pic.equals("null")|| pic.isEmpty())pic="0.jpg";
+                                post.setUserImg(server+"/assets/images/users/"+pic);
                                 post.setPostLike(jsonObject.getString("seen"));
                                 String dtl = jsonObject.getString("sotime");
                                 Calendar mydate = Calendar.getInstance();

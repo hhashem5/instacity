@@ -19,5 +19,5 @@
     <item name="darkgreen" type="color">#FF669900</item>
     <item name="darkorange" type="color">#FFFF8800</item>
     <item name="lightblue" type="color">#3066ff66</item>
-
+    <item name="darkGrey" type="color">#FF333333</item>
 </resources>

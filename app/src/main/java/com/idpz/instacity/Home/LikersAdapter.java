@@ -58,7 +58,7 @@ public class LikersAdapter extends BaseAdapter {
         CircleImageView thumbNail = (CircleImageView) convertView
                 .findViewById(R.id.imgLikersUserImg);
         TextView userName = (TextView) convertView.findViewById(R.id.txtCommentUserName);
-
+        Comment m = postList.get(position);
         DisplayImageOptions options;
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.blur)
@@ -69,14 +69,15 @@ public class LikersAdapter extends BaseAdapter {
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
+        ImageLoader.getInstance().displayImage(m.getMycomment(),thumbNail,options);
         // getting Food data for the row
-        Comment m = postList.get(position);
+
 
        //  thumbnail image
 //        thumbNail.setImageURI("http://mscity.ir/assets/images/users/1.jpg", imageLoader);
 //        ImageLoader imageLoader = ImageLoader.getInstance();
 //        imageLoader.displayImage(m.getMycomment(),thumbNail,options);
-        ImageLoader.getInstance().displayImage(m.getMycomment(),thumbNail,options);
+
         userName.setText(m.getUsrName());
 
 
