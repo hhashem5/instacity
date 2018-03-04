@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
     ArrayList<Area>areaArrayList=new ArrayList<>();
 
-    private static final String AREA_URL = "http://mscity.ir/i/getarea.php";
+    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
     /**
      * Id to identity READ_CONTACTS permission request.
      */

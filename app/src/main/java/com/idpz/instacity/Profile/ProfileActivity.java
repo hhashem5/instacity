@@ -63,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
     Boolean areaFlag=false,connected=false;
     Boolean reqFlag = false,moneyFlag=false;
     ArrayList<Area> areaArrayList=new ArrayList<>();
-    private static final String AREA_URL = "http://mscity.ir/i/getarea.php";
+    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
 //    ProgressBar progressBar;
 
     //widgets

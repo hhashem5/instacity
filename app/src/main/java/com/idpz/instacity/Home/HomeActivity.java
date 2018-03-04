@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity implements
         Log.d(TAG, "onLoadMoreItems: displaying more photos");
 
     }
-    private static final String AREA_URL = "http://mscity.ir/i/getarea.php";
+    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
     private static final String TAG = "HomeActivity";
     private static final int ACTIVITY_NUM = 0;
     private static final int HOME_FRAGMENT = 1;

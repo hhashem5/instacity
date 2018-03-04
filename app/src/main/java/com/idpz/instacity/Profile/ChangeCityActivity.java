@@ -65,7 +65,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
     Location myLocation, mycity;
     Boolean areaFlag=false,connected=false,mapFlag=false;
     ArrayList<Area> areaArrayList=new ArrayList<>();
-    String AREA_URL="http://myzibadasht.ir/i/getarea.php";
+    String AREA_URL="http://idpz.ir/i/getarea.php";
     Button btnChangeCT;
     TextView txtMyNearCT;
 
