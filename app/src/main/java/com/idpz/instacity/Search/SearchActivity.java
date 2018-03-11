@@ -76,6 +76,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     TextView txtcat;
     Button btnRegStore;
     String server="";
+    Float homelat,homelng;
 
 
 
@@ -87,6 +88,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
+        homelat=Float.valueOf(SP1.getString("homelat", "0"));
+        homelng=Float.valueOf(SP1.getString("homelng", "0"));
         SHOP_URL=server+"/i/shoprec.php";
 
         shops=new ArrayList<>();
@@ -368,7 +371,7 @@ drawMap();
         mMap = googleMap;
 
         // Add a marker in Sydney, Australia, and move the camera.
-            cityLatLng = new LatLng(lat, lng);
+            cityLatLng = new LatLng(homelat, homelng);
 
         mMap.addMarker(new MarkerOptions().position(cityLatLng).title("موقعیت شما"));
         CircleOptions circleOptions=new CircleOptions().center(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()))
@@ -392,7 +395,7 @@ drawMap();
                         "لطفا کمی صبر کنید...", Toast.LENGTH_SHORT)
                         .show();
             }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 17));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(homelat, homelng), 17));
             mapFlag=true;
         }
     }

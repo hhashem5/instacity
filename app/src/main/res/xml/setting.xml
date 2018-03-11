@@ -62,6 +62,18 @@
             android:summary="مختصات محله من برای دریافت اطلاعات"
             android:editable="false"
             />
+    <EditTextPreference
+        android:key="homelat"
+        android:title="عرض جغرافیایی"
+        android:summary="مختصات محله من برای دریافت اطلاعات"
+        android:editable="false"
+        />
+    <EditTextPreference
+        android:key="homelng"
+        android:title="طول جغرافیایی"
+        android:summary="مختصات محله من برای دریافت اطلاعات"
+        android:editable="false"
+        />
         <CheckBoxPreference
                 android:key="alarm"
                 android:title="هشدار"

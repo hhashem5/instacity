@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+    <RadioGroup
+        android:id="@+id/rd_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <RadioButton
+        android:id="@+id/mrd_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="فرهنگی" />
+
+    <RadioButton
+        android:id="@+id/mrd_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_0"
+        android:text="زیباسازی" />
+
+    <RadioButton
+        android:id="@+id/mrd_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_1"
+        android:text="ساختمانی" />
+
+    <RadioButton
+        android:id="@+id/mrd_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_2"
+        android:text="مالی" />
+    <RadioButton
+        android:id="@+id/mrd_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_3"
+        android:text="خدمات شهری" />
+    <RadioButton
+        android:id="@+id/mrd_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_4"
+        android:text="مسئولین شهری" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnMov"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_group"
+        android:layout_centerInParent="true"
+        android:text="تایید" />
+</RelativeLayout>

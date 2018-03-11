@@ -168,7 +168,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         try {
                             jsonArray = new JSONArray(response);
                             Post post;
-
+                            Log.d(TAG, "onResponse: socials"+response);
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
 
 

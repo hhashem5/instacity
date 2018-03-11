@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "Login activity";
     String requrl="";
     TextView txtInfo;
+
     String mob="",pas="",server="",ctName;
     Boolean areaFlag=false,connected=false;
 
@@ -81,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mLoginFormView;
     Button btnRegister;
     Spinner spCity;
+    Float homelat,homelng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 server=areaArrayList.get(position).getServer();
                 ctName=areaArrayList.get(position).getAfname();
+                homelat=areaArrayList.get(position).getAlat();
+                homelng=areaArrayList.get(position).getAlng();
 //                Toast.makeText(LoginActivity.this, "select:"+position+" "+server, Toast.LENGTH_SHORT).show();
             }
 
@@ -339,6 +343,8 @@ public class LoginActivity extends AppCompatActivity {
                                 SP2.putString("pass", pas);
                                 SP2.putString("lat", lat);
                                 SP2.putString("lng", lng);
+                                SP2.putString("homelat",String.valueOf(homelat));
+                                SP2.putString("homelng",String.valueOf(homelng));
                                 SP2.putString("server", server);
                                 SP2.putString("ctname", ctName);
                                 SP2.putString("birth", birth);

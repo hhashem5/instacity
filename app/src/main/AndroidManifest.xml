@@ -78,11 +78,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            android:label="دهکده هوشمند">
+            android:label="@string/app_name">
         </activity>
         <activity android:name=".Search.StoreRegActivity" />
         <activity android:name=".Profile.ChangeCityActivity" />
-        <activity android:name=".Home.LikersActivity"/>
+        <activity android:name=".Home.LikersActivity" />
+        <activity android:name=".Share.GalleryActivity"></activity>
     </application>
 
 </manifest>

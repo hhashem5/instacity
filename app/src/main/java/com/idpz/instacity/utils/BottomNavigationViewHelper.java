@@ -12,7 +12,7 @@ import com.idpz.instacity.Like.LikesActivity;
 import com.idpz.instacity.Profile.ProfileActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.Search.SearchActivity;
-import com.idpz.instacity.Share.ShareActivity;
+import com.idpz.instacity.Share.GalleryActivity;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
@@ -50,7 +50,7 @@ public class BottomNavigationViewHelper {
                         context.startActivity(intent2);
                         break;
                     case R.id.ic_share:
-                        Intent intent3=new Intent(context, ShareActivity.class);
+                        Intent intent3=new Intent(context, GalleryActivity.class);
                         intent3.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
                         context.startActivity(intent3);
                         break;

@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">شهرینو</string>
+    <string name="app_name">دهکده هوشمند</string>
     <string name="server">http://mscity.ir</string>
-    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_search">نقشه</string>
     <string name="edit_profile">ویرایش پروفایل</string>
     <string name="sign_out">خروج از حساب کاربری</string>
     <string name="upload_send_pic">ارسال عکس</string>
@@ -32,11 +32,11 @@
     <string name="view_comments_fragment">مشاهده نظرات</string>
 
     <!-- dialog names -->
-    <string name="confirm_password_dialog">ConfirmPaswordDialog</string>
+    <string name="confirm_password_dialog">تایید رمز ورود</string>
 
     <!-- Firebase messages -->
-    <string name="auth_failed">Failed to Authenticate</string>
-    <string name="auth_success">Authentication Success</string>
+    <string name="auth_failed">خطا در تایید اعتبار</string>
+    <string name="auth_success">اعتبار تایید شد</string>
 
     <!-- Firebase database fields -->
     <string name="dbname_users">users</string>
@@ -87,6 +87,8 @@
     <string name="photo">دوربین</string>
     <string name="string_open_camera">عکس گرفتن</string>
     <string name="string_next">بعدی</string>
+    <string name="string_slogan">ما را با بیان مشکلات، ایده ها و نظرات خود یاری کنید</string>
+    <string name="string_nopic">بدون عکس</string>
     <string name="string_share">ارسال</string>
 
     <string-array name="moavenat">
@@ -130,6 +132,7 @@
         <item>خدمات</item>
         <item>ورزشی</item>
         <item>غذا</item>
+        <item>گردشگری</item>
     </string-array>
 
 </resources>

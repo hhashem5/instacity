@@ -68,6 +68,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
     String AREA_URL="http://idpz.ir/i/getarea.php";
     Button btnChangeCT;
     TextView txtMyNearCT;
+    Float homelat,homelng;
 
 //    ListView lvCities;
 
@@ -119,9 +120,13 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                     return;
                 }else {
                     server=myArea.getServer();
+                    homelat=myArea.getAlat();
+                    homelng=myArea.getAlng();
                     SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                     SP2.putString("server", server);
                     SP2.putString("ctname", myArea.getAfname());
+                    SP2.putString("homelat",String.valueOf(homelat));
+                    SP2.putString("homelng",String.valueOf(homelng));
                     SP2.apply();
                     finishAffinity();
                     Intent intent=new Intent(ChangeCityActivity.this,HomeActivity.class);

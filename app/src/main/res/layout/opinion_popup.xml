@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+    <RadioGroup
+        android:id="@+id/rd_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <RadioButton
+        android:id="@+id/rd_0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="پیشنهاد" />
+
+    <RadioButton
+        android:id="@+id/rd_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_0"
+        android:text="ایده" />
+    <RadioButton
+        android:id="@+id/rd_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_1"
+        android:text="انتقاد" />
+
+    <RadioButton
+        android:id="@+id/rd_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_2"
+        android:text="شکایت" />
+    </RadioGroup>
+    <Button
+        android:id="@+id/btnOpinion"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rd_group"
+        android:layout_centerInParent="true"
+        android:text="تایید" />
+</RelativeLayout>

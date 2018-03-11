@@ -1,9 +1,9 @@
 package com.idpz.instacity.Share;
 
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -25,12 +25,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +45,7 @@ import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.GPSTracker;
 import com.idpz.instacity.utils.Permissions;
+import com.idpz.instacity.utils.UniversalImageLoader;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.io.BufferedReader;
@@ -74,7 +74,6 @@ public class ShareActivity extends AppCompatActivity {
     private static final int ACTIVITY_NUM = 2;
     private static final int VERIFY_PERMISSIONS_REQUEST = 1;
     private static final int REQUEST_ACCESS_LOCATION = 0;
-    private static final int  CAMERA_REQUEST_CODE = 5;
     private static final int REQUEST_CAMERA = 6;
     private static final int SELECT_FILE = 7;
     private int PROFILE_PIC_COUNT=0;
@@ -94,14 +93,13 @@ public class ShareActivity extends AppCompatActivity {
     //vars
     private String mAppend = "file:/";
     private int imageCount = 0,cmprs=70;
-    private String imgUrl,lat="",lng="",oldLat="0",oldLng="0";
+    private String imgUrl,lat="",lng="",oldLat="0",oldLng="0",govtxt="";
     private Bitmap bitmap;
     private Intent intent;
     Button share,btnShareCamera;
-    RadioButton radioTashakor,radioPishnahad,radioEnteghad,radioShekayat,radNazar;
-    Spinner spnMoavenat;
-    TextView tvMessage;
-    ImageView image;
+//    Spinner spnMoavenat;
+    TextView tvMessage,tvShare,tvStatusSend;
+    ImageView image,ivBackArrow;
     private Context mContext = ShareActivity.this;
 
     @Override
@@ -125,84 +123,51 @@ public class ShareActivity extends AppCompatActivity {
 
         mCaption = (EditText) findViewById(R.id.textBody) ;
 
-        radioTashakor=(RadioButton)findViewById(R.id.radioButton);
-        radioPishnahad=(RadioButton)findViewById(R.id.radioButton2);
-        radioEnteghad=(RadioButton)findViewById(R.id.radioButton3);
-        radioShekayat=(RadioButton)findViewById(R.id.radioButton4);
-        radNazar=(RadioButton)findViewById(R.id.radioButton5);
-        spnMoavenat=(Spinner)findViewById(R.id.spnMoavenat);
+//        spnMoavenat=(Spinner)findViewById(R.id.spnMoavenat);
         image=(ImageView) findViewById(R.id.imgSharePic);
+        ivBackArrow=(ImageView) findViewById(R.id.ivBackArrow);
         tvMessage=(TextView) findViewById(R.id.shareTextMessage);
+        tvShare=(TextView) findViewById(R.id.tvShare);
+        tvStatusSend=(TextView) findViewById(R.id.tvStatusSend);
 
+//        btnShareCamera=(Button)findViewById(R.id.btnShareCamera);
 
-
-        btnShareCamera=(Button)findViewById(R.id.btnShareCamera);
-
-        btnShareCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final CharSequence[] items = {"دوربین", "گالری", "انصراف"};
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShareActivity.this);
-                builder.setTitle("افزودن عکس");
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int item) {
-
-                        if (items[item].equals("دوربین")) {
-                            PROFILE_PIC_COUNT = 1;
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent, REQUEST_CAMERA);
-                        } else if (items[item].equals("گالری")) {
-                            PROFILE_PIC_COUNT = 1;
-                            Intent intent = new Intent(
-                                    Intent.ACTION_PICK,
-                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            startActivityForResult(intent,SELECT_FILE);
-                        } else if (items[item].equals("انصراف")) {
-                            PROFILE_PIC_COUNT = 0;
-                            dialog.dismiss();
-                        }
-                    }
-                });
-                builder.show();
-
-            }
-        });
+//        btnShareCamera.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                final CharSequence[] items = {"دوربین", "گالری", "انصراف"};
+//                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShareActivity.this);
+//                builder.setTitle("افزودن عکس");
+//                builder.setItems(items, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int item) {
+//
+//                        if (items[item].equals("دوربین")) {
+//                            PROFILE_PIC_COUNT = 1;
+//                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                            startActivityForResult(intent, REQUEST_CAMERA);
+//                        } else if (items[item].equals("گالری")) {
+//                            PROFILE_PIC_COUNT = 1;
+//                            Intent intent = new Intent(
+//                                    Intent.ACTION_PICK,
+//                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                            startActivityForResult(intent,SELECT_FILE);
+//                        } else if (items[item].equals("انصراف")) {
+//                            PROFILE_PIC_COUNT = 0;
+//                            dialog.dismiss();
+//                        }
+//                    }
+//                });
+//                builder.show();
+//
+//            }
+//        });
 
 
 
         mstatus="0";
-        radioTashakor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mstatus="1";
-            }
-        });
-        radioPishnahad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mstatus="2";
-            }
-        });
-        radioEnteghad.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mstatus="3";
-            }
-        });
-        radioShekayat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mstatus="4";
-            }
-        });
-        radNazar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mstatus="5";
-            }
-        });
-        share=(Button)findViewById(R.id.btnShareSocial);
+
+//        share=(Button)findViewById(R.id.btnShareSocial);
 
 //        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname=SP.getString("myname", "0");
@@ -210,47 +175,90 @@ public class ShareActivity extends AppCompatActivity {
         oldLng=SP.getString("lng", "0");
         oldLat=SP.getString("lat", "0");
 
-        spnMoavenat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 1:
-                        gov="6";
-                        break;
-                    case 2:
-                        gov="7";
-                        break;
-                    case 3:
-                        gov="5";
-                        break;
-                    case 4:
-                        gov="2";
-                        break;
-                    case 5:
-                        gov="3";
-                        break;
-                    case 6:
-                        gov="1";
-                        break;
-                }
-            }
+        final Dialog dialog = new Dialog(ShareActivity.this);
+        dialog.setContentView(R.layout.moavenat_popup);
+        dialog.setTitle("گیرنده");
+        dialog.setCancelable(true);
+        // there are a lot of settings, for dialog, check them all out!
+        // set up radiobutton
+        final RadioButton rd0 = (RadioButton) dialog.findViewById(R.id.mrd_0);
+        final RadioButton rd1 = (RadioButton) dialog.findViewById(R.id.mrd_1);
+        final RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.mrd_2);
+        final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.mrd_3);
+        final RadioButton rd4 = (RadioButton) dialog.findViewById(R.id.mrd_4);
+        final RadioButton rd5 = (RadioButton) dialog.findViewById(R.id.mrd_5);
+        Button btnDialog=(Button)dialog.findViewById(R.id.btnMov);
+        // now that the dialog is set up, it's time to show it
+        dialog.show();
 
+        rd0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gov="1";
+                govtxt=rd0.getText().toString();
             }
         });
-        share.setOnClickListener(new View.OnClickListener() {
+        rd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gov="2";
+                govtxt=rd1.getText().toString();
+            }
+        });
+        rd2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gov="3";
+                govtxt=rd2.getText().toString();
+            }
+        });
+        rd3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gov="4";
+                govtxt=rd3.getText().toString();
+            }
+        });
+        rd4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gov="5";
+                govtxt=rd4.getText().toString();
+            }
+        });
+        rd5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                gov="6";
+                govtxt=rd5.getText().toString();
+            }
+        });
+        btnDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        ivBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        tvShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to the final share screen.");
                 //upload the image to
-
-
                 mytext = mCaption.getText().toString();
+
                 if (mytext.length()>4) {
-                    Toast.makeText(ShareActivity.this, "درحال ارسال اطلاعات", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShareActivity.this, "درحال ارسال اطلاعات", Toast.LENGTH_LONG).show();
                     ImageUploadToServerFunction();
+                }else {
+                    Toast.makeText(mContext, "لطفا متنی برای پیام بنویسید", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -259,6 +267,8 @@ public class ShareActivity extends AppCompatActivity {
         populateGPS();
 
         setupBottomNavigationView();
+        setImage();
+
     }
 
 
@@ -683,5 +693,26 @@ public class ShareActivity extends AppCompatActivity {
         };
         queue.add(postRequest);
 
+    }
+
+    private void setImage(){
+        intent = getIntent();
+
+        if(intent.hasExtra(getString(R.string.selected_image))){
+            imgUrl = intent.getStringExtra(getString(R.string.selected_image));
+            Log.d(TAG, "setImage: got new image url: " + imgUrl);
+            UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
+            PROFILE_PIC_COUNT=1;
+        }
+        else {
+//            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
+            Log.d(TAG, "setImage: got new bitmap");
+            image.setImageResource(R.drawable.noimage);
+            PROFILE_PIC_COUNT=0;
+        }
+        if (intent.hasExtra("mstatus")){
+            mstatus=intent.getStringExtra("mstatus");
+//            tvStatusSend.setText(getString(R.array.moavenat));
+        }
     }
 }

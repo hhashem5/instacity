@@ -49,6 +49,7 @@ public class SignupActivity extends AppCompatActivity {
     View focusView = null;
     Boolean areaFlag=false,connected=false;
     Spinner spCity;
+    Float homelat,homelng;
     ArrayList<Area> areaArrayList=new ArrayList<>();
     private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
 
@@ -81,6 +82,8 @@ public class SignupActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 server=areaArrayList.get(position).getServer();
                 ctName=areaArrayList.get(position).getAfname();
+                homelat=areaArrayList.get(position).getAlat();
+                homelng=areaArrayList.get(position).getAlng();
 //                Toast.makeText(SignupActivity.this, "select:"+position+" "+server, Toast.LENGTH_SHORT).show();
             }
 
@@ -210,6 +213,8 @@ public class SignupActivity extends AppCompatActivity {
                         SP2.putString("numPosts", "0");
                         SP2.putString("gen", gender);
                         SP2.putString("ctname", ctName);
+                        SP2.putString("homelat",String.valueOf(homelat));
+                        SP2.putString("homelng",String.valueOf(homelng));
                         SP2.apply();
                         Intent intent=new Intent(SignupActivity.this,HomeActivity.class);
                         startActivity(intent);
