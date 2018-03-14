@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     Boolean reqFlag=true,connected=false;
     Context context;
     Boolean postRcvFlag=false,videoRcvFlag=false;
+
 
     @Nullable
     @Override

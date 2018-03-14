@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="73dp"
+        android:orientation="horizontal"
+        android:background="@drawable/grey_border_bottom"
+        android:gravity="center"
+        >
+        <com.nightonke.boommenu.BoomMenuButton
+            android:id="@+id/bmb"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_marginTop="10dp"
+            app:bmb_buttonEnum="simpleCircle"
+            app:bmb_piecePlaceEnum="piecePlace_dot_3_1"
+            app:bmb_buttonPlaceEnum="buttonPlace_sc_3_3"
+
+            />
+
+        <ImageButton
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:id="@+id/btnHandyCarft"
+            android:src="@drawable/handycraft"
+
+            android:layout_margin="5dp"
+            />
+
+        <ImageButton
+            android:id="@+id/btnTourism"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/tourism"
+            android:background="@null"
+            android:layout_margin="5dp"
+            />
+
+        <ImageButton
+            android:id="@+id/btnCars"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/cars"
+            android:background="@null"
+            android:layout_margin="5dp"
+            />
+
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gray_border_bottom"
+        >
+        <TextView
+            android:id="@+id/city_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:textSize="10sp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/darkblue"
+             />
+
+        <TextView
+            android:id="@+id/updated_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/city_field"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/darkblue"
+            android:text="آب و هوا"
+            android:textSize="14sp" />
+        <ImageView
+            android:id="@+id/imgWeather"
+            android:layout_below="@id/updated_field"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/sunny"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+        <TextView
+            android:id="@+id/weather_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/darkblue"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/current_temperature_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgWeather"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/darkblue"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="18sp" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/details_field"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/current_temperature_field"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:textColor="@color/darkblue"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--/>-->
+        <TextView
+            android:id="@+id/humidity_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/current_temperature_field"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/darkblue"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            />
+        <!--<TextView-->
+            <!--android:id="@+id/pressure_field"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/humidity_field"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:textColor="@color/darkblue"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--/>-->
+
+    </RelativeLayout>
+</LinearLayout>

@@ -83,7 +83,7 @@ public class ShareActivity extends AppCompatActivity {
 
     String ImageName = "image_name" ,mobile,pas;
 
-    String ImagePath = "image_path",mstatus="0",gov="6",myname="",myphone="",mytext="" ;
+    String ImagePath = "image_path",mstatus="0",gov="1",myname="",myphone="",mytext="" ;
 
     String ServerUploadPath ="", REG_USER_LAT ="",server ;
     //widgets
@@ -194,48 +194,55 @@ public class ShareActivity extends AppCompatActivity {
         rd0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (rd0.isChecked())
                 gov="1";
                 govtxt=rd0.getText().toString();
+                Toast.makeText(mContext, gov+" "+govtxt, Toast.LENGTH_SHORT).show();
             }
         });
         rd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                gov="2";
+                if (rd1.isChecked())gov="2";
                 govtxt=rd1.getText().toString();
+                Toast.makeText(mContext, gov+" "+govtxt, Toast.LENGTH_SHORT).show();
             }
         });
         rd2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                gov="3";
+                if (rd2.isChecked())gov="3";
                 govtxt=rd2.getText().toString();
             }
         });
         rd3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                gov="4";
+                if (rd3.isChecked())gov="4";
                 govtxt=rd3.getText().toString();
             }
         });
         rd4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                gov="5";
+                if (rd4.isChecked())gov="5";
                 govtxt=rd4.getText().toString();
             }
         });
         rd5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                gov="6";
+                if (rd5.isChecked())gov="6";
                 govtxt=rd5.getText().toString();
             }
         });
         btnDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String[] govrs=getApplicationContext().getResources().getStringArray(R.array.moavenat);
+                String[] titles=getApplicationContext().getResources().getStringArray(R.array.pmType);
+                mstatus=intent.getStringExtra("status");
+                tvStatusSend.setText("ارسال "+titles[Integer.valueOf(mstatus)-1]+" به واحد "+govrs[Integer.valueOf(gov)]);
                 dialog.dismiss();
             }
         });
@@ -710,9 +717,11 @@ public class ShareActivity extends AppCompatActivity {
             image.setImageResource(R.drawable.noimage);
             PROFILE_PIC_COUNT=0;
         }
-        if (intent.hasExtra("mstatus")){
-            mstatus=intent.getStringExtra("mstatus");
-//            tvStatusSend.setText(getString(R.array.moavenat));
+        if (intent.hasExtra("status")){
+            String[] govrs=getApplicationContext().getResources().getStringArray(R.array.moavenat);
+            String[] titles=getApplicationContext().getResources().getStringArray(R.array.pmType);
+            mstatus=intent.getStringExtra("status");
+            tvStatusSend.setText("ارسال "+titles[Integer.valueOf(mstatus)-1]+" به واحد "+govrs[Integer.valueOf(gov)]);
         }
     }
 }

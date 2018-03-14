@@ -74,7 +74,7 @@
                     android:layout_gravity="center"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:text="شهرفعلی"
+                        android:text="منطقه فعلی"
                         android:layout_width="wrap_content"
                         android:textColor="@color/black"
                         android:layout_gravity="center"
@@ -88,11 +88,20 @@
                         android:layout_height="wrap_content" />
                     <Button
                         android:id="@+id/btnChangeCTPofile"
-                        android:text="تغییر شهر"
+                        android:text="تغییر منطقه"
                         android:background="@drawable/white_gray_border_bottom"
                         android:layout_width="wrap_content"
                         android:layout_gravity="center"
                         android:layout_height="30dp" />
+                    <Button
+                        android:id="@+id/btnUseGift"
+                        android:layout_margin="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="30dp"
+                        android:background="@drawable/white_gray_border_bottom"
+                        android:text="هدایا"
+                        />
                 </LinearLayout>
 
                     <LinearLayout

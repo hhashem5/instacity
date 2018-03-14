@@ -77,7 +77,7 @@ public class ProfileActivity extends AppCompatActivity {
     private DisplayImageOptions options;
     CircleImageView imgProfile;
     String server="";
-    Button btnChangeCT;
+    Button btnChangeCT,btnUseGift;
 
 
 
@@ -110,12 +110,21 @@ public class ProfileActivity extends AppCompatActivity {
         txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
         imgPostMenu=(ImageView)findViewById(R.id.imgProfileMenu);
         btnChangeCT=(Button) findViewById(R.id.btnChangeCTPofile);
+        btnUseGift=(Button) findViewById(R.id.btnUseGift);
         txtCurCt.setText(ctName);
 
         btnChangeCT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(ProfileActivity.this,ChangeCityActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnUseGift.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ProfileActivity.this,LikesActivity.class);
                 startActivity(intent);
             }
         });

@@ -83,7 +83,7 @@ public class HomeActivity extends AppCompatActivity implements
     String lat="",lng="",server="";
     String REG_USER_URL="",REGISTER_PROFILE="";
     String myname="0",melliid="0",pas="", mobile="0", birth="0",pic="", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
-    String upStatus="start";
+    String upStatus="start",ctname="";
     Boolean userRegFlag=false,areaFlag=false,connected=false,userProfileFlag=false,gpsCheck=false;
     // declare for popup window
     Button showPopupBtn, closePopupBtn;
@@ -129,6 +129,7 @@ public class HomeActivity extends AppCompatActivity implements
         pas=SP1.getString("pass", "0");
         server=SP1.getString("server", "0");
         pic=SP1.getString("pic", "0");
+        ctname=SP1.getString("ctname", "");
 
         if(server.equals("0"))server=getString(R.string.server);
 
@@ -257,8 +258,8 @@ public class HomeActivity extends AppCompatActivity implements
      */
     private void setupViewPager(){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CameraFragment()); //index 0
-        adapter.addFragment(new HomeFragment()); //index 1
+        adapter.addFragment(new HomeFragment()); //index 0
+        adapter.addFragment(new MainFragment()); //index 1
         adapter.addFragment(new MessagesFragment()); //index 2
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(2);
@@ -266,9 +267,12 @@ public class HomeActivity extends AppCompatActivity implements
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_instagram_black);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_news);
+//        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
+        tabLayout.getTabAt(0).setText("گزارش مردمی");
+//        tabLayout.getTabAt(1).setIcon(R.drawable.ic_instagram_black);
+        tabLayout.getTabAt(1).setText(ctname);
+//        tabLayout.getTabAt(2).setIcon(R.drawable.ic_news);
+        tabLayout.getTabAt(2).setText("اخبارمحلی");
         tabLayout.getTabAt(1).select();
     }
 

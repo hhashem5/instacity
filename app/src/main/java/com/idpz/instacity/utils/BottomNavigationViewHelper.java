@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.idpz.instacity.Home.HomeActivity;
-import com.idpz.instacity.Like.LikesActivity;
+import com.idpz.instacity.Like.TourismActivity;
 import com.idpz.instacity.Profile.ProfileActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.Search.SearchActivity;
@@ -55,7 +55,7 @@ public class BottomNavigationViewHelper {
                         context.startActivity(intent3);
                         break;
                     case R.id.ic_like:
-                        Intent intent4=new Intent(context, LikesActivity.class);
+                        Intent intent4=new Intent(context, TourismActivity.class);
                         intent4.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
                         context.startActivity(intent4);
                         break;

@@ -1,4 +1,4 @@
-package com.idpz.instacity.Like;
+package com.idpz.instacity.Profile;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +23,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.idpz.instacity.Profile.MyProfileActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.GiftPlace;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
@@ -66,7 +65,7 @@ public class LikesActivity extends AppCompatActivity {
 
 
 
-        setupBottomNavigationView();
+//        setupBottomNavigationView();
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");

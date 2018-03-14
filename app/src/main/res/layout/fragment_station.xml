@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+              android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+            <Switch
+                android:id="@+id/btnJobReg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                />
+            <TextView
+                android:text="آیا اقامتگاهی برای ارائه به گردشگران دارید "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="100"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="65"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imgStationMaster"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/vilhome"
+            />
+        <Button
+            android:id="@+id/btnSendStationPic"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="@drawable/white_gray_border_bottom"
+            android:text="ارسال عکس"
+            />
+        <Button
+            android:id="@+id/btnSendStationInfo"
+            android:background="@drawable/white_gray_border_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="ثبت"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="35"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text=""
+                android:hint=""
+                android:ems="8"
+                android:id="@+id/txtCitizenName"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="نام اقامتگاه"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvJob1"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text=""
+                android:hint="مثال:نمای کویری بنای خشتی"
+                android:ems="10"
+                android:id="@+id/txtCtNumber"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="توضیحات"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvJob2"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:orientation="horizontal">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text=""
+                android:layout_gravity="right"
+                android:hint="مثال: 10"
+                android:ems="3"
+                android:id="@+id/txtStationCapacity"
+                 />
+
+            <TextView
+                android:text="ظرفیت"
+                android:layout_gravity="right"
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvJob21"
+                 />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_gravity="right"
+            android:weightSum="100"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="10"
+                android:layout_height="wrap_content">
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <RadioButton
+                        android:id="@+id/rdPerPerson"
+                        android:text="هر نفر"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <RadioButton
+                        android:id="@+id/rdPerRoom"
+                        android:checked="true"
+                        android:text="هر اتاق"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </RadioGroup>
+            </LinearLayout>
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text=""
+                android:hint="مثال: 40000"
+                android:id="@+id/txtStationPrice"
+                android:layout_weight="20" />
+
+            <TextView
+                android:text="قیمت"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvJob22"
+                android:layout_weight="70" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkParking"
+                    android:text="پارکینگ"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkGarden"
+                    android:text="حیاط"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkBed"
+                    android:text="خواب"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkChiken"
+                    android:text="آشپزخانه"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkTeras"
+                    android:text="تراس"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkBarbeque"
+                    android:text="باربکیو"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkFood"
+                    android:text="غذای محلی"
+                    android:layout_height="wrap_content"
+                    />
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:id="@+id/chkBath"
+                    android:text="حمام"
+                    android:layout_height="wrap_content"
+                    />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <TextView
+            android:text="امکانات"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvFav"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+    <HorizontalScrollView
+        android:id="@+id/horizontal_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/horizontal_scroll2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/horizontal_recycler_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:horizontalSpacing="10dp"
+            android:isScrollContainer="false"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="10dp"
+            />
+
+    </HorizontalScrollView>
+
+</LinearLayout>

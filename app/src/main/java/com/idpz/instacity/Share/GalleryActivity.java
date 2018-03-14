@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.FilePaths;
@@ -66,10 +67,10 @@ public class GalleryActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         // there are a lot of settings, for dialog, check them all out!
         // set up radiobutton
-        RadioButton rd0 = (RadioButton) dialog.findViewById(R.id.rd_0);
-        RadioButton rd1 = (RadioButton) dialog.findViewById(R.id.rd_1);
-        RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.rd_2);
-        RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.rd_3);
+        final RadioButton rd0 = (RadioButton) dialog.findViewById(R.id.rd_0);
+        final RadioButton rd1 = (RadioButton) dialog.findViewById(R.id.rd_1);
+        final RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.rd_2);
+        final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.rd_3);
         Button btnDialog=(Button)dialog.findViewById(R.id.btnOpinion);
         // now that the dialog is set up, it's time to show it
         dialog.show();
@@ -77,25 +78,29 @@ public class GalleryActivity extends AppCompatActivity {
         rd0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (rd0.isChecked())
                 mstatus="1";
+                Toast.makeText(GalleryActivity.this,mstatus+ "پیشنهاد", Toast.LENGTH_SHORT).show();
             }
         });
         rd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (rd1.isChecked())
                 mstatus="2";
             }
         });
         rd2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (rd2.isChecked())
                 mstatus="3";
             }
         });
         rd3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mstatus="4";
+                if (rd3.isChecked())mstatus="4";
             }
         });
         ImageView shareClose = (ImageView) findViewById(R.id.ivCloseShare);
