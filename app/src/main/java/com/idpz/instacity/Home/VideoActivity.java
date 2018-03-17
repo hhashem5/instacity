@@ -5,15 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.VideoView;
@@ -37,13 +33,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by h on 2017/12/31.
- */
-
-public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLayout.OnRefreshListener{
     private SwipeRefreshLayout swipeRefreshLayout;
-    private static final String TAG = "CameraFragment";
+    private static final String TAG = "VideoFragment";
     ListView lvVideoPost;
     ProgressDialog pd;
     ArrayList<Video> dataModels;
@@ -54,24 +46,22 @@ public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRef
     Boolean reqVideoFlag =false,connected=false;
     Context context;
     VideoView videoView;
-
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_video,container,false);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        lvVideoPost = (ListView) view.findViewById(R.id.lvVideoContent);
-        pd = new ProgressDialog(view.getContext());
+        lvVideoPost = (ListView) findViewById(R.id.lvVideoContent);
+        pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
-        videoPostAdapter = new VideoPostAdapter(getActivity(), dataModels);
-        videoView = (VideoView)view.findViewById(R.id.vidPostVideo);
+        videoPostAdapter = new VideoPostAdapter(this, dataModels);
+        videoView = (VideoView)findViewById(R.id.vidPostVideo);
 //        pd.show();
         SharedPreferences SP1;
-        SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SP1 = PreferenceManager.getDefaultSharedPreferences(this);
         server=SP1.getString("server", "0");
         fullServer = server+"/i/videoread.php";
         lvVideoPost.setAdapter(videoPostAdapter);
@@ -81,10 +71,10 @@ public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void run() {
                 while (!reqVideoFlag) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    VideoActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                             if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
                                 //we are connected to a network
@@ -113,20 +103,6 @@ public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
 
 
-//        lvVideoPost.setRecyclerListener(new AbsListView.RecyclerListener() {
-//            @Override
-//            public void onMovedToScrapHeap(View view) {
-//
-//                if (videoView.isPlaying()){
-//                    videoView.pause();
-//                }else {
-//                    videoView.pause();
-//                }
-//
-//            }
-//
-//        });
-
         lvVideoPost.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -149,12 +125,12 @@ public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
         });
 
-        return view;
     }
 
 
+
     public void reqVideos() {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        RequestQueue queue = Volley.newRequestQueue(this);
         String url = fullServer;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
@@ -226,23 +202,7 @@ public class CameraFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     }
 
-    public void setUserVisibleHint(boolean isVisibleToUser)
-    {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (this.isVisible())
-        {
-            if (!isVisibleToUser)   // If we are becoming invisible, then...
-            {
-//                videoView=(VideoView);
-//                videoView.pause();
-            }
 
-            if (isVisibleToUser) // If we are becoming visible, then...
-            {
-
-            }
-        }
-    }
 
     @Override
     public void onRefresh() {

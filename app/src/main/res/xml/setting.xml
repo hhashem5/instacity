@@ -145,6 +145,16 @@
         android:title="نام شهر"
         android:summary="نام شهر"
         />
+    <EditTextPreference
+        android:key="ctpic"
+        android:title="عکس شهر"
+        android:summary="عکس شهر"
+        />
+    <EditTextPreference
+        android:key="ctdesc"
+        android:title="توضیح شهر"
+        android:summary="توضیح شهر"
+        />
         <EditTextPreference
             android:key="numPosts"
             android:title="فاصله خودرو"

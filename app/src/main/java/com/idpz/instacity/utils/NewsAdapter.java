@@ -75,9 +75,9 @@ public class NewsAdapter extends BaseAdapter {
         final String usr=m.getUserName();
         DisplayImageOptions options;
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.blur)
-                .showImageForEmptyUri(R.drawable.blur)
-                .showImageOnFail(R.drawable.blur)
+                .showImageOnLoading(R.drawable.noimage)
+                .showImageForEmptyUri(R.drawable.noimage)
+                .showImageOnFail(R.drawable.noimage)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)

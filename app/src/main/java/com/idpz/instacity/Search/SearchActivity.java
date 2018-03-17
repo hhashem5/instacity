@@ -20,6 +20,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,8 +73,12 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private Context context;
     private static final int REQUEST_ACCESS_LOCATION = 0;
     CheckBox chkTrafic,chkPlaces,chkSat;
-    CheckBox chkIEdu,chkIShop,chkISport,chkIService,chkIRepaire,chkIHealth,chkIReligion,chkIFood,chkCars;
-    Boolean Iedu=true,Ishop=false,Isport=true,Iservice=false,Irepair=false,Ihealth=true,Ireligion=false,Ifood=false,Icar=false;
+    CheckBox chkIEdu,chkIShop,chkISport,chkIService,chkIRepaire,chkIHealth,chkIReligion,chkIFood,chkCars,
+    chkCarAlarm;
+    Spinner spnCarSelect;
+    SeekBar sbarCarDistance;
+    Boolean Iedu=true,Ishop=false,Isport=true,Iservice=false,Irepair=false,Ihealth=true,Ireligion=false,Ifood=false
+            ,Icar=false;
     TextView txtcat;
     Button btnRegStore;
     String server="";
@@ -96,6 +102,10 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         showShops=new ArrayList<>();
         setupBottomNavigationView();
 
+
+        chkCarAlarm=(CheckBox)findViewById(R.id.chkCarAlarm);
+        spnCarSelect=(Spinner)findViewById(R.id.spnCars);
+        sbarCarDistance=(SeekBar)findViewById(R.id.sbarCarDistance);
         chkSat=(CheckBox)findViewById(R.id.chkShowSat);
         chkPlaces=(CheckBox)findViewById(R.id.chkShowPlaces);
         chkTrafic=(CheckBox)findViewById(R.id.chkShowTraffic);
@@ -122,8 +132,30 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIFood.setVisibility(View.GONE);
         txtcat.setVisibility(View.GONE);
         chkPlaces.setEnabled(false);
-
+        sbarCarDistance.setVisibility(View.GONE);
+        spnCarSelect.setVisibility(View.GONE);
+        chkCarAlarm.setVisibility(View.GONE);
         SHOP_URL=server+"/i/shoprec.php";
+
+        chkCars.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    chkPlaces.setChecked(false);
+                    sbarCarDistance.setVisibility(View.VISIBLE);
+                    spnCarSelect.setVisibility(View.VISIBLE);
+                    chkCarAlarm.setVisibility(View.VISIBLE);
+                    Icar=true;
+                }else {
+                    sbarCarDistance.setVisibility(View.GONE);
+                    spnCarSelect.setVisibility(View.GONE);
+                    chkCarAlarm.setVisibility(View.GONE);
+                    Icar=false;
+                }
+            }
+        });
+
+
 
         btnRegStore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,6 +292,8 @@ drawMap();
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    chkCars.setChecked(false);
+                    Icar=false;
                     chkIEdu.setVisibility(View.VISIBLE);
                     chkIShop.setVisibility(View.VISIBLE);
                     chkISport.setVisibility(View.VISIBLE);
@@ -647,7 +681,15 @@ drawMap();
 //                        mk.setTag(mshop);
 //                        m.showInfoWindow();
             if (Icar){
+                LatLng carloc = new LatLng(homelat, homelng);
+                markerOp
+                        .position(carloc)
+                        .title("خودرو")
+                        .snippet("سرعت 0کیلومتر")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.garbagepin));
+                mMap.addMarker(markerOp);
 
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(carloc, 17));
             }
         }
     }

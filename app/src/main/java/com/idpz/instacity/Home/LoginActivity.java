@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     String requrl="";
     TextView txtInfo;
 
-    String mob="",pas="",server="",ctName;
+    String mob="",pas="",server="",ctName="",ctDesc="",ctpic="";
     Boolean areaFlag=false,connected=false;
 
     ArrayList<Area>areaArrayList=new ArrayList<>();
@@ -111,6 +111,8 @@ public class LoginActivity extends AppCompatActivity {
                 ctName=areaArrayList.get(position).getAfname();
                 homelat=areaArrayList.get(position).getAlat();
                 homelng=areaArrayList.get(position).getAlng();
+                ctDesc=areaArrayList.get(position).getDescription();
+                ctpic=areaArrayList.get(position).getPic();
 //                Toast.makeText(LoginActivity.this, "select:"+position+" "+server, Toast.LENGTH_SHORT).show();
             }
 
@@ -356,6 +358,8 @@ public class LoginActivity extends AppCompatActivity {
                                 SP2.putString("jobb", jobb);
                                 SP2.putString("pic", pic);
                                 SP2.putString("money", money);
+                                SP2.putString("ctpic",String.valueOf(ctpic));
+                                SP2.putString("ctdesc",String.valueOf(ctDesc));
                                 SP2.apply();
                                 Intent intent=new Intent(LoginActivity.this,HomeActivity.class);
                                 startActivity(intent);
@@ -427,7 +431,8 @@ public class LoginActivity extends AppCompatActivity {
                                 area.setAdiameter(jsonObject.getInt("adiameter"));
                                 area.setServer(jsonObject.getString("server"));
                                 area.setZoom(jsonObject.getInt("azoom"));
-
+                                area.setPic(jsonObject.getString("pic"));
+                                area.setDescription(jsonObject.getString("memo"));
 
                                 areaArrayList.add(area);
                             }

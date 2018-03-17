@@ -7,14 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -40,29 +37,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.idpz.instacity.Home.HomeActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.GPSTracker;
 import com.idpz.instacity.utils.Permissions;
-import com.idpz.instacity.utils.UniversalImageLoader;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -88,7 +76,7 @@ public class ShareActivity extends AppCompatActivity {
     String ServerUploadPath ="", REG_USER_LAT ="",server ;
     //widgets
     private EditText mCaption;
-    boolean check = true;
+    boolean check = true,nopicFlag=false;
     ProgressDialog progressDialog;
     //vars
     private String mAppend = "file:/";
@@ -107,6 +95,7 @@ public class ShareActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         Log.d(TAG, "onCreate: started.");
+
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         mobile=SP.getString("mobile", "0");
         pas=SP.getString("pass", "0");
@@ -130,41 +119,6 @@ public class ShareActivity extends AppCompatActivity {
         tvShare=(TextView) findViewById(R.id.tvShare);
         tvStatusSend=(TextView) findViewById(R.id.tvStatusSend);
 
-//        btnShareCamera=(Button)findViewById(R.id.btnShareCamera);
-
-//        btnShareCamera.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                final CharSequence[] items = {"دوربین", "گالری", "انصراف"};
-//                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(ShareActivity.this);
-//                builder.setTitle("افزودن عکس");
-//                builder.setItems(items, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int item) {
-//
-//                        if (items[item].equals("دوربین")) {
-//                            PROFILE_PIC_COUNT = 1;
-//                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                            startActivityForResult(intent, REQUEST_CAMERA);
-//                        } else if (items[item].equals("گالری")) {
-//                            PROFILE_PIC_COUNT = 1;
-//                            Intent intent = new Intent(
-//                                    Intent.ACTION_PICK,
-//                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                            startActivityForResult(intent,SELECT_FILE);
-//                        } else if (items[item].equals("انصراف")) {
-//                            PROFILE_PIC_COUNT = 0;
-//                            dialog.dismiss();
-//                        }
-//                    }
-//                });
-//                builder.show();
-//
-//            }
-//        });
-
-
-
         mstatus="0";
 
 //        share=(Button)findViewById(R.id.btnShareSocial);
@@ -187,6 +141,7 @@ public class ShareActivity extends AppCompatActivity {
         final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.mrd_3);
         final RadioButton rd4 = (RadioButton) dialog.findViewById(R.id.mrd_4);
         final RadioButton rd5 = (RadioButton) dialog.findViewById(R.id.mrd_5);
+        final RadioButton rd6 = (RadioButton) dialog.findViewById(R.id.mrd_6);
         Button btnDialog=(Button)dialog.findViewById(R.id.btnMov);
         // now that the dialog is set up, it's time to show it
         dialog.show();
@@ -194,46 +149,52 @@ public class ShareActivity extends AppCompatActivity {
         rd0.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rd0.isChecked())
+                if (rd0.isChecked()){
                 gov="1";
-                govtxt=rd0.getText().toString();
-                Toast.makeText(mContext, gov+" "+govtxt, Toast.LENGTH_SHORT).show();
+                govtxt=rd0.getText().toString();}
             }
         });
         rd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rd1.isChecked())gov="2";
-                govtxt=rd1.getText().toString();
+                if (rd1.isChecked()){gov="2";
+                govtxt=rd1.getText().toString();}
                 Toast.makeText(mContext, gov+" "+govtxt, Toast.LENGTH_SHORT).show();
             }
         });
         rd2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rd2.isChecked())gov="3";
-                govtxt=rd2.getText().toString();
+                if (rd2.isChecked()){gov="3";
+                govtxt=rd2.getText().toString();}
             }
         });
         rd3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rd3.isChecked())gov="4";
-                govtxt=rd3.getText().toString();
+                if (rd3.isChecked()){gov="4";
+                govtxt=rd3.getText().toString();}
             }
         });
         rd4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rd4.isChecked())gov="5";
-                govtxt=rd4.getText().toString();
+                if (rd4.isChecked()){gov="5";
+                govtxt=rd4.getText().toString();}
             }
         });
         rd5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (rd5.isChecked())gov="6";
-                govtxt=rd5.getText().toString();
+                if (rd5.isChecked()){gov="6";
+                govtxt=rd5.getText().toString();}
+            }
+        });
+        rd6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (rd6.isChecked()){gov="7";
+                govtxt=rd6.getText().toString();}
             }
         });
         btnDialog.setOnClickListener(new View.OnClickListener() {
@@ -242,7 +203,7 @@ public class ShareActivity extends AppCompatActivity {
                 String[] govrs=getApplicationContext().getResources().getStringArray(R.array.moavenat);
                 String[] titles=getApplicationContext().getResources().getStringArray(R.array.pmType);
                 mstatus=intent.getStringExtra("status");
-                tvStatusSend.setText("ارسال "+titles[Integer.valueOf(mstatus)-1]+" به واحد "+govrs[Integer.valueOf(gov)]);
+                tvStatusSend.setText("ارسال "+titles[Integer.valueOf(mstatus)-1]+" به واحد "+govrs[Integer.valueOf(gov)-1]);
                 dialog.dismiss();
             }
         });
@@ -263,7 +224,12 @@ public class ShareActivity extends AppCompatActivity {
 
                 if (mytext.length()>4) {
                     Toast.makeText(ShareActivity.this, "درحال ارسال اطلاعات", Toast.LENGTH_LONG).show();
-                    ImageUploadToServerFunction();
+                    if (nopicFlag){
+                        regSocial();
+                    }else{
+                        uploadImage();
+                    }
+
                 }else {
                     Toast.makeText(mContext, "لطفا متنی برای پیام بنویسید", Toast.LENGTH_LONG).show();
                 }
@@ -274,7 +240,11 @@ public class ShareActivity extends AppCompatActivity {
         populateGPS();
 
         setupBottomNavigationView();
-        setImage();
+        try {
+            setImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -346,228 +316,117 @@ public class ShareActivity extends AppCompatActivity {
 
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == this.RESULT_CANCELED) {
-            return;
-        }
+    /**
+     * gets the image url from the incoming intent and displays the chosen image
+     */
+    private void setImage() throws IOException {
+        intent = getIntent();
 
-        if(requestCode == REQUEST_CAMERA){
-            Log.d(TAG, "onActivityResult: done taking a photo.");
 
-            bitmap = (Bitmap) data.getExtras().get("data");
-            image.setImageBitmap(bitmap);
-            cmprs=90;
-            PROFILE_PIC_COUNT = 1;
+        if(intent.hasExtra(getString(R.string.selected_image))){
+            imgUrl = intent.getStringExtra(getString(R.string.selected_image));
+            lat=intent.getStringExtra("lat");
+            lng=intent.getStringExtra("lng");
+            Log.d(TAG, "setImage: got new image url: " + imgUrl);
+//            UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
 
-        }else if (requestCode==SELECT_FILE){
-            Log.d(TAG, "onActivityResult: done taking a photo.");
-            if (data != null) {
-                Uri contentURI = data.getData();
-                cmprs=15;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-//                    Log.e("The image", imageToString(bitmap));
-                    image.setImageBitmap(bitmap);
-
-//                    String filePath=getRealPathFromURI(ShareActivity.this,contentURI);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            cmprs=70;
+            FileInputStream in = null;
+            try {
+                in = new FileInputStream(imgUrl);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
-
-
+            BufferedInputStream buf = new BufferedInputStream(in);
+            byte[] bMapArray= new byte[buf.available()];
+            buf.read(bMapArray);
+            bitmap = BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
+            image.setImageBitmap(bitmap);
+        }
+        else if(intent.hasExtra(getString(R.string.selected_bitmap))){
+            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
+            lat=intent.getStringExtra("lat");
+            lng=intent.getStringExtra("lng");
+            Log.d(TAG, "setImage: got new bitmap aliabedi"+lat+lng);
+            image.setImageBitmap(bitmap);
+            cmprs=70;
+        }else {
+            nopicFlag=true;
+            image.setImageResource(R.drawable.noimage);
         }
     }
-
 
      /*
      ------------------------------------ send post to server ---------------------------------------------
      */
 
 
-
-    public void ImageUploadToServerFunction(){
-
-        if (PROFILE_PIC_COUNT==0){
-            regSocial();
-            return;
-        }
-
-        ByteArrayOutputStream byteArrayOutputStreamObject ;
-
-        byteArrayOutputStreamObject = new ByteArrayOutputStream();
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, cmprs, byteArrayOutputStreamObject);
-
-        byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
-
-        final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
-
-        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
-
-            @Override
-            protected void onPreExecute() {
-
-                super.onPreExecute();
-
-                progressDialog = ProgressDialog.show(ShareActivity.this,"درحال ارسال عکس","کمی صبر کنید",false,false);
-            }
-
-            @Override
-            protected void onPostExecute(String string1) {
-
-                super.onPostExecute(string1);
-
-                // Dismiss the progress dialog after done uploading.
-                progressDialog.dismiss();
-
-                // Printing uploading success message coming from server on android app.
-                Intent intent =new Intent(ShareActivity.this, HomeActivity.class);
-                startActivity(intent);
-                finish();
-                // Setting image as transparent after done uploading.
-//                imageView.setImageResource(android.R.color.transparent);
-
-
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-
-                ShareActivity.ImageProcessClass imageProcessClass = new ShareActivity.ImageProcessClass();
-
-                HashMap<String,String> HashMapParams = new HashMap<String,String>();
-
-                HashMapParams.put(ImageName, myphone);
-
-                HashMapParams.put(ImagePath, ConvertImage);
-                HashMapParams.put("status", mstatus);
-                HashMapParams.put("gov", gov);
-                HashMapParams.put("lat", lat);
-                HashMapParams.put("lng", lng);
-                HashMapParams.put("name", myname);
-                HashMapParams.put("phone", myphone);
-                HashMapParams.put("text", mytext);
-
-
-                String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
-
-                return FinalData;
-            }
-        }
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-
-        AsyncTaskUploadClassOBJ.execute();
-    }
-
-    public class ImageProcessClass{
-
-        public String ImageHttpRequest(String requestURL,HashMap<String, String> PData) {
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            try {
-
-                URL url;
-                HttpURLConnection httpURLConnectionObject ;
-                OutputStream OutPutStream;
-                BufferedWriter bufferedWriterObject ;
-                BufferedReader bufferedReaderObject ;
-                int RC ;
-
-                url = new URL(requestURL);
-
-                httpURLConnectionObject = (HttpURLConnection) url.openConnection();
-
-                httpURLConnectionObject.setReadTimeout(19000);
-
-                httpURLConnectionObject.setConnectTimeout(19000);
-
-                httpURLConnectionObject.setRequestMethod("POST");
-
-                httpURLConnectionObject.setDoInput(true);
-
-                httpURLConnectionObject.setDoOutput(true);
-
-                OutPutStream = httpURLConnectionObject.getOutputStream();
-
-                bufferedWriterObject = new BufferedWriter(
-
-                        new OutputStreamWriter(OutPutStream, "UTF-8"));
-
-                bufferedWriterObject.write(bufferedWriterDataFN(PData));
-
-                bufferedWriterObject.flush();
-
-                bufferedWriterObject.close();
-
-                OutPutStream.close();
-
-                RC = httpURLConnectionObject.getResponseCode();
-
-                if (RC == HttpsURLConnection.HTTP_OK) {
-
-                    bufferedReaderObject = new BufferedReader(new InputStreamReader(httpURLConnectionObject.getInputStream()));
-
-                    stringBuilder = new StringBuilder();
-
-                    String RC2;
-
-                    while ((RC2 = bufferedReaderObject.readLine()) != null){
-
-                        stringBuilder.append(RC2);
+    private void uploadImage(){
+        //Showing the progress dialog
+        final ProgressDialog loading = ProgressDialog.show(this,"Uploading...","Please wait...",false,false);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ServerUploadPath,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        //Disimissing the progress dialog
+                        loading.dismiss();
+                        //Showing toast message of the response
+                        Toast.makeText(ShareActivity.this, s , Toast.LENGTH_LONG).show();
                     }
-                }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        loading.dismiss();
+                        finish();
+                        //Showing toast
+                        Toast.makeText(ShareActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                //Converting Bitmap to String
+                String image = getStringImage(bitmap);
+                //Getting Image Name
+                String name = mobile;
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+                params.put(ImageName, mobile);
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                params.put(ImagePath, image);
+                params.put("status", mstatus);
+                params.put("gov", gov);
+                params.put("lat", oldLat);
+                params.put("lng", oldLng);
+                params.put("name", myname);
+                params.put("phone", myphone);
+                params.put("text", mytext);
+                params.put("uploadFile", image);
+
+
+                //returning parameters
+                return params;
             }
-            return stringBuilder.toString();
-        }
+        };
 
-        private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
+        //Creating a Request Queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-            StringBuilder stringBuilderObject;
+        //Adding request to the queue
+        requestQueue.add(stringRequest);
+    }
 
-            stringBuilderObject = new StringBuilder();
 
-            for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
-
-                if (check)
-
-                    check = false;
-                else
-                    stringBuilderObject.append("&");
-
-                stringBuilderObject.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
-
-                stringBuilderObject.append("=");
-
-                stringBuilderObject.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
-            }
-
-            return stringBuilderObject.toString();
-        }
+    public String getStringImage(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
 
     }
 
-    public String getRealPathFromURI(Context context, Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = { MediaStore.Images.Media.DATA };
-            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
 
     private void populateGPS() {
         if (!mayRequestLocation()) {
@@ -702,26 +561,5 @@ public class ShareActivity extends AppCompatActivity {
 
     }
 
-    private void setImage(){
-        intent = getIntent();
 
-        if(intent.hasExtra(getString(R.string.selected_image))){
-            imgUrl = intent.getStringExtra(getString(R.string.selected_image));
-            Log.d(TAG, "setImage: got new image url: " + imgUrl);
-            UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
-            PROFILE_PIC_COUNT=1;
-        }
-        else {
-//            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
-            Log.d(TAG, "setImage: got new bitmap");
-            image.setImageResource(R.drawable.noimage);
-            PROFILE_PIC_COUNT=0;
-        }
-        if (intent.hasExtra("status")){
-            String[] govrs=getApplicationContext().getResources().getStringArray(R.array.moavenat);
-            String[] titles=getApplicationContext().getResources().getStringArray(R.array.pmType);
-            mstatus=intent.getStringExtra("status");
-            tvStatusSend.setText("ارسال "+titles[Integer.valueOf(mstatus)-1]+" به واحد "+govrs[Integer.valueOf(gov)]);
-        }
-    }
 }

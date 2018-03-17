@@ -44,7 +44,7 @@ public class SignupActivity extends AppCompatActivity {
     Button btnReg,btnSignIn;
     String myname,melli,mob,sal,pass,gender,ctName;
     TextView txtmsg;
-    String REGISTER_URL="",server="";
+    String REGISTER_URL="",server="",ctDesc="",ctpic="";
     Boolean kansel=false;
     View focusView = null;
     Boolean areaFlag=false,connected=false;
@@ -84,6 +84,10 @@ public class SignupActivity extends AppCompatActivity {
                 ctName=areaArrayList.get(position).getAfname();
                 homelat=areaArrayList.get(position).getAlat();
                 homelng=areaArrayList.get(position).getAlng();
+                ctDesc=areaArrayList.get(position).getDescription();
+                ctpic=areaArrayList.get(position).getPic();
+
+
 //                Toast.makeText(SignupActivity.this, "select:"+position+" "+server, Toast.LENGTH_SHORT).show();
             }
 
@@ -215,6 +219,8 @@ public class SignupActivity extends AppCompatActivity {
                         SP2.putString("ctname", ctName);
                         SP2.putString("homelat",String.valueOf(homelat));
                         SP2.putString("homelng",String.valueOf(homelng));
+                        SP2.putString("ctpic",String.valueOf(ctpic));
+                        SP2.putString("ctdesc",String.valueOf(ctDesc));
                         SP2.apply();
                         Intent intent=new Intent(SignupActivity.this,HomeActivity.class);
                         startActivity(intent);
@@ -285,7 +291,8 @@ public class SignupActivity extends AppCompatActivity {
                                 area.setAdiameter(jsonObject.getInt("adiameter"));
                                 area.setServer(jsonObject.getString("server"));
                                 area.setZoom(jsonObject.getInt("azoom"));
-
+                                area.setPic(jsonObject.getString("pic"));
+                                area.setDescription(jsonObject.getString("memo"));
 
                                 areaArrayList.add(area);
                             }

@@ -79,14 +79,14 @@ public class AdsAdapter extends BaseAdapter {
         DisplayImageOptions options;
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.jobpic)
-                .showImageOnFail(R.drawable.jobpic)
+                .showImageForEmptyUri(R.drawable.noimage)
+                .showImageOnFail(R.drawable.noimage)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(server+"/assets/images/ads/"+m.getPic(),thumbNail,options);
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(m.getPic(),thumbNail,options);
 
         // title
         name.setText(m.getTitle());

@@ -61,7 +61,7 @@ public class WeatherFunction {
 
     public interface AsyncResponse {
 
-        void processFinish(String output1, String output2, String output3, String output4, String output5, String output6, String output7, String output8);
+        void processFinish(String output1, String output2, String output3, String output4, String output5, String output6, String output7, String output8,String output9, String output10, String output11);
     }
 
 
@@ -105,13 +105,18 @@ public class WeatherFunction {
                     String temperature = String.format(Locale.US,"%.2f", main.getDouble("temp"))+ "°";
                     String humidity = main.getString("humidity") + "%";
                     String pressure = main.getString("pressure") + " hPa";
+                    String minTemp=main.getString("temp_min") + "°";
+                    String maxTemp=main.getString("temp_max") + "°";
+                    String wind=json.getJSONObject("wind").getString("speed");
                     String updatedOn = df.format(new Date(json.getLong("dt")*1000));
                     String iconText = setWeatherIcon(details.getInt("id"),
                             json.getJSONObject("sys").getLong("sunrise") * 1000,
                             json.getJSONObject("sys").getLong("sunset") * 1000);
                     String ende=""+ (json.getJSONObject("sys").getLong("sunrise") * 1000);
+                    String sunrise=""+json.getJSONObject("sys").getLong("sunrise") * 1000;
+
                     Log.d(TAG, "onPostExecute: "+city+" - "+ description+" - "+ temperature+" - "+ humidity+" - "+ pressure+updatedOn+" - "+ iconText+ " :"+ (json.getJSONObject("sys").getLong("sunrise") * 1000));
-                    delegate.processFinish(city, description, temperature, humidity, pressure, updatedOn, iconText, "1520995696000");
+                    delegate.processFinish(city, description, temperature, humidity, pressure, updatedOn, iconText, sunrise,minTemp,maxTemp,wind);
 
                 }
             } catch (JSONException e) {

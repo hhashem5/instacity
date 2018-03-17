@@ -1,8 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
+    android:gravity="right"
+    android:layout_gravity="right"
     android:layout_height="wrap_content" >
     <RadioGroup
         android:id="@+id/rd_group"
+        android:layout_margin="10dp"
+        android:layout_marginRight="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -34,7 +38,7 @@
     </RadioGroup>
     <Button
         android:id="@+id/btnOpinion"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rd_group"
         android:layout_centerInParent="true"

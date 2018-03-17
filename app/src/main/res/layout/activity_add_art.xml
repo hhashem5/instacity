@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.idpz.instacity.Like.AddArtActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="65"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/imgArtSave"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/vilhome"
+                />
+            <Button
+                android:id="@+id/btnArtImgSelect"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/white_gray_border_bottom"
+                android:text="انتخاب عکس"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="35"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text=""
+                    android:hint=""
+                    android:ems="8"
+                    android:id="@+id/txtArtName"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="نام محصول"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob1"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text=""
+                    android:hint="مثال: خانگی"
+                    android:ems="10"
+                    android:id="@+id/txtArtType"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="نوع"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob22"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:text=""
+                    android:hint=""
+                    android:ems="10"
+                    android:id="@+id/txtArtWeight"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="وزن"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob21"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text=""
+                    android:hint=""
+                    android:ems="10"
+                    android:id="@+id/txtArtAddress"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="آدرس"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob2"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text=""
+                    android:hint=""
+                    android:ems="10"
+                    android:id="@+id/txtArtMat"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="جنس"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob27"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text=""
+                    android:hint=""
+                    android:ems="10"
+                    android:id="@+id/txtArtColor"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="رنگ"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob28"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:text=""
+                    android:hint=""
+                    android:ems="10"
+                    android:id="@+id/txtArtPrice"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="قیمت"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvJob29"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnArtSend"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/white_gray_border_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="ثبت"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

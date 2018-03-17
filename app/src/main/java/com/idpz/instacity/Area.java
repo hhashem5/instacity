@@ -14,11 +14,13 @@ public class Area {
     private float adiameter;
     private String server;
     private int zoom;
+    private String description;
+    private String pic;
 
     public Area() {
     }
 
-    public Area(int id, String aename, String afname, float alat, float alng, float adiameter, String server, int zoom) {
+    public Area(int id, String aename, String afname, float alat, float alng, float adiameter, String server, int zoom,String description,String pic) {
         this.id = id;
         this.aename = aename;
         this.afname = afname;
@@ -27,6 +29,8 @@ public class Area {
         this.adiameter = adiameter;
         this.server=server;
         this.zoom = zoom;
+        this.description=description;
+        this.pic=pic;
     }
 
     public String getServer() {
@@ -91,5 +95,21 @@ public class Area {
 
     public void setZoom(int zoom) {
         this.zoom = zoom;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
     }
 }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,13 +26,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.MapFragment;
 import com.idpz.instacity.Like.TourismActivity;
+import com.idpz.instacity.Profile.ChangeCityActivity;
+import com.idpz.instacity.Profile.LikesActivity;
+import com.idpz.instacity.Profile.MyProfileActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.Search.SearchActivity;
-import com.idpz.instacity.models.Video;
+import com.idpz.instacity.Share.GalleryActivity;
+import com.idpz.instacity.models.VisitPlace;
 import com.idpz.instacity.utils.BuilderManager;
 import com.idpz.instacity.utils.VideoPostAdapter;
+import com.idpz.instacity.utils.VisitPlacesAdapter;
 import com.idpz.instacity.utils.WeatherFunction;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
@@ -55,35 +60,49 @@ import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
 
 public class MainFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
-    private static final String TAG = "CameraFragment";
+    private static final String TAG = "MainFragment";
     ProgressDialog pd;
-    ArrayList<Video> dataModels;
+    ArrayList<VisitPlace> dataModels;
     //    DBLastData dbLastData;
     VideoPostAdapter videoPostAdapter;
-    String server="",fullServer="",homeLat="",homeLng="";
+    String server="",fullServer="",homeLat="",homeLng="",ctDesc="",ctpic="",ctname="";
     int lim1=0,lim2=20;
     Boolean reqVideoFlag =false,connected=false;
     private BoomMenuButton bmb;
-    ImageButton btnCars, btntourism, btnHandyCraft;
+    ImageButton btnCars, btntourism, btnHandyCraft,btnChangeCity;
 
     TextView cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField;
+    TextView txtWind,txtMin,txtMax;
     ImageView imgWeather;
     Typeface weatherFont;
+    ListView lvVisitPlaces;
+    VisitPlacesAdapter visitPlacesAdapter;
+
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_main,container,false);
 
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
+        server=SP1.getString("server", "0");
+        fullServer =  server+"/i/getvisitplace.php";
+        homeLat=SP1.getString("homelat", "0");
+        homeLng=SP1.getString("homelng", "0");
+        ctpic=SP1.getString("ctpic", "0");
+        ctDesc=SP1.getString("ctdesc", "0");
+        ctname=SP1.getString("ctname", "");
+
         btnCars = (ImageButton) view.findViewById(R.id.btnCars);
         btntourism = (ImageButton) view.findViewById(R.id.btnTourism);
         btnHandyCraft = (ImageButton) view.findViewById(R.id.btnHandyCarft);
-        SharedPreferences SP1;
-        SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
-        homeLat=SP1.getString("homelat", "0");
-        homeLng=SP1.getString("homelng", "0");
+        btnChangeCity = (ImageButton) view.findViewById(R.id.btnChangCity);
 
-        Toast.makeText(getContext(), homeLat+":"+homeLng, Toast.LENGTH_LONG).show();
+        txtMax=(TextView)view.findViewById(R.id.max_field);
+        txtMin=(TextView)view.findViewById(R.id.min_field);
+        txtWind=(TextView)view.findViewById(R.id.speed_field);
 
         btnCars.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,11 +114,23 @@ public class MainFragment extends Fragment {
 
             }
         });
+
+        btnChangeCity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent4=new Intent(getContext(), ChangeCityActivity.class);
+                intent4.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+                getContext().startActivity(intent4);
+
+            }
+        });
         btntourism.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent4=new Intent(getContext(), TourismActivity.class);
                 intent4.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent4.putExtra("position", 0);
                 getContext().startActivity(intent4);
             }
         });
@@ -108,15 +139,25 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent4=new Intent(getContext(), TourismActivity.class);
                 intent4.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+                intent4.putExtra("position", 2);
                 getContext().startActivity(intent4);
             }
         });
 
+        // tourist visit places list view
+        dataModels = new ArrayList<>();
+        dataModels.add(new VisitPlace(1,"زال تپه","تپه دوره سلجوقیان","بلیط ندارد","بازدید همه روزه","همه ساعت","35.711","50.912","02636884391","خیابان امام انتهای خ خندان","زال تپه مربوط به پیش از اسلام - دوره سلجوقیان است و در شهرستان فردیس، استان البرز، روستای فرخ آباد زیبادشت واقع شده و این اثر در تاریخ ۱ مهر ۱۳۸۲ با شمارهٔ ثبت ۱۰۳۰۴ به\u200Cعنوان یکی از آثار ملی ایران به ثبت رسیده است",""));
+        lvVisitPlaces=(ListView)view.findViewById(R.id.lvVisitPlaces);
+        visitPlacesAdapter=new VisitPlacesAdapter(getActivity(),dataModels);
+        lvVisitPlaces.setAdapter(visitPlacesAdapter);
+
+
+
         bmb = (BoomMenuButton) view.findViewById(R.id.bmb);
         assert bmb != null;
         bmb.setButtonEnum(ButtonEnum.TextOutsideCircle);
-        bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_8_1);
-        bmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_8_3);
+        bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_6_1);
+        bmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_6_3);
 
         for (int i = 0; i < bmb.getPiecePlaceEnum().pieceNumber(); i++)
             bmb.addBuilder(BuilderManager.getTextOutsideCircleButtonBuilder().listener(new OnBMClickListener() {
@@ -124,54 +165,60 @@ public class MainFragment extends Fragment {
                 public void onBoomButtonClick(int index) {
                     switch (index) {
                         case 1:
-                            Intent intent1 = new Intent(getContext(), MapFragment.class);
+                            Toast.makeText(getActivity(), "1", Toast.LENGTH_SHORT).show();
+                            Intent intent1 = new Intent(getContext(), GalleryActivity.class);
                             Bundle b = new Bundle();
                             b.putString("key", "food"); //          city Map
                             intent1.putExtras(b); //Put your id to your next Intent
                             startActivity(intent1);
                             break;
                         case 2:
-                            Intent intent2 = new Intent(getContext(), MapFragment.class);
+                            Toast.makeText(getActivity(), "2", Toast.LENGTH_SHORT).show();
+                            Intent intent2 = new Intent(getContext(), MyProfileActivity.class);
                             Bundle c2 = new Bundle();
                             c2.putString("key", "health"); //Your id
                             intent2.putExtras(c2); //Put your id to your next Intent
                             startActivity(intent2);
                             break;
                         case 3:
-                            Intent intent3 = new Intent(getContext(), MapFragment.class);
+                            Toast.makeText(getActivity(), "3", Toast.LENGTH_SHORT).show();
+                            Intent intent3 = new Intent(getContext(), LikesActivity.class);
                             Bundle d3 = new Bundle();
                             d3.putString("key", "religion"); //Your id
                             intent3.putExtras(d3); //Put your id to your next Intent
                             startActivity(intent3);
                             break;
                         case 4:
-                            Intent intent = new Intent(getContext(), MapFragment.class);
+                            Toast.makeText(getActivity(), "4", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getContext(), SearchActivity.class);
                             startActivity(intent);
                             break;
                         case 5:
-                            Intent intent4 = new Intent(getContext(), MapFragment.class);
+                            Toast.makeText(getActivity(), "5", Toast.LENGTH_SHORT).show();
+                            Intent intent4 = new Intent(getContext(), VideoActivity.class);
                             Bundle e4 = new Bundle();
                             e4.putString("key", "services"); //Your id
                             intent4.putExtras(e4); //Put your id to your next Intent
                             startActivity(intent4);
                             break;
                         case 6:
-                            Intent intent6 = new Intent(getContext(), MapFragment.class);
-
+                            Toast.makeText(getActivity(), "6", Toast.LENGTH_SHORT).show();
+                            Intent intent6 = new Intent(getContext(), KaryabiActivity.class);
                             startActivity(intent6);
                             break;
                         case 7:
-                            Intent intent7 = new Intent(getContext(), MapFragment.class);
+                            Toast.makeText(getActivity(), "7", Toast.LENGTH_SHORT).show();
+                            Intent intent7 = new Intent(getContext(), RuydadActivity.class);
                             Bundle b7 = new Bundle();
                             b7.putString("key", "sport"); //Your id
                             intent7.putExtras(b7); //Put your id to your next Intent
                             startActivity(intent7);
                             break;
                         case 0:
-                            Intent intent0 = new Intent(getContext(), MapFragment.class);
-                            Bundle b0 = new Bundle();
-                            b0.putString("key", "edu"); //          137
-                            intent0.putExtras(b0); //Put your id to your next Intent
+                            Toast.makeText(getActivity(), "0", Toast.LENGTH_SHORT).show();
+                            Intent intent0 = new Intent(getContext(), HomeActivity.class);
+//                            intent0.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            intent0.putExtra("position", 0); //          137
                             startActivity(intent0);
                             break;
 
@@ -194,10 +241,13 @@ public class MainFragment extends Fragment {
 //        weatherIcon.setTypeface(weatherFont);
 
 
+        reqVisitPlace();
         WeatherFunction.placeIdTask asyncTask =new WeatherFunction.placeIdTask(new WeatherFunction.AsyncResponse() {
-            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_pressure, String weather_updatedOn, String weather_iconText, String sun_rise) {
-                Log.d(TAG, "processFinish: "+weather_city+" "+weather_updatedOn);
-                switch (weather_description){
+            public void processFinish(String weather_city, String weather_description, String weather_temperature,
+                                      String weather_humidity, String weather_pressure, String weather_updatedOn,
+                                      String weather_iconText, String sun_rise,String min,String max,String wind) {
+                Log.d(TAG, "processFinish: "+weather_city+" "+weather_description);
+                switch (weather_description.toLowerCase()){
                     case "clear sky":
                         imgWeather.setImageResource(R.drawable.sunny);
                         updatedField.setText("آسمان صاف");
@@ -206,7 +256,7 @@ public class MainFragment extends Fragment {
                         imgWeather.setImageResource(R.drawable.partlycloudy);
                         updatedField.setText("کمی ابری");
                         break;
-                    case "scatteredclouds":
+                    case "scattered clouds":
                         imgWeather.setImageResource(R.drawable.scatteredclouds);
                         updatedField.setText("ابری");
                         break;
@@ -216,7 +266,11 @@ public class MainFragment extends Fragment {
                         break;
                     case "shower rain":
                         imgWeather.setImageResource(R.drawable.rainshower);
-                        updatedField.setText("کمی بارانی");
+                        updatedField.setText(" بارانی");
+                        break;
+                    case "light rain":
+                        imgWeather.setImageResource(R.drawable.rainshower);
+                        updatedField.setText(" بارانی");
                         break;
                     case "rain":
                         imgWeather.setImageResource(R.drawable.rainshower);
@@ -231,20 +285,23 @@ public class MainFragment extends Fragment {
                         updatedField.setText("برفی");
                         break;
                     case "mist":
-                        imgWeather.setImageResource(R.drawable.sunny);
-                        updatedField.setText("آفتابی");
+                        imgWeather.setImageResource(R.drawable.mist);
+                        updatedField.setText("مه و غبار");
                         break;
                     default:
                         imgWeather.setImageResource(R.drawable.mist);
                         updatedField.setText("مه و غبار");
                 }
-                cityField.setText(weather_city);
+                cityField.setText("مرکز: "+weather_city);
 //                updatedField.setText(weather_updatedOn);
 
-                currentTemperatureField.setText("دمای هوا:"+weather_temperature);
-                humidity_field.setText("رطوبت: "+weather_humidity);
+                currentTemperatureField.setText(weather_temperature);
+                humidity_field.setText(weather_humidity);
 //                pressure_field.setText("فشار: "+weather_pressure);
 //                weatherIcon.setText(Html.fromHtml(weather_iconText));
+                txtMin.setText("↓ "+min+" ");
+                txtMax.setText("↑ "+max);
+                txtWind.setText(wind+"km");
 
             }
         });
@@ -256,7 +313,7 @@ public class MainFragment extends Fragment {
     }
 
 
-    public void reqVideos() {
+    public void reqVisitPlace() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = fullServer;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -265,30 +322,35 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         reqVideoFlag =true;
-                        pd.dismiss();
-                        swipeRefreshLayout.setRefreshing(false);
-                        Log.d(TAG, "onResponse: videos recived");
+//                        pd.dismiss();
+//                        swipeRefreshLayout.setRefreshing(false);
+                        dataModels.clear();
+                        Log.d(TAG, "onResponse: visit places recived");
 
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
-                            Video video;
+                            VisitPlace visitPlace;
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
 
 
                             for (int i = jsonArray.length(); i > 0; i--) {
                                 jsonObject = jsonArray.getJSONObject(i - 1);
-                                video=new Video();
-                                video.setId(jsonObject.getInt("id"));
-                                video.setTitle(jsonObject.getString("title"));
-                                video.setVideoUrl(jsonObject.getString("url"));
-                                video.setComment(jsonObject.getString("comment"));
-                                video.setDetail(jsonObject.getString("vdate"));
-
-                                dataModels.add(video);
+                                visitPlace=new VisitPlace();
+                                visitPlace.setId(jsonObject.getInt("id"));
+                                visitPlace.setName(jsonObject.getString("name"));
+                                visitPlace.setYear(jsonObject.getString("pyear"));
+                                visitPlace.setTicket(jsonObject.getString("ticket"));
+                                visitPlace.setDays(jsonObject.getString("pdays"));
+                                visitPlace.setHours(jsonObject.getString("phours"));
+                                visitPlace.setTel(jsonObject.getString("tel"));
+                                visitPlace.setAddress(jsonObject.getString("address"));
+                                visitPlace.setMemo(jsonObject.getString("memo"));
+                                visitPlace.setPic(server+"/assets/images/places/"+jsonObject.getString("pic"));
+                                dataModels.add(visitPlace);
 
                             }
-                            videoPostAdapter.notifyDataSetChanged();
+                            visitPlacesAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
 
@@ -304,6 +366,7 @@ public class MainFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
                         Log.d("ERROR","error => "+error.toString());
+                        reqVisitPlace();
                     }
                 }
         ) {

@@ -1,9 +1,7 @@
 package com.idpz.instacity.Like;
 
-import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -66,41 +64,15 @@ public class AdsFragment extends Fragment{
 
         listView.setAdapter(adapter);
 
+        reqAds();
 
-        new Thread() {
+        btnAdsReg.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                while (!adsFlag) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
-//                                Toast.makeText(getActivity().getApplicationContext(), "اینترنت وصل نیست!", Toast.LENGTH_SHORT).show();
-                            }
-
-                            if (connected && !adsFlag) {
-                                reqAds();
-                            }
-
-                        }
-                    });
-                    try {
-                        sleep(7000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            public void onClick(View v) {
+                Intent in =new Intent(getContext(),AdsAddActivity.class);
+                getActivity().startActivity(in);
             }
-        }.start();
-
-
-
+        });
 
 
 
@@ -132,7 +104,7 @@ public class AdsFragment extends Fragment{
                                 area.setMemo(jsonObject.getString("memo"));
                                 area.setAddress(jsonObject.getString("address"));
                                 area.setTel(jsonObject.getString("tel"));
-                                area.setPic(jsonObject.getString("pic"));
+                                area.setPic(server+"/assets/images/ads/"+jsonObject.getString("pic"));
 
                                 dataModels.add(area);
 

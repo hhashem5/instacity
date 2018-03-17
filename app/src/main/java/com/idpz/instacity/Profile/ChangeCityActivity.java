@@ -127,6 +127,8 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                     SP2.putString("ctname", myArea.getAfname());
                     SP2.putString("homelat",String.valueOf(homelat));
                     SP2.putString("homelng",String.valueOf(homelng));
+                    SP2.putString("ctpic",myArea.getPic());
+                    SP2.putString("ctdesc",myArea.getDescription());
                     SP2.apply();
                     finishAffinity();
                     Intent intent=new Intent(ChangeCityActivity.this,HomeActivity.class);
@@ -235,6 +237,8 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                                 area.setAdiameter(jsonObject.getInt("adiameter"));
                                 area.setServer(jsonObject.getString("server"));
                                 area.setZoom(jsonObject.getInt("azoom"));
+                                area.setPic(jsonObject.getString("pic"));
+                                area.setDescription(jsonObject.getString("memo"));
 
                                 areaArrayList.add(area);
                                 mycity.setLatitude(area.getAlat());

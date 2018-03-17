@@ -29,7 +29,7 @@ public class TourismActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private FrameLayout mFrameLayout;
     private RelativeLayout mRelativeLayout;
-
+    TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class TourismActivity extends AppCompatActivity {
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(2);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
 //        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
@@ -101,6 +101,12 @@ public class TourismActivity extends AppCompatActivity {
 //        tabLayout.getTabAt(2).setIcon(R.drawable.ic_news);
         tabLayout.getTabAt(2).setText("صنایع دستی");
         tabLayout.getTabAt(1).select();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        tabLayout.getTabAt(getIntent().getIntExtra("position", 1)).select();
     }
 
     // تنظیم نوار پایین برنامه

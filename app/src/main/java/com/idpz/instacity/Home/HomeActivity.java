@@ -92,7 +92,7 @@ public class HomeActivity extends AppCompatActivity implements
     TextView tvPopup;
     ListView lv;
     //
-
+    TabLayout tabLayout;
 
     //widgets
     GPSTracker gps,gps2;
@@ -264,7 +264,7 @@ public class HomeActivity extends AppCompatActivity implements
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(2);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
 //        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
@@ -274,6 +274,12 @@ public class HomeActivity extends AppCompatActivity implements
 //        tabLayout.getTabAt(2).setIcon(R.drawable.ic_news);
         tabLayout.getTabAt(2).setText("اخبارمحلی");
         tabLayout.getTabAt(1).select();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        tabLayout.getTabAt(getIntent().getIntExtra("position", 1)).select();
     }
 
     /**

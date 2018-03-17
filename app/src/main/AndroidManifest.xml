@@ -67,25 +67,30 @@
         <activity android:name=".Profile.SinglePostActivity" />
         <activity android:name=".Profile.MyProfileActivity" />
         <activity android:name=".Home.LoginActivity" />
-        <activity android:name=".Home.SignupActivity">
-
-        </activity>
+        <activity android:name=".Home.SignupActivity" />
         <activity android:name=".Search.StoreRegActivity" />
         <activity android:name=".Profile.ChangeCityActivity" />
         <activity android:name=".Home.LikersActivity" />
         <activity android:name=".Share.GalleryActivity" />
         <activity android:name=".Like.TourismActivity" />
-        <activity android:name=".Home.SplashScreenActivity"
-            android:theme="@style/SplashTheme"
+        <activity
+            android:name=".Home.SplashScreenActivity"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:label="@string/app_name">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity android:name=".Home.VideoActivity" />
+        <activity android:name=".Home.KaryabiActivity" />
+        <activity android:name=".Home.RuydadActivity" />
+        <activity android:name=".Home.AboutusActivity" />
+        <activity android:name=".Like.AdsAddActivity" />
+        <activity android:name=".Like.AddArtActivity" />
+        <activity android:name=".Like.VillaAddActivity"></activity>
     </application>
 
 </manifest>

@@ -97,7 +97,7 @@
         <item>ساختمانی</item>
         <item>مالی</item>
         <item>خدمات شهری</item>
-        <item>شهردار</item>
+        <item>مسئولین شهری</item>
         <item>سایر</item>
     </string-array>
     <string-array name="pmType">
@@ -141,6 +141,11 @@
         <item>گردشگری</item>
     </string-array>
 
+    <string-array name="Cars">
+        <item>اتوبوس</item>
+        <item>حمل زباله</item>
+    </string-array>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -154,14 +159,14 @@
     <string name="title_activity_food_tab">FoodTab</string>
     <string name="title_activity_salad_tab">SaladTabActivity</string>
 
-    <string name="text1">نقشه کامل شهر</string>
-    <string name="text2">ارسال پیام پیشنهاد انتقاد</string>
-    <string name="text3">مشاهده موقعیت تاکسی ها</string>
-    <string name="text4">درباره تیم همکاری برنامه</string>
-    <string name="text5">مشاهده اتوبوس در نقشه</string>
-    <string name="text6">فیلم آموزشی امکانات برنامه</string>
-    <string name="text7">راهنمای استفاده از برنامه</string>
-    <string name="text8">هشت</string>
+    <string name="text1">ارسال انتقاد پیشنهاد</string>
+    <string name="text2">تکمیل پروفایل</string>
+    <string name="text3">هدایا</string>
+    <string name="text4">نقشه امکانات</string>
+    <string name="text5">فیلم</string>
+    <string name="text6">کاریابی</string>
+    <string name="text7">رویداد محلی</string>
+    <string name="text8">مسئولین محلی</string>
     <string name="text9">سامانه پیام مردمی 137</string>
 
 
@@ -181,7 +186,6 @@
     <string name="weather_drizzle">&#xf01c;</string>
 
     <string name="place_not_found">Sorry, no weather data found.</string>
-
 
 
 </resources>

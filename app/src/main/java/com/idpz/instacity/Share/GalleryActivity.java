@@ -80,7 +80,6 @@ public class GalleryActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (rd0.isChecked())
                 mstatus="1";
-                Toast.makeText(GalleryActivity.this,mstatus+ "پیشنهاد", Toast.LENGTH_SHORT).show();
             }
         });
         rd1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -123,7 +122,7 @@ public class GalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to the final share screen.");
-
+                Toast.makeText(GalleryActivity.this, "لطفا کمی صبر کنید", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(GalleryActivity.this, ShareActivity.class);
                     intent.putExtra(getString(R.string.selected_image), mSelectedImage);
                     intent.putExtra("status", mstatus);

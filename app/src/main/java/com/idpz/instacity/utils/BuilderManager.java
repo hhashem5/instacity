@@ -17,12 +17,12 @@ import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 public class BuilderManager {
 
     private static int[] imageResources = new int[]{
-            R.drawable.ifood,
-            R.drawable.iedu,
-            R.drawable.ihealth,
-            R.drawable.ireligion,
-            R.drawable.irepair,
-            R.drawable.ishop,
+            R.drawable.sad,
+            R.drawable.msg,
+            R.drawable.myprofile,
+            R.drawable.giftl,
+            R.drawable.map,
+            R.drawable.video,
             R.drawable.iservices,
             R.drawable.isport,
             R.drawable.ifood,
