@@ -23,16 +23,18 @@ public class BuilderManager {
             R.drawable.giftl,
             R.drawable.map,
             R.drawable.video,
-            R.drawable.iservices,
-            R.drawable.isport,
-            R.drawable.ifood,
-            R.drawable.iedu,
-            R.drawable.ihealth,
-            R.drawable.ireligion,
-            R.drawable.irepair,
-            R.drawable.ishop,
-            R.drawable.iservices,
-            R.drawable.isport
+            R.drawable.sad,
+            R.drawable.msg,
+            R.drawable.myprofile,
+            R.drawable.giftl,
+            R.drawable.map,
+            R.drawable.video,
+            R.drawable.sad,
+            R.drawable.msg,
+            R.drawable.myprofile,
+            R.drawable.giftl,
+            R.drawable.map,
+            R.drawable.video
     };
     private static int[] textreses=new int[]{
             R.string.app_name,

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,8 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class StationFragment extends Fragment {
+public class StationFragment extends Fragment  implements SwipeRefreshLayout.OnRefreshListener{
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private static final String TAG = "StationFragment";
 
@@ -52,6 +54,9 @@ public class StationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_station,container,false);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.villasRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         listView=(ListView)view.findViewById(R.id.lvVillaContent);
         btnVillaReg=(ImageView) view.findViewById(R.id.imgAddVilla);
@@ -93,7 +98,7 @@ public class StationFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         JSONArray jsonArray= null;
-
+                        swipeRefreshLayout.setRefreshing(false);
                         try {
                             jsonArray = new JSONArray(response);
                             artsFlag=true;
@@ -116,7 +121,7 @@ public class StationFragment extends Fragment {
                                 villa.setLat(jsonObject.getString("lat"));
                                 villa.setLng(jsonObject.getString("lng"));
 
-                                villa.setPic(server+"/assets/images/places/"+jsonObject.getString("pic"));
+                                villa.setPic(server+"/assets/images/villas/"+jsonObject.getString("pic"));
 
                                 dataModels.add(villa);
 
@@ -152,5 +157,10 @@ public class StationFragment extends Fragment {
             }
         };
         queue.add(postRequest);
+    }
+
+    @Override
+    public void onRefresh() {
+        reqArts();
     }
 }

@@ -38,7 +38,8 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class AdsFragment extends Fragment{
+public class AdsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "AdsFragment";
     List<Ads> allAds;
@@ -52,16 +53,20 @@ public class AdsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_ads,container,false);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.adsRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         listView=(ListView)view.findViewById(R.id.lvAdsContent);
+
         btnAdsReg=(ImageView) view.findViewById(R.id.imgAddAds);
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
         server=SP1.getString("server", "0");
         GET_ADS_URL =  server+"/i/getads.php";
+
         dataModels= new ArrayList<>();
-
         adapter= new AdsAdapter(getActivity(),dataModels);
-
         listView.setAdapter(adapter);
 
         reqAds();
@@ -88,7 +93,7 @@ public class AdsFragment extends Fragment{
                     @Override
                     public void onResponse(String response) {
                         JSONArray jsonArray= null;
-
+                        swipeRefreshLayout.setRefreshing(false);
                         try {
                             jsonArray = new JSONArray(response);
                             adsFlag=true;
@@ -141,4 +146,8 @@ public class AdsFragment extends Fragment{
         queue.add(postRequest);
     }
 
+    @Override
+    public void onRefresh() {
+        reqAds();
+    }
 }

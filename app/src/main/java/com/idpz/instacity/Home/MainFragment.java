@@ -17,7 +17,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -94,7 +93,7 @@ public class MainFragment extends Fragment {
         ctpic=SP1.getString("ctpic", "0");
         ctDesc=SP1.getString("ctdesc", "0");
         ctname=SP1.getString("ctname", "");
-
+        connected=SP1.getBoolean("connected", false);
         btnCars = (ImageButton) view.findViewById(R.id.btnCars);
         btntourism = (ImageButton) view.findViewById(R.id.btnTourism);
         btnHandyCraft = (ImageButton) view.findViewById(R.id.btnHandyCarft);
@@ -146,7 +145,6 @@ public class MainFragment extends Fragment {
 
         // tourist visit places list view
         dataModels = new ArrayList<>();
-        dataModels.add(new VisitPlace(1,"زال تپه","تپه دوره سلجوقیان","بلیط ندارد","بازدید همه روزه","همه ساعت","35.711","50.912","02636884391","خیابان امام انتهای خ خندان","زال تپه مربوط به پیش از اسلام - دوره سلجوقیان است و در شهرستان فردیس، استان البرز، روستای فرخ آباد زیبادشت واقع شده و این اثر در تاریخ ۱ مهر ۱۳۸۲ با شمارهٔ ثبت ۱۰۳۰۴ به\u200Cعنوان یکی از آثار ملی ایران به ثبت رسیده است",""));
         lvVisitPlaces=(ListView)view.findViewById(R.id.lvVisitPlaces);
         visitPlacesAdapter=new VisitPlacesAdapter(getActivity(),dataModels);
         lvVisitPlaces.setAdapter(visitPlacesAdapter);
@@ -165,7 +163,7 @@ public class MainFragment extends Fragment {
                 public void onBoomButtonClick(int index) {
                     switch (index) {
                         case 1:
-                            Toast.makeText(getActivity(), "1", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "1", Toast.LENGTH_SHORT).show();
                             Intent intent1 = new Intent(getContext(), GalleryActivity.class);
                             Bundle b = new Bundle();
                             b.putString("key", "food"); //          city Map
@@ -173,7 +171,7 @@ public class MainFragment extends Fragment {
                             startActivity(intent1);
                             break;
                         case 2:
-                            Toast.makeText(getActivity(), "2", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "2", Toast.LENGTH_SHORT).show();
                             Intent intent2 = new Intent(getContext(), MyProfileActivity.class);
                             Bundle c2 = new Bundle();
                             c2.putString("key", "health"); //Your id
@@ -181,7 +179,7 @@ public class MainFragment extends Fragment {
                             startActivity(intent2);
                             break;
                         case 3:
-                            Toast.makeText(getActivity(), "3", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "3", Toast.LENGTH_SHORT).show();
                             Intent intent3 = new Intent(getContext(), LikesActivity.class);
                             Bundle d3 = new Bundle();
                             d3.putString("key", "religion"); //Your id
@@ -189,12 +187,12 @@ public class MainFragment extends Fragment {
                             startActivity(intent3);
                             break;
                         case 4:
-                            Toast.makeText(getActivity(), "4", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "4", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getContext(), SearchActivity.class);
                             startActivity(intent);
                             break;
                         case 5:
-                            Toast.makeText(getActivity(), "5", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "5", Toast.LENGTH_SHORT).show();
                             Intent intent4 = new Intent(getContext(), VideoActivity.class);
                             Bundle e4 = new Bundle();
                             e4.putString("key", "services"); //Your id
@@ -202,12 +200,12 @@ public class MainFragment extends Fragment {
                             startActivity(intent4);
                             break;
                         case 6:
-                            Toast.makeText(getActivity(), "6", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "6", Toast.LENGTH_SHORT).show();
                             Intent intent6 = new Intent(getContext(), KaryabiActivity.class);
                             startActivity(intent6);
                             break;
                         case 7:
-                            Toast.makeText(getActivity(), "7", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "7", Toast.LENGTH_SHORT).show();
                             Intent intent7 = new Intent(getContext(), RuydadActivity.class);
                             Bundle b7 = new Bundle();
                             b7.putString("key", "sport"); //Your id
@@ -215,7 +213,7 @@ public class MainFragment extends Fragment {
                             startActivity(intent7);
                             break;
                         case 0:
-                            Toast.makeText(getActivity(), "0", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getActivity(), "0", Toast.LENGTH_SHORT).show();
                             Intent intent0 = new Intent(getContext(), HomeActivity.class);
 //                            intent0.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
                             intent0.putExtra("position", 0); //          137
@@ -240,8 +238,8 @@ public class MainFragment extends Fragment {
         weatherIcon = (TextView)view.findViewById(R.id.weather_icon);
 //        weatherIcon.setTypeface(weatherFont);
 
+        if (connected)reqVisitPlace();
 
-        reqVisitPlace();
         WeatherFunction.placeIdTask asyncTask =new WeatherFunction.placeIdTask(new WeatherFunction.AsyncResponse() {
             public void processFinish(String weather_city, String weather_description, String weather_temperature,
                                       String weather_humidity, String weather_pressure, String weather_updatedOn,

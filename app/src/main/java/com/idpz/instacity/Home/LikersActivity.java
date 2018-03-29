@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -73,7 +72,7 @@ public class LikersActivity extends AppCompatActivity {
         pd.show();
 
         lvLikers.setAdapter(likersAdapter);
-        Toast.makeText(this, fullServer, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, fullServer, Toast.LENGTH_SHORT).show();
 
 
         new Thread() {

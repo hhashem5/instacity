@@ -39,6 +39,7 @@ import com.idpz.instacity.utils.galleryAdapter;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,6 +141,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         imgProfile=(CircleImageView)findViewById(R.id.profile_photoProfile);
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getBaseContext()));
         ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

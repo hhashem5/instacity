@@ -40,7 +40,6 @@
         <include layout="@layout/layout_center_like"/>
 
         <!-- bottom navigation -->
-        <include layout="@layout/layout_bottom_navigation_view"/>
 
     </RelativeLayout>
     </RelativeLayout>

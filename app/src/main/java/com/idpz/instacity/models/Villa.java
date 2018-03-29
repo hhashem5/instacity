@@ -17,11 +17,12 @@ public class Villa {
     private String lat;
     private String lng;
     private String pic;
+    private String owner;
 
     public Villa() {
     }
 
-    public Villa(int id, String name, String area, String price, String room, String facility, String tel, String address, String memo, String lat, String lng, String pic) {
+    public Villa(int id, String name,String owner, String area, String price, String room, String facility, String tel, String address, String memo, String lat, String lng, String pic) {
         this.id = id;
         this.name = name;
         this.area = area;
@@ -34,6 +35,7 @@ public class Villa {
         this.lat = lat;
         this.lng = lng;
         this.pic = pic;
+        this.owner = owner;
     }
 
     public int getId() {
@@ -46,6 +48,14 @@ public class Villa {
 
     public String getName() {
         return name;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public void setName(String name) {

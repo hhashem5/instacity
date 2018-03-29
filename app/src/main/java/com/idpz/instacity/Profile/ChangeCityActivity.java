@@ -111,7 +111,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
             });
             builder.show();
         }
-        Toast.makeText(this, "lat="+myLocation.getLatitude()+" lng="+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "lat="+myLocation.getLatitude()+" lng="+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
         btnChangeCT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -308,6 +308,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         myNearCity=areaArrayList.get(minIndex);
         txtMyNearCT.setText(" نزدیکترین شهر: "+myNearCity.getAfname()+" فاصله از مرکز "+distances.get(minIndex)+"متر");
         txtMyNearCT.setTextColor(Color.GREEN);
+        spnCity.setSelection(minIndex);
     }
 
 

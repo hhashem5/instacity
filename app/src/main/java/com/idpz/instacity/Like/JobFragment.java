@@ -37,16 +37,16 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class JobFragment extends Fragment{
-    private SwipeRefreshLayout swipeRefreshLayout;
+public class JobFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "jobFragment";
 
 
-
+    ArtAdapter adapter;
     ArrayList<Arts> dataModels;
     ListView listView;
     ImageView btnAdsReg;
-    ArtAdapter adapter;
+
     Boolean artsFlag=false,connected=false;
     String GET_ADS_URL="",server="";
     @Nullable
@@ -55,6 +55,10 @@ public class JobFragment extends Fragment{
         View view=inflater.inflate(R.layout.fragment_job,container,false);
         listView=(ListView)view.findViewById(R.id.lvJobContent);
         btnAdsReg=(ImageView) view.findViewById(R.id.imgAddJob);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.jobRefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
 
         dataModels= new ArrayList<>();
 
@@ -92,7 +96,7 @@ public class JobFragment extends Fragment{
                     @Override
                     public void onResponse(String response) {
                         JSONArray jsonArray= null;
-
+                        swipeRefreshLayout.setRefreshing(false);
                         try {
                             jsonArray = new JSONArray(response);
                             artsFlag=true;
@@ -149,6 +153,11 @@ public class JobFragment extends Fragment{
             }
         };
         queue.add(postRequest);
+    }
+
+    @Override
+    public void onRefresh() {
+        reqArts();
     }
 
     //`id`, `owner`, `code`, `name`, `type`, `weight`, `material`, `color`, `price`, `memo`, `pic`, `pub`, `stamp

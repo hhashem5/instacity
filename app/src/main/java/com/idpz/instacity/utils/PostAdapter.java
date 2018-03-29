@@ -27,6 +27,7 @@ import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +92,7 @@ public class PostAdapter extends BaseAdapter {
         final ImageView imglike = (ImageView) convertView.findViewById(R.id.imgPostLike);
         ImageView imgComment = (ImageView) convertView.findViewById(R.id.imgPostComment);
         ImageView imgPostSend = (ImageView) convertView.findViewById(R.id.imgPostSend);
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
         // getting Food data for the row
         Post m = postList.get(position);
 //        detector = new GestureDetector(context, new GestureListener(convertView));
@@ -98,9 +100,9 @@ public class PostAdapter extends BaseAdapter {
         final String usr=m.getUserName();
         DisplayImageOptions options;
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.blur)
-                .showImageForEmptyUri(R.drawable.blur)
-                .showImageOnFail(R.drawable.blur)
+                .showImageOnLoading(R.drawable.loading)
+                .showImageForEmptyUri(R.drawable.noimage)
+                .showImageOnFail(R.drawable.noimage)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
@@ -108,7 +110,8 @@ public class PostAdapter extends BaseAdapter {
                 .build();
         // thumbnail image
 //        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
-        imageLoader.displayImage(m.getPostImageUrl(), thumbNail,options);
+
+        ImageLoader.getInstance().displayImage(m.getPostImageUrl(), thumbNail,options);
         ImageLoader.getInstance().displayImage(m.getUserImg(),userImg,options);
         editPostComment.setText("پاسخ:"+m.getPostAnswer());
         // title

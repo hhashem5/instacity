@@ -13,6 +13,7 @@ import com.idpz.instacity.R;
 import com.idpz.instacity.models.Comment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class LikersAdapter extends BaseAdapter {
 
         CircleImageView thumbNail = (CircleImageView) convertView
                 .findViewById(R.id.imgLikersUserImg);
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
         TextView userName = (TextView) convertView.findViewById(R.id.txtCommentUserName);
         Comment m = postList.get(position);
         DisplayImageOptions options;

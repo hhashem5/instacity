@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -57,7 +56,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     int lim1=0,lim2=20;
     Boolean reqFlag=true,connected=false;
     Context context;
-    Boolean postRcvFlag=false,videoRcvFlag=false;
+    Boolean postRcvFlag=false,videoRcvFlag=false,refreshFlag=false;
 
 
     @Nullable
@@ -163,6 +162,10 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     public void onResponse(String response) {
                         reqFlag=true;
                         postRcvFlag=true;
+                        if (refreshFlag){
+                            refreshFlag=false;
+                            dataModels.clear();
+                        }
                         pd.dismiss();
                         swipeRefreshLayout.setRefreshing(false);
 
@@ -250,7 +253,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         lim1=0;lim2=20;
-        dataModels .clear();
+        refreshFlag=true;
         swipeRefreshLayout.setRefreshing(true);
         reqPosts();
     }

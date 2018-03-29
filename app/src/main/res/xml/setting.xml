@@ -77,7 +77,7 @@
         <CheckBoxPreference
                 android:key="alarm"
                 android:title="هشدار"
-                android:summary="هشدار نزدیک شدن خودرو حمل زباله"
+                android:summary="هشدار نزدیک شدن خودرو "
                 />
         <CheckBoxPreference
             android:key="msg"
@@ -90,6 +90,11 @@
                 android:title="فاصله خودرو"
             android:summary="تنظیم فاصله نزدیک شدن خودرو جهت هشدار"
             />
+    <EditTextPreference
+        android:key="carcode"
+        android:title="کدخودرو"
+        android:summary="کدخودرو"
+        />
         <EditTextPreference
             android:key="fav"
             android:title="علاقمندی"
@@ -160,5 +165,9 @@
             android:title="فاصله خودرو"
             android:summary="تنظیم فاصله نزدیک شدن خودرو جهت هشدار"
             />
-
+    <CheckBoxPreference
+        android:key="connected"
+        android:title="اتصال اینترنت"
+        android:summary="اتصال"
+        />
 </PreferenceScreen>

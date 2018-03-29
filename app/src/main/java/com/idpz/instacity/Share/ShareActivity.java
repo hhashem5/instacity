@@ -371,7 +371,7 @@ public class ShareActivity extends AppCompatActivity {
                         //Disimissing the progress dialog
                         loading.dismiss();
                         //Showing toast message of the response
-                        Toast.makeText(ShareActivity.this, s , Toast.LENGTH_LONG).show();
+                        Toast.makeText(ShareActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener() {
@@ -381,7 +381,7 @@ public class ShareActivity extends AppCompatActivity {
                         loading.dismiss();
                         finish();
                         //Showing toast
-                        Toast.makeText(ShareActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
+//                        Toast.makeText(ShareActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override

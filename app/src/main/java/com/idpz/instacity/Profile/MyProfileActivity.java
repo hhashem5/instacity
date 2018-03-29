@@ -20,7 +20,6 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -285,7 +284,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 SP2.apply();
 
 
-                Toast.makeText(MyProfileActivity.this, "سرور:"+server+" jobTitle:"+jobTitle, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MyProfileActivity.this, "سرور:"+server+" jobTitle:"+jobTitle, Toast.LENGTH_SHORT).show();
                 txtczstatus.setText("درحال ارسال...");
                 regUserInfo();
             }

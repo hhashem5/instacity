@@ -20,6 +20,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Ads;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 public class AdsAdapter extends BaseAdapter {
@@ -71,11 +72,12 @@ public class AdsAdapter extends BaseAdapter {
         TextView tel = (TextView) convertView.findViewById(R.id.textAdsTel);
         TextView address = (TextView) convertView.findViewById(R.id.textAdsAddress);
 //        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
-
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
         // getting Food data for the row
         Ads m = adsList.get(position);
 
         // thumbnail image
+
         DisplayImageOptions options;
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)

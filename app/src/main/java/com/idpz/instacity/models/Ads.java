@@ -11,20 +11,30 @@ public class Ads {
     private String tel;
     private String address;
     private String pic;
+    private String owner;
     public Ads() {
     }
 
-    public Ads(int id, String title, String memo, String tel, String address,String pic) {
+    public Ads(int id,String owner, String title, String memo, String tel, String address,String pic) {
         this.id = id;
         this.title = title;
         this.memo = memo;
         this.tel = tel;
         this.address = address;
         this.pic = pic;
+        this.owner = owner;
     }
 
     public int getId() {
         return id;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public void setId(int id) {

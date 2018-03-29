@@ -6,11 +6,14 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,23 +38,31 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.Area;
 import com.idpz.instacity.R;
+import com.idpz.instacity.utils.GPSTracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "Login activity";
+    private static final int REQUEST_ACCESS_LOCATION = 1;
     String requrl="";
     TextView txtInfo;
-
+    GPSTracker gps;
+    Location myLocation,mycity;
     String mob="",pas="",server="",ctName="",ctDesc="",ctpic="";
     Boolean areaFlag=false,connected=false;
 
@@ -91,6 +102,9 @@ public class LoginActivity extends AppCompatActivity {
         // Set up the login form.
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        myLocation = new Location("myloc");
+        mycity = new Location("city");
 
         mEmailView = (EditText) findViewById(R.id.txtLoginMobile);
         spCity=(Spinner)findViewById(R.id.spnLoginSelCity);
@@ -152,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-
+        populateGPS();
 
         new Thread() {
             @Override
@@ -445,11 +459,7 @@ public class LoginActivity extends AppCompatActivity {
                             server=areaArrayList.get(0).getServer();
                             ctName=areaArrayList.get(0).getAfname();
 
-
-
-
-
-
+                            findArea();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -479,6 +489,74 @@ public class LoginActivity extends AppCompatActivity {
         };
         queue.add(postRequest);
     }
+
+
+    private void populateGPS() {
+        if (!mayRequestLocation()) {
+            return;
+        }
+        gps =new GPSTracker(this);
+        Log.d(TAG, "onCreate: GPS FROM populate gps_before Check:"+String.valueOf(gps.getLatitude())+" : "+String.valueOf(gps.getLongitude()));
+        String upStatus="";
+        if (gps.getLatitude()!=0.0) {
+            SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+            SP.putString("lat", String.valueOf(gps.getLatitude()));
+            SP.putString("lng", String.valueOf(gps.getLongitude()));
+            SP.apply();
+
+            Log.d(TAG, "onCreate: GPS FROM populate gps_ok:"+String.valueOf(gps.getLatitude())+" : "+String.valueOf(gps.getLongitude()));
+            myLocation.setLatitude(gps.getLatitude());
+            myLocation.setLongitude(gps.getLongitude());
+            upStatus="gps_ok";
+        }
+
+//        Toast.makeText(MainActivity.this, "location ="+myLocation.getLatitude()+","+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+
+    }
+
+    private boolean mayRequestLocation() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED   ) {
+            return true;
+        }
+        if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+            Snackbar.make(spCity, "لطفا دسترسی به جی پی اس را فعال کنید.", Snackbar.LENGTH_INDEFINITE)
+                    .setAction(android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        @TargetApi(Build.VERSION_CODES.M)
+                        public void onClick(View v) {
+                            requestPermissions(new String[]{ACCESS_FINE_LOCATION},REQUEST_ACCESS_LOCATION);
+                        }
+                    });
+        } else {
+            requestPermissions(new String[]{ACCESS_FINE_LOCATION}, REQUEST_ACCESS_LOCATION);
+        }
+        return false;
+    }
+
+    public void findArea(){
+        List<Float> distances=new ArrayList<Float>();
+        float myDistance=0;
+        distances.clear();
+//        myLocation.setLatitude(Double.valueOf(lat));
+//        myLocation.setLongitude(Double.valueOf(lng));
+
+//        Log.d(TAG, "findArea: gps mylocation="+myLocation.getLatitude());
+        for (Area area:areaArrayList){
+
+            mycity.setLatitude(area.getAlat());
+            mycity.setLongitude(area.getAlng());
+            myDistance=Math.round(myLocation.distanceTo(mycity));
+            distances.add(myDistance);
+        }
+
+        int minIndex = distances.indexOf(Collections.min(distances));
+        spCity.setSelection(minIndex);
+    }
+
 
 }
 

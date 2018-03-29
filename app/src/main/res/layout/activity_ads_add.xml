@@ -22,7 +22,6 @@
                 android:id="@+id/imgAdsSave"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/vilhome"
                 />
             <Button
                 android:id="@+id/btnAdsImgSelect"
@@ -30,6 +29,13 @@
                 android:layout_height="30dp"
                 android:background="@drawable/white_gray_border_bottom"
                 android:text="انتخاب عکس"
+                />
+            <TextView
+                android:id="@+id/adsCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text=""
                 />
 
         </LinearLayout>
@@ -69,10 +75,11 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
                     android:text=""
                     android:hint=""
                     android:ems="10"
+                    android:lines="2"
                     android:id="@+id/txtAdsMemo"
                     android:layout_weight="1" />
 
@@ -113,10 +120,12 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
                     android:text=""
                     android:hint=""
                     android:ems="10"
+
+                    android:lines="2"
                     android:id="@+id/txtAdsAddress"
                     android:layout_weight="1" />
 
@@ -137,13 +146,45 @@
     </LinearLayout>
 
 
-    <Button
-        android:id="@+id/btnAdsSend"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/white_gray_border_bottom"
+        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:text="ثبت"
-        />
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnAdsEdit"
+            android:layout_gravity="center"
+            android:background="@drawable/white_gray_border_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="ویرایش"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnAdsSend"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/white_gray_border_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text=" ثبت جدید"
+            />
+
+    </LinearLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_marginTop="5dp"
+        android:id="@+id/addAdsRefresh"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lvAdsContent">
+
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

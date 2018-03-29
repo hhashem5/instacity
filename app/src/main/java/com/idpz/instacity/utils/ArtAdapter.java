@@ -20,6 +20,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Arts;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class ArtAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.row_ads, null);
 
         if (imageLoader == null)
+
             imageLoader = AppController.getInstance().getImageLoader();
         ImageView thumbNail = (ImageView) convertView
                 .findViewById(R.id.imgAds);
@@ -72,11 +74,12 @@ public class ArtAdapter extends BaseAdapter {
         TextView tel = (TextView) convertView.findViewById(R.id.textAdsTel);
         TextView address = (TextView) convertView.findViewById(R.id.textAdsAddress);
 //        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
-
+        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
         // getting Food data for the row
         Arts m = adsList.get(position);
 
         // thumbnail image
+
         DisplayImageOptions options;
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_stub)
@@ -97,7 +100,7 @@ public class ArtAdapter extends BaseAdapter {
 
 
         // release year
-        tel.setText("کد:"+m.getCode()+" جنس:"+m.getMaterial()+" رنگ:"+m.getColor());
+        tel.setText("کد:"+m.getId()+" جنس:"+m.getMaterial()+" رنگ:"+m.getColor());
         address.setText(m.getPrice());
         return convertView;
     }

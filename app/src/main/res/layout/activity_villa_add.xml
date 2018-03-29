@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.idpz.instacity.Like.AddArtActivity">
 
     <LinearLayout
@@ -21,7 +22,7 @@
                 android:id="@+id/imgVillaSave"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/vilhome"
+
                 />
             <Button
                 android:id="@+id/btnVillaImgSelect"
@@ -30,7 +31,13 @@
                 android:background="@drawable/white_gray_border_bottom"
                 android:text="انتخاب عکس"
                 />
-
+            <TextView
+                android:id="@+id/villaCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text=""
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -215,20 +222,50 @@
                     android:layout_weight="1" />
 
             </LinearLayout>
-            <Button
-                android:id="@+id/btnVillaSend"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/white_gray_border_bottom"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:text="ثبت"
-                />
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/btnVillaEdit"
+                    android:layout_gravity="center"
+                    android:background="@drawable/white_gray_border_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="ویرایش"
+                    android:enabled="false"
+                    />
+
+                <Button
+                    android:id="@+id/btnVillaSend"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/white_gray_border_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text=" ثبت جدید"
+                    />
+
+            </LinearLayout>
+
+
 
         </LinearLayout>
 
     </LinearLayout>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_marginTop="5dp"
+        android:id="@+id/addVillasRefresh"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lvAddVillasContent">
 
+        </ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

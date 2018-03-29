@@ -55,7 +55,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         NewsAdapter newsAdapter;
         String server="",fullServer="";
         int lim1=0,lim2=20;
-        Boolean reqFlag=false,connected=false;
+        Boolean reqFlag=false,connected=false,refreshFlag=false;
         Context context;
 
         @Nullable
@@ -154,6 +154,10 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                     public void onResponse(String response) {
                         reqFlag=true;
                         pd.dismiss();
+                        if (refreshFlag){
+                            refreshFlag=false;
+                            dataModels.clear();
+                        }
                         Log.d(TAG, "onResponse: MSG received");
                         swipeRefreshLayout.setRefreshing(false);
                         JSONArray jsonArray = null;
@@ -224,7 +228,8 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onRefresh() {
         lim1=0;lim2=20;
-        dataModels.clear();
+//        dataModels.clear();
+        refreshFlag=true;
         swipeRefreshLayout.setRefreshing(true);
         reqPosts();
     }

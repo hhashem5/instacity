@@ -177,8 +177,14 @@ public class HomeActivity extends AppCompatActivity implements
                             if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
                                 //we are connected to a network
+                                SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                                SP.putBoolean("connected", true);
+                                SP.apply();
                                 connected = true;
                             } else {
+                                SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                                SP.putBoolean("connected", false);
+                                SP.apply();
                                 connected = false;
 //                                txtNews.setText("اینترنت وصل نیست");
                             }
@@ -591,58 +597,4 @@ public class HomeActivity extends AppCompatActivity implements
         }
     }
 
-//    private void initiatePopupWindow(String msg) {
-//        try {
-//            //We need to get the instance of the LayoutInflater, use the context of this activity
-//            LayoutInflater inflater = (LayoutInflater) HomeActivity.this
-//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            //Inflate the view from a predefined XML layout
-//            View layout = inflater.inflate(R.layout.layout_pupup,
-//                    (ViewGroup) findViewById(R.id.popup_rel));
-//            // create a 300px width and 470px height PopupWindow
-//            PopupWindow pw = new PopupWindow(layout, 300, 470, true);
-//            // display the popup in the center
-//            pw.showAtLocation(getCurrentFocus(), Gravity.CENTER, 0, 0);
-//
-//            TextView mResultText = (TextView) layout.findViewById(R.id.tvPopup);
-//            mResultText.setText(msg);
-////            Button cancelButton = (Button) layout.findViewById(R.id.end_data_send_button);
-////            cancelButton.setOnClickListener(cancel_button_click_listener);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-//    public void showPopup(){
-////        LayoutInflater layoutInflater = (LayoutInflater) HomeActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-////        View customView = layoutInflater.inflate(R.layout.layout_pupup,null);
-////
-////        closePopupBtn = (Button) customView.findViewById(R.id.closePopupBtn);
-////        tvPopup=(TextView)customView.findViewById(R.id.tvPopup);
-////
-////
-////        //instantiate popup window
-////        popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-////
-////        //display the popup window
-////        popupWindow.showAtLocation(lv, Gravity.CENTER, 0, 0);
-////
-////        //close the popup window on button click
-////        closePopupBtn.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                popupWindow.dismiss();
-////            }
-////        });
-//        LayoutInflater inflater = (LayoutInflater)
-//                this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        PopupWindow pw = new PopupWindow(
-//                inflater.inflate(R.layout.layout_pupup, null, false),
-//                100,
-//                100,
-//                true);
-//        // The code below assumes that the root container has an id called 'main'
-//        pw.showAtLocation(lv, Gravity.CENTER, 0, 0);
-//    }
 }

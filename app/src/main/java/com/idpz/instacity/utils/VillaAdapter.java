@@ -14,6 +14,7 @@ import com.idpz.instacity.R;
 import com.idpz.instacity.models.Villa;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -63,6 +64,17 @@ public class VillaAdapter extends BaseAdapter {
         TextView address = (TextView) convertView.findViewById(R.id.textPlaceAddress);
         TextView memo = (TextView) convertView.findViewById(R.id.textPlaceMemo);
 //        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
+        DisplayImageOptions options;
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.blur)
+                .showImageForEmptyUri(R.drawable.blur)
+                .showImageOnFail(R.drawable.blur)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
 
         // getting Food data for the row
         Villa m = visitPlaces.get(position);
@@ -78,16 +90,8 @@ public class VillaAdapter extends BaseAdapter {
         memo.setText(m.getMemo());
 
         // thumbnail image
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.blur)
-                .showImageForEmptyUri(R.drawable.blur)
-                .showImageOnFail(R.drawable.blur)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
+
+
         // thumbnail image
 //        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
         ImageLoader.getInstance().displayImage(m.getPic(),thumbNail,options);
