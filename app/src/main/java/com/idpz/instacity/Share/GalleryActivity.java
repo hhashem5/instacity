@@ -1,61 +1,71 @@
 package com.idpz.instacity.Share;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.idpz.instacity.R;
-import com.idpz.instacity.utils.FilePaths;
-import com.idpz.instacity.utils.FileSearch;
 import com.idpz.instacity.utils.GridImageAdapter;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class GalleryActivity extends AppCompatActivity {
 
 
     //constants
     private static final int NUM_GRID_COLUMNS = 3;
-
+    private static final int REQUEST_PERMISSIONS = 100;
     private static final String TAG = "GalleryFragment";
     //widgets
     private GridView gridView;
     private ImageView galleryImage;
     private ProgressBar mProgressBar;
-    private Spinner directorySpinner;
+    boolean boolean_folder;
 
     //vars
     private ArrayList<String> directories;
     private String mAppend = "file:/";
     private String mSelectedImage,mstatus="1";
-
-
+    DisplayImageOptions options;
+    ImageLoader imageLoader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
+
+
+        imageLoader=ImageLoader.getInstance();
+
+
         galleryImage = (ImageView) findViewById(R.id.galleryImageView);
         gridView = (GridView) findViewById(R.id.gridView);
-        directorySpinner = (Spinner) findViewById(R.id.spinnerDirectory);
+
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.GONE);
         directories = new ArrayList<>();
@@ -72,6 +82,7 @@ public class GalleryActivity extends AppCompatActivity {
         final RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.rd_2);
         final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.rd_3);
         Button btnDialog=(Button)dialog.findViewById(R.id.btnOpinion);
+        rd0.setSelected(true);
         // now that the dialog is set up, it's time to show it
         dialog.show();
 
@@ -123,6 +134,8 @@ public class GalleryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to the final share screen.");
                 Toast.makeText(GalleryActivity.this, "لطفا کمی صبر کنید", Toast.LENGTH_SHORT).show();
+                if (imageLoader.getMemoryCache() != null)
+                    imageLoader.clearMemoryCache();
                     Intent intent = new Intent(GalleryActivity.this, ShareActivity.class);
                     intent.putExtra(getString(R.string.selected_image), mSelectedImage);
                     intent.putExtra("status", mstatus);
@@ -143,55 +156,39 @@ public class GalleryActivity extends AppCompatActivity {
 
             }
         });
+        if ((ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            if ((ActivityCompat.shouldShowRequestPermissionRationale(GalleryActivity.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(GalleryActivity.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE))) {
 
-        init();
+            } else {
+                ActivityCompat.requestPermissions(GalleryActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSIONS);
+            }
+        }else {
+            Log.e("Else","Else");
+            setupGridView();
+        }
+
 
     }
 
 
 
-    private void init(){
-        FilePaths filePaths = new FilePaths();
+    private void setupGridView(){
 
-        //check for other folders indide "/storage/emulated/0/pictures"
-        if (FileSearch.getDirectoryPaths(filePaths.PICTURES) != null) {
-            directories = FileSearch.getDirectoryPaths(filePaths.PICTURES);
-        }
-        directories.add(filePaths.CAMERA);
-        directories.add(filePaths.Downloads);
-        ArrayList<String> directoryNames = new ArrayList<>();
-        for (int i = 0; i < directories.size(); i++) {
-            Log.d(TAG, "init: directory: " + directories.get(i));
-            int index = directories.get(i).lastIndexOf("/");
-            String string = directories.get(i).substring(index);
-            directoryNames.add(string);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(GalleryActivity.this,
-                android.R.layout.simple_spinner_item, directoryNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        directorySpinner.setAdapter(adapter);
-
-        directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemClick: selected: " + directories.get(position));
-
-                //setup our image grid for the directory chosen
-                setupGridView(directories.get(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
+        // edit
 
 
-    private void setupGridView(String selectedDirectory){
-        Log.d(TAG, "setupGridView: directory chosen: " + selectedDirectory);
-        final ArrayList<String> imgURLs = FileSearch.getFilePaths(selectedDirectory);
+        final ArrayList<String> imgURLs = getFilePaths();
+
+
+
+        //end edit
+
 
         //set the grid column width
         int gridWidth = getResources().getDisplayMetrics().widthPixels;
@@ -214,9 +211,26 @@ public class GalleryActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: selected an image: " + imgURLs.get(position));
-
-                setImage(imgURLs.get(position), galleryImage, mAppend);
+//                String[] projection = {MediaStore.Images.Media.DATA};
+//                Cursor cursor;
+//                int columnIndex=0;
+//                cursor = getContentResolver().query( MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                        projection, // Which columns to return
+//                        null,       // Return all rows
+//                        null,
+//                        null);
+//                columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//                cursor.moveToPosition(position);
+//                // Get image filename
+//                String imagePath = cursor.getString(columnIndex);
+//                if (cursor != null) {
+//                    cursor.close();
+//                }
                 mSelectedImage = imgURLs.get(position);
+                setImage(mSelectedImage, galleryImage, mAppend);
+
+//                galleryImage.setImageURI(Uri.parse(mSelectedImage));
+
             }
         });
 
@@ -225,30 +239,149 @@ public class GalleryActivity extends AppCompatActivity {
 
     private void setImage(String imgURL, ImageView image, String append){
         Log.d(TAG, "setImage: setting image");
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.ic_stub)
+                .showImageForEmptyUri(R.drawable.noimage)
+                .showImageOnFail(R.drawable.noimage)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
 
-        ImageLoader imageLoader = ImageLoader.getInstance();
-
-        imageLoader.displayImage(append + imgURL, image, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
-                mProgressBar.setVisibility(View.INVISIBLE);
-            }
-        });
+        imageLoader.displayImage(append + imgURL, image,options);
+//        image.setImageURI(Uri.withAppendedPath(
+//                MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, "" + imageID));
     }
+
+    public ArrayList<String> getFilePaths()
+    {
+
+
+        Uri u = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {MediaStore.Images.ImageColumns.DATA};
+        Cursor c = null;
+        SortedSet<String> dirList = new TreeSet<String>();
+        ArrayList<String> resultIAV = new ArrayList<String>();
+        String orderBy = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC";
+        String[] directories = null;
+        if (u != null)
+        {
+            c = getContentResolver().query(u, projection, null, null, orderBy);
+        }
+
+        if ((c != null) && (c.moveToFirst()))
+        {
+            do
+            {
+                String tempDir = c.getString(0);
+                tempDir = tempDir.substring(0, tempDir.lastIndexOf("/"));
+                try{
+                    dirList.add(tempDir);
+                }
+                catch(Exception e)
+                {
+
+                }
+            }
+            while (c.moveToNext());
+            directories = new String[dirList.size()];
+            dirList.toArray(directories);
+
+        }
+        if (c != null) {
+            c.close();
+        }
+        for(int i=0;i<dirList.size();i++)
+        {
+            File imageDir = new File(directories[i]);
+            File[] imageList = imageDir.listFiles();
+            if(imageList == null)
+                continue;
+            for (File imagePath : imageList) {
+                try {
+
+                    if(imagePath.isDirectory())
+                    {
+                        imageList = imagePath.listFiles();
+
+                    }
+                    if ( imagePath.getName().contains(".jpg")|| imagePath.getName().contains(".JPG")
+                            || imagePath.getName().contains(".jpeg")|| imagePath.getName().contains(".JPEG")
+                            || imagePath.getName().contains(".png") || imagePath.getName().contains(".PNG")
+                            || imagePath.getName().contains(".bmp") || imagePath.getName().contains(".BMP")
+                            )
+                    {
+
+
+
+                        String path= imagePath.getAbsolutePath();
+                        resultIAV.add(path);
+
+                    }
+                }
+                //  }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return resultIAV;
+
+
+    }
+    public static ArrayList<String> al_images = new ArrayList<>();
+    public ArrayList<String> fn_imagespath() {
+        al_images.clear();
+        Log.d(TAG, "fn_imagespath: started");
+        int int_position = 0;
+        Uri uri;
+        Cursor cursor;
+        int column_index_data, column_index_folder_name;
+
+        String absolutePathOfImage = null;
+        uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
+        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
+
+        final String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+        cursor = getApplicationContext().getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
+
+        assert cursor != null;
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        column_index_folder_name = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(column_index_data);
+            Log.e("Column", absolutePathOfImage);
+            Log.e("Folder", cursor.getString(column_index_folder_name));
+
+            for (int i = 0; i < al_images.size(); i++) {
+                if (al_images.get(i).equals(cursor.getString(column_index_folder_name))) {
+                    boolean_folder = true;
+                    int_position = i;
+                    break;
+                } else {
+                    boolean_folder = false;
+                    al_images.add(absolutePathOfImage);
+                    Log.d(TAG, "fn_imagespath: "+absolutePathOfImage);
+                }
+            }
+
+
+
+
+
+
+
+
+        }
+
+        cursor.close();
+
+        return al_images;
+    }
+
+
 }
 

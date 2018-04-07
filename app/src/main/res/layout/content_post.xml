@@ -47,14 +47,14 @@
         <ImageView
             android:layout_width="30dp"
             android:id="@+id/imgPostLike"
-            android:src="@drawable/likei"
+            android:src="@drawable/like"
             android:layout_height="30dp"
             android:layout_marginRight="5dp"
             />
         <ImageView
             android:layout_width="30dp"
             android:id="@+id/imgPostComment"
-            android:src="@drawable/commenti"
+            android:src="@drawable/comment"
             android:layout_height="30dp"
             android:layout_marginRight="5dp"/>
         <TextView

@@ -25,6 +25,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.idpz.instacity.Like.TourismActivity;
 import com.idpz.instacity.Profile.ChangeCityActivity;
 import com.idpz.instacity.Profile.LikesActivity;
@@ -66,7 +68,7 @@ public class MainFragment extends Fragment {
     VideoPostAdapter videoPostAdapter;
     String server="",fullServer="",homeLat="",homeLng="",ctDesc="",ctpic="",ctname="";
     int lim1=0,lim2=20;
-    Boolean reqVideoFlag =false,connected=false;
+    Boolean reqVideoFlag =false,connected=false,firstTime=true;
     private BoomMenuButton bmb;
     ImageButton btnCars, btntourism, btnHandyCraft,btnChangeCity;
 
@@ -94,6 +96,7 @@ public class MainFragment extends Fragment {
         ctDesc=SP1.getString("ctdesc", "0");
         ctname=SP1.getString("ctname", "");
         connected=SP1.getBoolean("connected", false);
+        firstTime=SP1.getBoolean("firsttime", true);
         btnCars = (ImageButton) view.findViewById(R.id.btnCars);
         btntourism = (ImageButton) view.findViewById(R.id.btnTourism);
         btnHandyCraft = (ImageButton) view.findViewById(R.id.btnHandyCarft);
@@ -305,7 +308,7 @@ public class MainFragment extends Fragment {
         });
         asyncTask.execute(homeLat, homeLng); //  asyncTask.execute("Latitude", "Longitude")
 
-
+        if (firstTime)targetView(view);
 
         return view;
     }
@@ -415,5 +418,39 @@ public class MainFragment extends Fragment {
         }
 
     }
+    public void doSomething(){
+        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+        SP.putBoolean("firsttime", false);
+        SP.apply();
+    }
 
+    public void targetView(View v){
+        TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                TapTarget.forView(v.findViewById(R.id.btnChangCity), "تغییر منطقه", "از اطلاعات مناطق دیگر دیدن کنید جاذبه ها، امکانات و رویدادهای مناطق دیگر را ببینید")
+                        // All options below are optional
+                        .outerCircleColor(R.color.darkblue)      // Specify a color for the outer circle
+                        .outerCircleAlpha(0.76f)            // Specify the alpha amount for the outer circle
+                        .targetCircleColor(R.color.white)   // Specify a color for the target circle
+                        .titleTextSize(25)                  // Specify the size (in sp) of the title text
+                        .titleTextColor(R.color.white)      // Specify the color of the title text
+                        .descriptionTextSize(20)            // Specify the size (in sp) of the description text
+                        .descriptionTextColor(R.color.black)  // Specify the color of the description text
+                        .textColor(R.color.white)            // Specify a color for both the title and description text
+                        .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                        .dimColor(R.color.black)            // If set, will dim behind the view with 30% opacity of the given color
+                        .drawShadow(true)                   // Whether to draw a drop shadow or not
+                        .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                        .tintTarget(true)                   // Whether to tint the target view's color
+                        .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+//                        .icon(Drawable)                     // Specify a custom drawable to draw as the target
+                        .targetRadius(60) ,                 // Specify the target radius (in dp)
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        doSomething();
+                    }
+                }
+        );
+    }
 }

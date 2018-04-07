@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -22,13 +20,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,20 +32,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.idpz.instacity.Area;
 import com.idpz.instacity.Home.HomeActivity;
 import com.idpz.instacity.R;
+import com.idpz.instacity.utils.DBAreaHandler;
 import com.idpz.instacity.utils.GPSTracker;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private static final String TAG ="change ct";
     Spinner spnCity;
     Area myArea,myNearCity;
 
@@ -78,6 +65,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_change_city);
         myLocation = new Location("myloc");
         mycity = new Location("city");
+
 
 //        lvCities=(ListView)findViewById(R.id.lvChangeCTCities);
         btnChangeCT=(Button)findViewById(R.id.btnChangeCityChange);
@@ -137,44 +125,28 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
         });
-
-        new Thread() {
-            @Override
-            public void run() {
-                while (!areaFlag||!mapFlag) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
-                                Toast.makeText(ChangeCityActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
-                            }
+        ArrayList<String> ctNames=new ArrayList<>();
+        DBAreaHandler dbAreaHandler=new DBAreaHandler(this);
+        for (Area myArea:dbAreaHandler.getAllAreas()){
+            float myDistance=0;
+            areaArrayList.add(myArea);
+            mycity.setLatitude(myArea.getAlat());
+            mycity.setLongitude(myArea.getAlng());
+            myDistance=Math.round(myLocation.distanceTo(mycity));
+            ctNames.add(myArea.getAfname()+" (فاصله  "+myDistance+"متر)");
+        }
+        Log.d(TAG, "onCreate: "+ctNames.size());
 
 
-                            if (connected && !areaFlag) {
-                                reqArea();   //یافتن منطقه کاربر و اتصال به سوور هماه منطقه
-                            }
-                            if (mapFlag)initilizeMap();
-
-
-
-                        }
-                    });
-                    try {
-                        sleep(7000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
 
         spnCity=(Spinner)findViewById(R.id.spnLoginSelCity);
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+                (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
+                        ctNames); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnCity.setAdapter(spinnerArrayAdapter);
+        findArea();
         spnCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -197,96 +169,15 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         try {
             // Loading map
             initilizeMap();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
 
-    public void reqArea() {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = AREA_URL;
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>()
-                {
-                    public static final String TAG = "change city";
 
-                    @Override
-                    public void onResponse(String response) {
-                        JSONArray jsonArray= null;
-                        Log.d(TAG, "onResponse: response from area"+response);
-                        ArrayList<String> cityNames=new ArrayList<>();
-                        ArrayList<String> ctNames = new ArrayList<>();
-
-                        try {
-                            jsonArray = new JSONArray(response);
-                            areaFlag=true;
-                            JSONObject jsonObject=jsonArray.getJSONObject(0);
-
-                            for (int i=jsonArray.length();i>0;i--) {
-                                jsonObject = jsonArray.getJSONObject(i-1);
-                                float myDistance=0;
-                                Area area=new Area();
-                                area.setId(jsonObject.getInt("aid"));
-                                area.setAename(jsonObject.getString("aename"));
-                                area.setAfname(jsonObject.getString("afname"));
-                                cityNames.add(jsonObject.getString("afname"));
-                                area.setAlat(Float.valueOf(jsonObject.getString("alat")));
-                                area.setAlng(Float.valueOf(jsonObject.getString("alng")));
-                                area.setAdiameter(jsonObject.getInt("adiameter"));
-                                area.setServer(jsonObject.getString("server"));
-                                area.setZoom(jsonObject.getInt("azoom"));
-                                area.setPic(jsonObject.getString("pic"));
-                                area.setDescription(jsonObject.getString("memo"));
-
-                                areaArrayList.add(area);
-                                mycity.setLatitude(area.getAlat());
-                                mycity.setLongitude(area.getAlng());
-                                myDistance=Math.round(myLocation.distanceTo(mycity));
-                                ctNames.add(jsonObject.getString("afname")+" (فاصله  "+myDistance+"متر)");
-                            }
-                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-                                    (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
-                                            ctNames); //selected item will look like a spinner set from XML
-                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            spnCity.setAdapter(spinnerArrayAdapter);
-
-//                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ChangeCityActivity.this,
-//                                    android.R.layout.simple_list_item_1, cityNames);
-//
-//                            lvCities.setAdapter(adapter);
-
-                            findArea();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-
-                        }
-
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        Log.d("ERROR","error => "+error.toString());
-//                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String>params = new HashMap<String,String>();
-
-//                params.put("name", );
-
-                return params;
-            }
-        };
-        queue.add(postRequest);
-    }
 
 
     public void findArea(){

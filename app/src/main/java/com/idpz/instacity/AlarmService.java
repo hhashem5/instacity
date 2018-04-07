@@ -24,7 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.idpz.instacity.Home.LoginActivity;
+import com.idpz.instacity.Home.HomeActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -188,9 +188,10 @@ public class AlarmService extends Service {
                                         sender = jsonObject.getString("sender");
                                         sendtime = jsonObject.getString("ndate");
 
-                                        Intent intent = new Intent(AlarmService.this, LoginActivity.class);
+                                        Intent intent = new Intent(AlarmService.this, HomeActivity.class);
                                         Bundle c2 = new Bundle();
                                         c2.putString("key", msgid); //Your id
+                                        c2.putString("position","2");
                                         intent.putExtras(c2); //Put your id to your next Intent
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -358,7 +359,13 @@ public class AlarmService extends Service {
                                                 mp.stop();
                                                 mp.release();
                                             }
+
                                             mp.start();
+                                            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                                public void onCompletion(MediaPlayer mp) {
+                                                    mp.release();
+                                                }
+                                            });
                                             Log.d(TAG, "alarm playing: ");
                                             stopSelf();
                                         } catch (Exception e) {

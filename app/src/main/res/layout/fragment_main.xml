@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/line1"
         android:layout_width="fill_parent"
         android:layout_height="73dp"
         android:orientation="horizontal"
@@ -64,11 +65,23 @@
             />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_below="@id/line1"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="match_parent"
+            android:src="@drawable/bbb"
+            android:scaleType="fitXY"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
     <RelativeLayout
+        android:layout_below="@id/line1"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/gray_border_white_round3"
         >
         <TextView
             android:id="@+id/city_field"
@@ -186,12 +199,16 @@
             android:layout_alignBottom="@+id/imgWind"
             android:layout_toEndOf="@+id/imgWind"
             android:layout_marginBottom="10dp" />
+
+
     </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_margin="5dp"
-            android:layout_height="wrap_content">
+            android:layout_height="300dp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp">
+
             <ListView
                 android:id="@+id/lvVisitPlaces"
 
@@ -202,5 +219,4 @@
 
         </LinearLayout>
 
-
-</LinearLayout>
+</RelativeLayout>

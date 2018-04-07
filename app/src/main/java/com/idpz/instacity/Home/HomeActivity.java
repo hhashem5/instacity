@@ -1,6 +1,7 @@
 package com.idpz.instacity.Home;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +42,7 @@ import com.idpz.instacity.AlarmService;
 import com.idpz.instacity.Area;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
+import com.idpz.instacity.utils.DBAreaHandler;
 import com.idpz.instacity.utils.GPSTracker;
 import com.idpz.instacity.utils.MainfeedListAdapter;
 import com.idpz.instacity.utils.SectionsPagerAdapter;
@@ -85,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements
     String myname="0",melliid="0",pas="", mobile="0", birth="0",pic="", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
     String upStatus="start",ctname="";
     Boolean userRegFlag=false,areaFlag=false,connected=false,userProfileFlag=false,gpsCheck=false;
+    int failCount=0;
     // declare for popup window
     Button showPopupBtn, closePopupBtn;
     PopupWindow popupWindow;
@@ -100,6 +103,7 @@ public class HomeActivity extends AppCompatActivity implements
     private FrameLayout mFrameLayout;
     private RelativeLayout mRelativeLayout;
     SharedPreferences SP1;
+    DBAreaHandler dbAreaHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +111,8 @@ public class HomeActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_home);
         Log.d(TAG, "onCreate: starting.");
         lv=(ListView)findViewById(R.id.lvHomeContent);
+
+        dbAreaHandler=new DBAreaHandler(this);
 
         areaArrayList = new ArrayList<>();
         myLocation = new Location("myloc");
@@ -186,13 +192,31 @@ public class HomeActivity extends AppCompatActivity implements
                                 SP.putBoolean("connected", false);
                                 SP.apply();
                                 connected = false;
+
 //                                txtNews.setText("اینترنت وصل نیست");
                             }
 
+                            if (failCount>6){
 
-//                            if (connected && !areaFlag) {
-//                                reqArea();   //یافتن منطقه کاربر و اتصال به سوور هماه منطقه
-//                            }
+                                AlertDialog alertDialog = new AlertDialog.Builder(HomeActivity.this).create();
+                                alertDialog.setTitle("اینترنت وصل نیست!");
+                                alertDialog.setMessage("لطفا از اتصال اینترنت مطمئن شوید!");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "خروج",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                finishAffinity();
+                                                System.exit(0);
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+
+
+                            }
+
+                            if (connected && !areaFlag) {
+                                reqArea();   //یافتن منطقه کاربر و اتصال به سوور هماه منطقه
+                            }
                             if (!userRegFlag&&connected){
                                 reqUser();  //register user on server
                                 showLayout();
@@ -285,7 +309,12 @@ public class HomeActivity extends AppCompatActivity implements
     @Override
     public void onStart() {
         super.onStart();
-        tabLayout.getTabAt(getIntent().getIntExtra("position", 1)).select();
+        if (getIntent().hasExtra("position")){
+            tabLayout.getTabAt(getIntent().getIntExtra("position", 1)).select();
+        }else {
+            tabLayout.getTabAt(1).select();
+        }
+
     }
 
     /**
@@ -364,6 +393,7 @@ public class HomeActivity extends AppCompatActivity implements
                 {
                     @Override
                     public void onResponse(String response) {
+                        failCount=0;
                         userRegFlag=true;
                     }
                 },
@@ -371,7 +401,7 @@ public class HomeActivity extends AppCompatActivity implements
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        failCount++;
 
                     }
                 }
@@ -399,6 +429,7 @@ public class HomeActivity extends AppCompatActivity implements
                     @Override
                     public void onResponse(String response) {
                             userProfileFlag=true;
+                            failCount=0;
 //                        txtczstatus.setText(response.toString());
                     }
                 },
@@ -406,7 +437,7 @@ public class HomeActivity extends AppCompatActivity implements
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        failCount++;
                         Log.d("ERROR","error => "+error.toString());
 //                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
                     }
@@ -438,85 +469,7 @@ public class HomeActivity extends AppCompatActivity implements
 
 
     }
-    public void reqArea() {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = AREA_URL;
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONArray jsonArray= null;
 
-                        try {
-                            jsonArray = new JSONArray(response);
-                            areaFlag=true;
-                            JSONObject jsonObject=jsonArray.getJSONObject(0);
-                            areaArrayList.clear();
-                            cities.clear();
-                            String all="";
-                            for (int i=jsonArray.length();i>0;i--) {
-                                jsonObject = jsonArray.getJSONObject(i-1);
-                                float myDistance=0;
-                                Area area=new Area();
-                                area.setId(jsonObject.getInt("aid"));
-                                area.setAename(jsonObject.getString("aename"));
-                                area.setAfname(jsonObject.getString("afname"));
-                                area.setAlat(Float.valueOf(jsonObject.getString("alat")));
-                                area.setAlng(Float.valueOf(jsonObject.getString("alng")));
-                                area.setAdiameter(jsonObject.getInt("adiameter"));
-                                area.setServer(jsonObject.getString("server"));
-                                area.setZoom(jsonObject.getInt("azoom"));
-
-                                mycity.setLatitude(area.getAlat());
-                                mycity.setLongitude(area.getAlng());
-                                myDistance=Math.round(myLocation.distanceTo(mycity));
-                                all=all+area.getAfname()+" فاصله با شما= "+myDistance+"\n";
-//                                distances.add(myDistance);
-
-
-                                cities.add(area.getAfname());
-//                                adapter.notifyDataSetChanged();
-                                areaArrayList.add(area);
-
-                            }
-//                                tvPopup.setText(all);
-//                        initiatePopupWindow(all);
-//                            Toast.makeText(mContext, all, Toast.LENGTH_LONG).show();
-                            findArea();
-
-
-
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-
-                        }
-
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        Log.d("ERROR","error => "+error.toString());
-//                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String>params = new HashMap<String,String>();
-
-//                params.put("name", );
-
-                return params;
-            }
-        };
-        queue.add(postRequest);
-    }
 
     public void findArea(){
         float myDistance=0;
@@ -595,6 +548,75 @@ public class HomeActivity extends AppCompatActivity implements
             }
 
         }
+    }
+
+    public void reqArea() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = AREA_URL;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    public static final String TAG = "change city";
+
+                    @Override
+                    public void onResponse(String response) {
+                        JSONArray jsonArray= null;
+                        Log.d(TAG, "onResponse: response from area"+response);
+                        dbAreaHandler.removeAll();
+                        failCount=0;
+                        areaFlag=true;
+
+                        try {
+                            jsonArray = new JSONArray(response);
+                            areaFlag=true;
+                            JSONObject jsonObject=jsonArray.getJSONObject(0);
+
+                            for (int i=jsonArray.length();i>0;i--) {
+                                jsonObject = jsonArray.getJSONObject(i-1);
+                                float myDistance=0;
+                                Area area=new Area();
+                                area.setId(jsonObject.getInt("aid"));
+                                area.setAename(jsonObject.getString("aename"));
+                                area.setAfname(jsonObject.getString("afname"));
+                                area.setAlat(Float.valueOf(jsonObject.getString("alat")));
+                                area.setAlng(Float.valueOf(jsonObject.getString("alng")));
+                                area.setAdiameter(jsonObject.getInt("adiameter"));
+                                area.setServer(jsonObject.getString("server"));
+                                area.setZoom(jsonObject.getInt("azoom"));
+                                area.setPic(jsonObject.getString("pic"));
+                                area.setDescription(jsonObject.getString("memo"));
+
+                                dbAreaHandler.addJob(area);
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                       failCount++;
+                        Log.d("ERROR","error => "+error.toString());
+//                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+
+//                params.put("name", );
+
+                return params;
+            }
+        };
+        queue.add(postRequest);
     }
 
 }

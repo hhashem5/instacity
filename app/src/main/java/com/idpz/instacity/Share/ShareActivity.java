@@ -8,14 +8,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -40,13 +40,12 @@ import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.GPSTracker;
-import com.idpz.instacity.utils.Permissions;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -89,6 +88,7 @@ public class ShareActivity extends AppCompatActivity {
     TextView tvMessage,tvShare,tvStatusSend;
     ImageView image,ivBackArrow;
     private Context mContext = ShareActivity.this;
+    DisplayImageOptions options;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -102,11 +102,7 @@ public class ShareActivity extends AppCompatActivity {
         server=SP.getString("server", "0");
 
         REG_USER_LAT=server+"/i/latprofile.php";
-        if (checkPermissionsArray(Permissions.PERMISSIONS)) {
 
-        } else {
-            verifyPermissions(Permissions.PERMISSIONS);
-        }
 
         ServerUploadPath =server+"/i/img1.php" ;
 
@@ -122,6 +118,7 @@ public class ShareActivity extends AppCompatActivity {
         mstatus="0";
 
 //        share=(Button)findViewById(R.id.btnShareSocial);
+
 
 //        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname=SP.getString("myname", "0");
@@ -143,6 +140,7 @@ public class ShareActivity extends AppCompatActivity {
         final RadioButton rd5 = (RadioButton) dialog.findViewById(R.id.mrd_5);
         final RadioButton rd6 = (RadioButton) dialog.findViewById(R.id.mrd_6);
         Button btnDialog=(Button)dialog.findViewById(R.id.btnMov);
+        rd0.setSelected(true);
         // now that the dialog is set up, it's time to show it
         dialog.show();
 
@@ -250,56 +248,6 @@ public class ShareActivity extends AppCompatActivity {
 
 
 
-    /**
-     * verifiy all the permissions passed to the array
-     * @param permissions
-     */
-    public void verifyPermissions(String[] permissions){
-        Log.d(TAG, "verifyPermissions: verifying permissions.");
-
-        ActivityCompat.requestPermissions(
-                ShareActivity.this,
-                permissions,
-                VERIFY_PERMISSIONS_REQUEST
-        );
-    }
-
-    /**
-     * Check an array of permissions
-     * @param permissions
-     * @return
-     */
-    public boolean checkPermissionsArray(String[] permissions){
-        Log.d(TAG, "checkPermissionsArray: checking permissions array.");
-
-        for(int i = 0; i< permissions.length; i++){
-            String check = permissions[i];
-            if(!checkPermissions(check)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Check a single permission is it has been verified
-     * @param permission
-     * @return
-     */
-    public boolean checkPermissions(String permission){
-        Log.d(TAG, "checkPermissions: checking permission: " + permission);
-
-        int permissionRequest = ActivityCompat.checkSelfPermission(ShareActivity.this, permission);
-
-        if(permissionRequest != PackageManager.PERMISSION_GRANTED){
-            Log.d(TAG, "checkPermissions: \n Permission was not granted for: " + permission);
-            return false;
-        }
-        else{
-            Log.d(TAG, "checkPermissions: \n Permission was granted for: " + permission);
-            return true;
-        }
-    }
 
     /**
      * BottomNavigationView setup
@@ -328,33 +276,47 @@ public class ShareActivity extends AppCompatActivity {
             lat=intent.getStringExtra("lat");
             lng=intent.getStringExtra("lng");
             Log.d(TAG, "setImage: got new image url: " + imgUrl);
-//            UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
+            options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.ic_stub)
+                    .showImageForEmptyUri(R.drawable.noimage)
+                    .showImageOnFail(R.drawable.noimage)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .considerExifParams(true)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .build();
 
-            cmprs=70;
-            FileInputStream in = null;
-            try {
-                in = new FileInputStream(imgUrl);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            BufferedInputStream buf = new BufferedInputStream(in);
-            byte[] bMapArray= new byte[buf.available()];
-            buf.read(bMapArray);
-            bitmap = BitmapFactory.decodeByteArray(bMapArray, 0, bMapArray.length);
-            image.setImageBitmap(bitmap);
-        }
-        else if(intent.hasExtra(getString(R.string.selected_bitmap))){
-            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
-            lat=intent.getStringExtra("lat");
-            lng=intent.getStringExtra("lng");
-            Log.d(TAG, "setImage: got new bitmap aliabedi"+lat+lng);
-            image.setImageBitmap(bitmap);
-            cmprs=70;
-        }else {
-            nopicFlag=true;
-            image.setImageResource(R.drawable.noimage);
+            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(mAppend+imgUrl,image,options,new ImageLoadingListener() {
+
+
+                @Override
+                public void onLoadingStarted(String s, View view) {
+
+                }
+
+                @Override
+                public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                }
+
+                @Override
+                public void onLoadingComplete(String urlLink, View arg1, Bitmap loadedImage) {
+
+                    Log.i("loading complete", "loading complete " + loadedImage);
+                    bitmap=loadedImage;
+
+                }
+
+                @Override
+                public void onLoadingCancelled(String s, View view) {
+
+                }
+            });
+
+
         }
     }
+
 
      /*
      ------------------------------------ send post to server ---------------------------------------------
@@ -372,6 +334,7 @@ public class ShareActivity extends AppCompatActivity {
                         loading.dismiss();
                         //Showing toast message of the response
                         Toast.makeText(ShareActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 },
                 new Response.ErrorListener() {
@@ -497,6 +460,7 @@ public class ShareActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         tvMessage.setText("پیام با موفقیت ارسال شد");
+                        finish();
                     }
                 },
                 new Response.ErrorListener()
@@ -559,6 +523,45 @@ public class ShareActivity extends AppCompatActivity {
         };
         queue.add(postRequest);
 
+    }
+
+
+
+    public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
+        ExifInterface ei = new ExifInterface(image_absolute_path);
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotate(bitmap, 90);
+
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotate(bitmap, 180);
+
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotate(bitmap, 270);
+
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                return flip(bitmap, true, false);
+
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                return flip(bitmap, false, true);
+
+            default:
+                return bitmap;
+        }
+    }
+
+    public static Bitmap rotate(Bitmap bitmap, float degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
+        Matrix matrix = new Matrix();
+        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
 

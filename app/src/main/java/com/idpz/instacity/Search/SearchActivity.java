@@ -1,7 +1,9 @@
 package com.idpz.instacity.Search;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -96,6 +98,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     Car mycar;
     SharedPreferences SP1;
     ArrayAdapter<String> spinnerArrayAdapter;
+    int failCount=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -239,6 +242,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     seekBar.setVisibility(View.GONE);
                     spnCarSelect.setVisibility(View.GONE);
                     chkCarAlarm.setVisibility(View.GONE);
+                    txtDistance.setVisibility(View.GONE);
+                    txtMydist.setVisibility(View.GONE);
                     Icar=false;
                 }
             }
@@ -294,6 +299,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+
                             ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                             if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
@@ -311,7 +317,20 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                     chkTrafic.setEnabled(true);
                                     chkSat.setEnabled(true);
                                 }
-
+                                if(connected&&failCount>3){
+                                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                                    alertDialog.setTitle("اینترنت وصل نیست!");
+                                    alertDialog.setMessage("لطفا از اتصال اینترنت مطمئن شوید!");
+                                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "خروج",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    remain=false;
+                                                    finish();
+                                                    dialog.dismiss();
+                                                }
+                                            });
+                                    alertDialog.show();
+                                }
 
                                 if (!placesFlag) reqShop();
 
@@ -592,6 +611,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     public void onResponse(String response) {
                         JSONArray jsonArray= null;
                         placesFlag=true;
+                        failCount=0;
                         try {
                             Shop shop=new Shop();
                             jsonArray = new JSONArray(response);
@@ -630,7 +650,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failCount++;
                         }
 
 
@@ -834,7 +854,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     mMap.addMarker(markerOp);
                     mMap.addPolyline(polyLines);
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(carloc, 17));
-                    txtMydist.setText("فاصله خودرو:"+Math.round(myLocation.distanceTo(carLocation)));
+                    txtMydist.setText("فاصله خودرو:"+Math.round(myLocation.distanceTo(carLocation))+"متر");
                     txtDistance.setText(SP1.getString("alarm_len","0")+"متر");
                     CircleOptions circleOptions=new CircleOptions().center(new LatLng(myLocation.getLatitude(),myLocation.getLongitude()))
                             .radius(alarmDist)
@@ -858,9 +878,10 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 {
                     @Override
                     public void onResponse(String response) {
-//                        Log.d(TAG, "onResponse: "+response);
+
                         JSONArray jsonArray= null;
                         rcvFlag=true;
+                        failCount=0;
                         nodes.clear();
                         try {
                             jsonArray = new JSONArray(response);
@@ -874,7 +895,6 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                 rcvsrv.setLat(jsonObject.getString("rlat"));
                                 rcvsrv.setLng(jsonObject.getString("rlng"));
                                 rcvsrv.setCode(jsonObject.getString("speed"));
-                                Log.d(TAG, "onResponse: "+rcvsrv.getLat());
                                 nodes.add(rcvsrv);
                             }
 
@@ -893,7 +913,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        failCount++;
                         Log.d("ERROR","error => "+error.toString());
                     }
                 }
@@ -902,7 +922,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
                 params.put("code",mycar.getCode());
-                params.put("limit","3");
+                params.put("limit","30");
                 return params;
             }
         };
@@ -922,6 +942,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                         Log.d(TAG, "onResponse: "+response);
                         driverFlag=true;
                         cars.clear();
+                        failCount=0;
                         carlist.clear();
                         JSONArray jsonArray= null;
                         try {
@@ -959,7 +980,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        failCount++;
                         Log.d("ERROR","error => "+error.toString());
 //                        Toast.makeText(MainActivity.this, "Error reqcdrv", Toast.LENGTH_SHORT).show();
                     }

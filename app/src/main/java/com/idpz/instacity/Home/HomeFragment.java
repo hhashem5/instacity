@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -97,7 +96,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 connected = true;
                             } else {
                                 connected = false;
-                                Toast.makeText(getActivity().getApplicationContext(), "اینترنت وصل نیست!", Toast.LENGTH_SHORT).show();
+
                             }
 
                             if (connected && !postRcvFlag) {
@@ -155,13 +154,15 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void reqPosts() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = fullServer;
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+        final StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
                 {
                     @Override
                     public void onResponse(String response) {
                         reqFlag=true;
+                        if (!postRcvFlag)dataModels.clear();
                         postRcvFlag=true;
+
                         if (refreshFlag){
                             refreshFlag=false;
                             dataModels.clear();

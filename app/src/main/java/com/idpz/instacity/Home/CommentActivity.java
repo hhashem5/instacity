@@ -1,6 +1,7 @@
 package com.idpz.instacity.Home;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -91,7 +92,7 @@ public class CommentActivity extends AppCompatActivity {
 //        server = dbLastData.getLastData(1).getValue();
 
         lvComments.setAdapter(commentAdapter);
-        Toast.makeText(this, fullServer, Toast.LENGTH_SHORT).show();
+
         reqPosts();
 
     }
@@ -157,7 +158,7 @@ public class CommentActivity extends AppCompatActivity {
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        //  Auto-generated method stub
                         Log.d("ERROR","error => "+error.toString());
                     }
                 }
@@ -192,7 +193,7 @@ public class CommentActivity extends AppCompatActivity {
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        //  Auto-generated method stub
                         Toast.makeText(CommentActivity.this, "پیام ارسال نشد", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -211,6 +212,14 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent0 = new Intent(CommentActivity.this, HomeActivity.class);
+//                            intent0.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent0.putExtra("position", 0); //          137
+        startActivity(intent0);
 
+    }
 
 }

@@ -170,4 +170,9 @@
         android:title="اتصال اینترنت"
         android:summary="اتصال"
         />
+    <CheckBoxPreference
+        android:key="firsttime"
+        android:title="اجرای اول"
+        android:summary="اجرای اول"
+        />
 </PreferenceScreen>

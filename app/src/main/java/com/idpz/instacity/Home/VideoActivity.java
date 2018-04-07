@@ -50,7 +50,7 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.videorefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         lvVideoPost = (ListView) findViewById(R.id.lvVideoContent);

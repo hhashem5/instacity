@@ -135,7 +135,7 @@ public class PostAdapter extends BaseAdapter {
             imglike.setImageResource(R.drawable.liked);
             imglike.setTag("1");
         }else {
-            imglike.setImageResource(R.drawable.likei);
+            imglike.setImageResource(R.drawable.like);
             imglike.setTag("0");
         }
 
@@ -147,7 +147,7 @@ public class PostAdapter extends BaseAdapter {
                 soid=String.valueOf(postList.get(position).getId());
                 String lik=postList.get(position).getPostLK();
                 if(lik.equals("1")) {
-                    imglike.setImageResource(R.drawable.likei);
+                    imglike.setImageResource(R.drawable.like);
                     imglike.setTag("0");
                     lk="0";
                     postList.get(position).setPostLK("0");
@@ -199,7 +199,7 @@ public class PostAdapter extends BaseAdapter {
             }
         });
 
-        imgComment.setImageResource(R.drawable.commenti);
+        imgComment.setImageResource(R.drawable.comment);
         imgComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
