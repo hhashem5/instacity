@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -45,18 +45,18 @@ private SwipeRefreshLayout swipeRefreshLayout;
     ArtAdapter adapter;
     ArrayList<Arts> dataModels;
     ListView listView;
-    ImageView btnAdsReg;
 
     Boolean artsFlag=false,connected=false;
     String GET_ADS_URL="",server="";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_job,container,false);
-        listView=(ListView)view.findViewById(R.id.lvJobContent);
-        btnAdsReg=(ImageView) view.findViewById(R.id.imgAddJob);
+        listView= view.findViewById(R.id.lvJobContent);
+//        btnAdsReg=(ImageView) view.findViewById(R.id.imgAddJob);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.jobRefresh);
+        swipeRefreshLayout = view.findViewById(R.id.jobRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
 
@@ -76,11 +76,21 @@ private SwipeRefreshLayout swipeRefreshLayout;
 
          reqArts();
 
-        btnAdsReg.setOnClickListener(new View.OnClickListener() {
+//        btnAdsReg.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent in =new Intent(getContext(),AddArtActivity.class);
+//                getActivity().startActivity(in);
+//            }
+//        });
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setAlpha(0.65f);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent in =new Intent(getContext(),AddArtActivity.class);
-                getActivity().startActivity(in);
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),AddArtActivity.class);
+                startActivity(intent);
             }
         });
 

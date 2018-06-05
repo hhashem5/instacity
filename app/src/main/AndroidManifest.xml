@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.idpz.instacity">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,17 +12,17 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:name=".utils.AppController"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@drawable/mlogo64"
         android:label="@string/app_name"
         android:roundIcon="@drawable/mlogo64"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCVMtJ1wQjmniQpjXhlaA_bcuOmMVbbxdU" />
@@ -30,16 +30,19 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".Home.HomeActivity"
+        <activity
+            android:name=".Home.HomeActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            />
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+
+        </activity>
         <activity
             android:name=".Search.SearchActivity"
-            android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:label="@string/title_activity_search"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
 
         <receiver android:name=".MyBroadcastReceiver">
             <intent-filter>
@@ -50,54 +53,96 @@
         <service
             android:name=".AlarmService"
             android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".Profile.LikesActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Profile.ProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Share.ShareActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Profile.AccountSettingActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".Home.CommentActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Profile.SinglePostActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Profile.MyProfileActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Home.LoginActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Home.SignupActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Search.StoreRegActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Profile.ChangeCityActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Home.LikersActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Share.GalleryActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Like.TourismActivity"
-            android:screenOrientation="portrait"/>
+            android:exported="true"
+            android:permission="" />
+        <activity android:name=".Home.GreenActivity"/>
         <activity
-            android:name=".Home.SplashScreenActivity"
-            android:label="@string/app_name"
+            android:name=".Profile.LikesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Profile.ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Share.ShareActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Profile.AccountSettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.CommentActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Profile.SinglePostActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Profile.MyProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            android:windowSoftInputMode="stateVisible|adjustPan" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".Home.VideoActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".Home.KaryabiActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".Home.RuydadActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".Home.AboutusActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".Like.AdsAddActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".Like.AddArtActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".Like.VillaAddActivity" android:screenOrientation="portrait" />
+        <activity android:name=".Home.SingleVisitActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".Home.SignupActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".Search.StoreRegActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".Profile.ChangeCityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.LikersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Share.GalleryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Like.TourismActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".utils.setting" />
+        <activity
+            android:name=".Home.SplashScreenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+
+        </activity>
+        <activity
+            android:name=".Home.VideoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.VisitSearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.SmsVerificationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.AboutusActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Like.AdsAddActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".Like.AddArtActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".Like.VillaAddActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity android:name=".Home.NamePlaceActivity"></activity>
     </application>
 
 </manifest>

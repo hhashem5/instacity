@@ -83,6 +83,7 @@ public class WeatherFunction {
             JSONObject jsonWeather = null;
             try {
                 jsonWeather = getWeatherJSON(params[0], params[1]);
+                Log.d(TAG, "doInBackground: "+jsonWeather);
             } catch (Exception e) {
                 Log.d("Error", "Cannot process JSON results", e);
             }
@@ -99,7 +100,7 @@ public class WeatherFunction {
                     JSONObject main = json.getJSONObject("main");
                     DateFormat df = DateFormat.getDateTimeInstance();
 
-
+                    Log.d(TAG, "onPostExecute: "+json.toString());
                     String city = json.getString("name").toUpperCase(Locale.US) + ", " + json.getJSONObject("sys").getString("country");
                     String description = details.getString("description").toUpperCase(Locale.US);
                     String temperature = String.format(Locale.US,"%.2f", main.getDouble("temp"))+ "°";
@@ -163,4 +164,6 @@ public class WeatherFunction {
             return null;
         }
     }
+
+
 }

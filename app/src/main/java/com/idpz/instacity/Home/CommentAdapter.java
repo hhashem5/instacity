@@ -51,11 +51,11 @@ public class CommentAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.content_comment, null);
 
 
-        NetworkImageView thumbNail = (NetworkImageView) convertView
+        NetworkImageView thumbNail = convertView
                 .findViewById(R.id.imgCommentUserImg);
-        TextView userName = (TextView) convertView.findViewById(R.id.txtCommentUserName);
-        TextView postComment = (TextView) convertView.findViewById(R.id.txtCommentText);
-        TextView commentDate = (TextView) convertView.findViewById(R.id.txtCommentDate);
+        TextView userName = convertView.findViewById(R.id.txtCommentUserName);
+        TextView postComment = convertView.findViewById(R.id.txtCommentText);
+        TextView commentDate = convertView.findViewById(R.id.txtCommentDate);
 
         // getting Food data for the row
         Comment m = postList.get(position);

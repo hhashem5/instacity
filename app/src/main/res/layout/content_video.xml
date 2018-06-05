@@ -27,42 +27,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
         <VideoView
             android:layout_gravity="center"
             android:layout_margin="2dp"
             android:id="@+id/vidPostVideo"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-
             />
-
-
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_gravity="left"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:layout_height="wrap_content">-->
-        <!--<ImageView-->
-            <!--android:layout_width="30dp"-->
-            <!--android:id="@+id/imgPostLike"-->
-            <!--android:src="@drawable/like"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_marginRight="5dp"-->
-            <!--/>-->
-        <!--<ImageView-->
-            <!--android:layout_width="30dp"-->
-            <!--android:id="@+id/imgPostComment"-->
-            <!--android:src="@drawable/comment"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_marginRight="5dp"/>-->
-        <!--<TextView-->
-            <!--android:id="@+id/txtPostView"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content" />-->
-    <!--</LinearLayout>-->
+<ImageView
+    android:id="@+id/imgPlayVideo"
+    android:src="@drawable/ic_video"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    android:layout_width="100dp"
+    android:layout_height="100dp" />
+</RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"

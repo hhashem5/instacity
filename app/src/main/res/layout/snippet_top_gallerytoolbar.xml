@@ -20,13 +20,10 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginEnd="20dp"
+                    android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:id="@+id/ivCloseShare"
                     android:src="@drawable/ic_black_x"/>
-
-
-
-
 
                 <TextView
                     android:layout_width="wrap_content"

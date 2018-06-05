@@ -22,7 +22,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -68,6 +67,7 @@ public class SignupActivity extends AppCompatActivity {
 
     ArrayList<Area> areaArrayList=new ArrayList<>();
     private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
+    private static final String STATIC_SERVER = "http://idpz.ir";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,14 +76,14 @@ public class SignupActivity extends AppCompatActivity {
 
         myLocation = new Location("myloc");
         mycity = new Location("city");
-
-        txtName=(EditText)findViewById(R.id.txtSignupNmae);
-        txtMobile=(EditText)findViewById(R.id.txtSignupMobile);
-        txtPass=(EditText)findViewById(R.id.txtSignupPass);
-        btnReg=(Button) findViewById(R.id.btnSignupReg);
-        btnSignIn=(Button) findViewById(R.id.btnSigninReg);
-        txtmsg=(TextView) findViewById(R.id.txtSignupMsg);
-        rbMard=(RadioButton)findViewById(R.id.rbSignupMard);
+        REGISTER_URL=STATIC_SERVER+"/i/profile.php";
+        txtName= findViewById(R.id.txtSignupNmae);
+        txtMobile= findViewById(R.id.txtSignupMobile);
+        txtPass= findViewById(R.id.txtSignupPass);
+        btnReg= findViewById(R.id.btnSignupReg);
+        btnSignIn= findViewById(R.id.btnSigninReg);
+        txtmsg= findViewById(R.id.txtSignupMsg);
+        rbMard= findViewById(R.id.rbSignupMard);
 
         populateGPS();
 
@@ -97,7 +97,7 @@ public class SignupActivity extends AppCompatActivity {
             finish();
         }
 
-        spCity=(Spinner)findViewById(R.id.spnLoginSelCity);
+        spCity= findViewById(R.id.spnLoginSelCity);
         spCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -137,14 +137,10 @@ public class SignupActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
-                                Toast.makeText(SignupActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
-                            }
+                            //we are connected to a network
+//                                Toast.makeText(SignupActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
+                            connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
 
                             if (connected && !areaFlag) {
@@ -231,7 +227,7 @@ public class SignupActivity extends AppCompatActivity {
                         SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                         SP2.putString("myname", myname);
                         SP2.putString("mobile", mob);
-                        SP2.putString("melliid", melli);
+//                        SP2.putString("melliid", melli);
                         SP2.putString("pass", pass);
                         SP2.putString("birth", sal);
                         SP2.putString("server", server);
@@ -309,7 +305,7 @@ public class SignupActivity extends AppCompatActivity {
                                 cityNames.add(jsonObject.getString("afname"));
                                 area.setAlat(Float.valueOf(jsonObject.getString("alat")));
                                 area.setAlng(Float.valueOf(jsonObject.getString("alng")));
-                                area.setAdiameter(jsonObject.getInt("adiameter"));
+//                                area.setAdiameter(jsonObject.getString("adiameter"));
                                 area.setServer(jsonObject.getString("server"));
                                 area.setZoom(jsonObject.getInt("azoom"));
                                 area.setPic(jsonObject.getString("pic"));
@@ -325,7 +321,7 @@ public class SignupActivity extends AppCompatActivity {
                             spCity.setAdapter(spinnerArrayAdapter);
                             server=areaArrayList.get(0).getServer();
                             ctName=areaArrayList.get(0).getAfname();
-                            REGISTER_URL=server+"/i/profile.php";
+
 
                             findArea();
                         } catch (JSONException e) {

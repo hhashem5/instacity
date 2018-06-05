@@ -3,7 +3,6 @@ package com.idpz.instacity.Profile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -23,13 +22,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.GiftPlace;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.GiftPlacesAdapter;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +51,7 @@ public class LikesActivity extends AppCompatActivity {
     String fullServer="",profileImgUrl="",mob="";
     TextView txtDisplayName,txtDescription, txtScore,txtTabUserName,txtMyMobile;
     CircleImageView imgProfile;
-    private DisplayImageOptions options;
+
     Boolean giftFlag=false,connected=false,moneyFlag=false;
     String server="";
 
@@ -72,21 +71,13 @@ public class LikesActivity extends AppCompatActivity {
         fullServer=server+"/i/gift.php";
 
         profileImgUrl = SP1.getString("pic", "0");
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.ic_empty)
-                .showImageOnFail(R.drawable.ic_error)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        txtDisplayName=(TextView)findViewById(R.id.txtDisplay_name);
-        txtDescription=(TextView)findViewById(R.id.txtDescription);
-        txtScore =(TextView)findViewById(R.id.txtMyScore);
-        txtMyMobile =(TextView)findViewById(R.id.txtMyMobile);
-        txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
-        imgProfile=(CircleImageView)findViewById(R.id.profile_photoLikes);
+
+        txtDisplayName= findViewById(R.id.txtDisplay_name);
+        txtDescription= findViewById(R.id.txtDescription);
+        txtScore = findViewById(R.id.txtMyScore);
+        txtMyMobile = findViewById(R.id.txtMyMobile);
+        txtTabUserName= findViewById(R.id.txtTabUsername);
+        imgProfile= findViewById(R.id.profile_photoLikes);
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,10 +87,16 @@ public class LikesActivity extends AppCompatActivity {
             }
         });
 
-        ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
+
+        Glide.with(this).load(server+"/assets/images/users/"+profileImgUrl)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(imgProfile);
 
         dataModels = new ArrayList<>();
-        lvGiftPlaces=(ListView)findViewById(R.id.listPlaces);
+        lvGiftPlaces= findViewById(R.id.listPlaces);
         giftPlacesAdapter=new GiftPlacesAdapter(this,dataModels);
         lvGiftPlaces.setAdapter(giftPlacesAdapter);
 
@@ -124,13 +121,9 @@ public class LikesActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
-                            }
+                            //we are connected to a network
+                            connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
                             if (connected && !giftFlag) {
                                 reqGifts();
@@ -155,7 +148,7 @@ public class LikesActivity extends AppCompatActivity {
     // تنظیم نوار پایین برنامه
     private void setupBottomNavigationView(){
         Log.d(TAG,"seting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx=(BottomNavigationViewEx)findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx= findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(LikesActivity.this,bottomNavigationViewEx);
         Menu menu=bottomNavigationViewEx.getMenu();

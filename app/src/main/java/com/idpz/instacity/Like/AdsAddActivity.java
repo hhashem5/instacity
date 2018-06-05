@@ -16,11 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,10 +33,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Ads;
 import com.idpz.instacity.utils.MyAdsAdapter;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +54,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLayout.OnRefreshListener{
+    private static final String TAG = "AdsAddActivity";
     private SwipeRefreshLayout swipeRefreshLayout;
 
     String ImageName = "image_name",mobile="0";
@@ -67,20 +71,23 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
     String title="",memo="",tel="",address="";
     View focusView = null;
     Boolean kansel=false,check=true;
-    private Intent intent;
-    private String imgUrl;
+
+
 
     ArrayList<Ads> dataModels;
     ListView listView;
     MyAdsAdapter adapter;
-    Boolean adsFlag=false,connected=false;
+    Boolean adsFlag=false,connected=false,imageFlag=false;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ads_add);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.addAdsRefresh);
+        progressBar= findViewById(R.id.progressBar);
+
+        swipeRefreshLayout = findViewById(R.id.addAdsRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         SharedPreferences SP1;
@@ -91,34 +98,38 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
         GET_ADS_URL =  server+"/i/getads.php";
         UpdateAdsPath=server+"/i/updateads.php";
 
-        listView=(ListView)findViewById(R.id.lvAdsContent);
+        listView= findViewById(R.id.lvAdsContent);
         dataModels= new ArrayList<>();
-        adapter= new MyAdsAdapter(AdsAddActivity.this,dataModels);
+        adapter= new MyAdsAdapter(AdsAddActivity.this,dataModels,this);
         listView.setAdapter(adapter);
 
-        imgAds=(ImageView)findViewById(R.id.imgAdsSave);
-        btnSend=(Button)findViewById(R.id.btnAdsSend);
-        btnAdsUpdate=(Button)findViewById(R.id.btnAdsEdit);
-        btnAdsImgSelect=(Button)findViewById(R.id.btnAdsImgSelect);
-        edtTitle=(EditText)findViewById(R.id.txtAdsTitle);
-        edtMemo=(EditText)findViewById(R.id.txtAdsMemo);
-        edtTel=(EditText)findViewById(R.id.txtAdsTel);
-        edtAddress=(EditText)findViewById(R.id.txtAdsAddress);
-        tvCode=(TextView)findViewById(R.id.adsCode);
-
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(AdsAddActivity.this));
+        imgAds= findViewById(R.id.imgAdsSave);
+        btnSend= findViewById(R.id.btnAdsSend);
+        btnAdsUpdate= findViewById(R.id.btnAdsEdit);
+        btnAdsUpdate.setVisibility(View.INVISIBLE);
+        btnAdsImgSelect= findViewById(R.id.btnAdsImgSelect);
+        edtTitle= findViewById(R.id.txtAdsTitle);
+        edtMemo= findViewById(R.id.txtAdsMemo);
+        edtTel= findViewById(R.id.txtAdsTel);
+        edtAddress= findViewById(R.id.txtAdsAddress);
+        tvCode= findViewById(R.id.adsCode);
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                btnAdsUpdate.setEnabled(true);
+                btnAdsUpdate.setVisibility(View.VISIBLE);
                 edtTitle.setText(dataModels.get(position).getTitle());
                 edtMemo.setText(dataModels.get(position).getMemo());
                 edtTel.setText(dataModels.get(position).getTel());
                 edtAddress.setText(dataModels.get(position).getAddress());
                 tvCode.setText(""+dataModels.get(position).getId());
-                com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(dataModels.get(position).getPic(),imgAds);
+                Glide.with(AdsAddActivity.this).load(dataModels.get(position).getPic())
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.nopic)
+                        .into(imgAds);
             }
         });
 
@@ -157,7 +168,9 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
 
                 if (!kansel){
                     ServerUploadPath=server+"/i/setads.php";
+                    Toast.makeText(AdsAddActivity.this, "درحال ثبت تغییرات", Toast.LENGTH_LONG).show();
                     updateAds();
+
                 }
 
             }
@@ -180,7 +193,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                 memo=edtMemo.getText().toString();
                 tel=edtTel.getText().toString();
                 address=edtAddress.getText().toString();
-
+                kansel=false;
                 if(title.length()<4){
                     edtTitle.setError("عنوان کوتاه است");
                     focusView=edtTitle;
@@ -202,28 +215,31 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                     focusView=edtAddress;
                     kansel=true;
                 }
-
+                if (!imageFlag){
+                    Toast.makeText(AdsAddActivity.this, "لطفا یک عکس انتخاب کنید!", Toast.LENGTH_LONG).show();
+                    kansel=true;
+                }
                 if (!kansel){
-
+                    Toast.makeText(AdsAddActivity.this, "درحال ثبت اطلاعات", Toast.LENGTH_LONG).show();
                     uploadImage();}
             }
         });
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         reqAds();
+
     }
 
     /**
      * gets the image url from the incoming intent and displays the chosen image
      */
     private void setImage() throws IOException {
+        Intent intent;
         intent = getIntent();
 
 
         if(intent.hasExtra(getString(R.string.selected_image))){
+            String imgUrl;
             imgUrl = intent.getStringExtra(getString(R.string.selected_image));
-
-//            UniversalImageLoader.setImage(imgUrl, image, null, mAppend);
-
 
             FileInputStream in = null;
             try {
@@ -238,7 +254,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
             imgAds.setImageBitmap(bitmap);
         }
         else if(intent.hasExtra(getString(R.string.selected_bitmap))){
-            bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
+            bitmap = intent.getParcelableExtra(getString(R.string.selected_bitmap));
 
             imgAds.setImageBitmap(bitmap);
 
@@ -261,7 +277,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
 //                    Log.e("The image", imageToString(bitmap));
                     imgAds.setImageBitmap(bitmap);
-
+                    imageFlag=true;
                     if (tvCode.getText().toString().length()>0) {
                         AlertDialog.Builder alertbox = new AlertDialog.Builder(AdsAddActivity.this);
                         alertbox.setMessage("عکس جدید آگهی، جایگزین شود");
@@ -305,7 +321,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                     @Override
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
-
+                        reqAds();
                         //Showing toast message of the response
                         Toast.makeText(AdsAddActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
                     }
@@ -316,7 +332,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                         //Dismissing the progress dialog
 
                         //Showing toast
-//                        Toast.makeText(AdsAddActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
+                        Toast.makeText(AdsAddActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override
@@ -358,7 +374,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                     @Override
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
-
+                        reqAds();
                         //Showing toast message of the response
                         Toast.makeText(AdsAddActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
                     }
@@ -408,6 +424,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
     }
 
     public void reqAds() {
+        progressBar.setVisibility(View.VISIBLE);
         RequestQueue queue = Volley.newRequestQueue(AdsAddActivity.this);
         String url = GET_ADS_URL;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -415,6 +432,12 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                 {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        Log.d(TAG, "onResponse: "+response);
+                        if (response.length()<10){
+                            dataModels.clear();
+                            adapter.notifyDataSetChanged();
+                        }
                         JSONArray jsonArray= null;
                         swipeRefreshLayout.setRefreshing(false);
                         try {
@@ -438,14 +461,14 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                                 dataModels.add(area);
 
                             }
-                            adapter.notifyDataSetChanged();
 
+                            adapter.notifyDataSetChanged();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
 
                         }
-
+                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener()
@@ -454,6 +477,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
                         Log.d("ERROR","error => "+error.toString());
+                        adapter.notifyDataSetChanged();
 //                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
                     }
                 }
@@ -473,6 +497,7 @@ public class AdsAddActivity extends AppCompatActivity  implements SwipeRefreshLa
 
     @Override
     public void onRefresh() {
-
+        swipeRefreshLayout.setRefreshing(true);
+        reqAds();
     }
 }

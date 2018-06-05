@@ -8,30 +8,17 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/bkg2"
     tools:context="com.idpz.instacity.Home.LoginActivity">
 
     <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/login_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
 
-    <ScrollView
-        android:id="@+id/login_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/email_login_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:layout_marginTop="80dp"
                 android:layout_height="wrap_content">
 
                 <EditText
@@ -44,49 +31,35 @@
                     android:singleLine="true" />
 
             </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </android.support.design.widget.TextInputLayout>
-<LinearLayout
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="100"
-    android:layout_marginTop="20dp"
-    android:layout_margin="5dp"
-    android:gravity="center"
-    android:layout_height="wrap_content">
-            <Spinner
-                android:id="@+id/spnLoginSelCity"
-                android:layout_width="wrap_content"
-                android:layout_weight="80"
-                android:layout_height="wrap_content">
-
-            </Spinner>
     <TextView
-        android:text="شهر خود را انتخاب کنید"
+        android:text="@string/select_city"
+        android:textColor="@color/black"
+        android:layout_margin="15dp"
         android:layout_width="wrap_content"
-        android:layout_weight="50"
-        android:gravity="center"
         android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <Spinner
+            android:id="@+id/spnLoginSelCity"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </Spinner>
+        <AutoCompleteTextView
+            android:id="@+id/acTxtView"
+            android:layout_weight="1"
+            android:layout_width="150dp"
+            android:hint="@string/city_search"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
             <Button
-                android:id="@+id/email_sign_in_button"
+                android:id="@+id/btnMobileReg"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,18 +68,19 @@
                 android:textStyle="bold" />
 <TextView
     android:id="@+id/txtLoginInfo"
-    android:textColor="@color/red"
+    android:textColor="@color/black"
+    android:gravity="center"
+    android:text="@string/mobile_start_with09"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/btn_sign_up_Login"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_up"
-                android:textStyle="bold" />
 
-        </LinearLayout>
-    </ScrollView>
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
 </LinearLayout>

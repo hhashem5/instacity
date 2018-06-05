@@ -46,8 +46,8 @@
             />
         <EditTextPreference
                 android:key="notification"
-                android:title="خبر فوری"
-                android:summary="متن آخرین خبر را ببینید"
+                android:title="شماره خبر فوری"
+                android:summary="شماره آخرین خبر "
                 android:editable="false"
                 />
         <EditTextPreference
@@ -174,5 +174,10 @@
         android:key="firsttime"
         android:title="اجرای اول"
         android:summary="اجرای اول"
+        />
+    <EditTextPreference
+        android:key="tabpos"
+        android:title="آخرین جا"
+        android:summary="سربرگ قبلی "
         />
 </PreferenceScreen>

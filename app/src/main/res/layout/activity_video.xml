@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <ProgressBar
+        android:id="@+id/progressVideo"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_width="72dp"
+        android:layout_height="72dp" />
+
 <android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/videorefresh"
+    android:layout_alignParentTop="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ListView
@@ -14,6 +22,13 @@
 
     </ListView>
 </android.support.v4.widget.SwipeRefreshLayout>
+    <ImageView
+        android:id="@+id/imgVideoRetry"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_refresh"
+        android:visibility="gone"
+        android:layout_width="72dp"
+        android:layout_height="72dp" />
 
-
-</LinearLayout>
+</RelativeLayout>

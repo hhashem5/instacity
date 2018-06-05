@@ -62,7 +62,7 @@ public class LikersActivity extends AppCompatActivity {
         SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname = sp1.getString("myname", "");
         phone=sp1.getString("mobile", "");
-        lvLikers = (ListView) findViewById(R.id.lvLikers);
+        lvLikers = findViewById(R.id.lvLikers);
         pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
@@ -70,6 +70,10 @@ public class LikersActivity extends AppCompatActivity {
         pd.setMessage("دریافت اطلاعات...");
         pd.setCancelable(true);
         pd.show();
+
+        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SP.putString("tabpos", "0");
+        SP.apply();
 
         lvLikers.setAdapter(likersAdapter);
 //        Toast.makeText(this, fullServer, Toast.LENGTH_SHORT).show();
@@ -83,14 +87,10 @@ public class LikersActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
+                            //we are connected to a network
 //                                txtNews.setText("اینترنت وصل نیست");
-                            }
+                            connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
 
                             if (!reqFlag&&connected)
@@ -138,7 +138,7 @@ public class LikersActivity extends AppCompatActivity {
                                 comment.setUsrName(jsonObject.getString("name"));
                                 String pic=jsonObject.getString("pic");
                                 if(pic.equals("null")|| pic.isEmpty())pic="0.jpg";
-                                comment.setMycomment(server+"/assets/images/users/"+pic);
+                                comment.setMycomment(getString(R.string.server)+"/assets/images/users/"+pic);
 
                                 dataModels.add(comment);
 

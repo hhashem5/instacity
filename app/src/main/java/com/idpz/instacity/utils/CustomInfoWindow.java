@@ -36,12 +36,12 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
                 .inflate(R.layout.custom_info_marker, null);
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
-        NetworkImageView img = (NetworkImageView) view.findViewById(R.id.imgPLaceMaker);
-        TextView txtName = (TextView) view.findViewById(R.id.txtMarkerPlaceName);
-        TextView txtOwner = (TextView) view.findViewById(R.id.txtMarkerPlaceOwner);
-        TextView txtKey = (TextView) view.findViewById(R.id.txtMarkerPlaceKey);
-        TextView txtTel = (TextView) view.findViewById(R.id.txtMarkerPlacetel);
-        TextView txtAddress = (TextView) view.findViewById(R.id.txtMarkerPlaceAddress);
+        NetworkImageView img = view.findViewById(R.id.imgPLaceMaker);
+        TextView txtName = view.findViewById(R.id.txtMarkerPlaceName);
+        TextView txtOwner = view.findViewById(R.id.txtMarkerPlaceOwner);
+        TextView txtKey = view.findViewById(R.id.txtMarkerPlaceKey);
+        TextView txtTel = view.findViewById(R.id.txtMarkerPlacetel);
+        TextView txtAddress = view.findViewById(R.id.txtMarkerPlaceAddress);
 
         Shop m = (Shop) marker.getTag();
         // thumbnail image

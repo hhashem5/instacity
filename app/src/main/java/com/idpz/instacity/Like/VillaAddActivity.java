@@ -15,12 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,10 +32,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Villa;
 import com.idpz.instacity.utils.MyVillaAdapter;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,21 +62,23 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
     String REGISTER_URL="",server="",ServerUploadPath="",UpdateVillaPath="";
     String name="",area="",price="",room="",facility="",memo="",tel="",address="";
     View focusView = null;
-    Boolean kansel=false,check=true,villaFlag=false;
+    Boolean kansel=false,check=true,villaFlag=false,imageFlag=false;
     private Intent intent;
     private String imgUrl,lat,lng;
     MyVillaAdapter adapter;
     ArrayList<Villa> dataModels;
     ListView listView;
     TextView tvCode;
-
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_villa_add);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.addVillasRefresh);
+        progressBar= findViewById(R.id.progressBar);
+
+        swipeRefreshLayout = findViewById(R.id.addVillasRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         SharedPreferences SP1;
@@ -85,23 +91,24 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
         UpdateVillaPath=server+"/i/updatevilla.php";
         GET_VILLA_URL =  server+"/i/getvillas.php";
 
-        btnUpdate=(Button)findViewById(R.id.btnVillaEdit);
-        imgVilla=(ImageView)findViewById(R.id.imgVillaSave);
-        btnSend=(Button)findViewById(R.id.btnVillaSend);
-        btnAdsImgSelect=(Button)findViewById(R.id.btnVillaImgSelect);
-        edtName=(EditText)findViewById(R.id.txtVillaName);
-        edtMemo=(EditText)findViewById(R.id.txtVillaMemo);
-        edtPrice=(EditText)findViewById(R.id.txtVillaPrice);
-        edtTel=(EditText)findViewById(R.id.txtVillaTel);
-        edtAddress=(EditText)findViewById(R.id.txtVillaAddress);
-        edtArea=(EditText)findViewById(R.id.txtVillaArea);
-        edtRoom=(EditText)findViewById(R.id.txtVillaRoom);
-        edtFacility=(EditText)findViewById(R.id.txtVillaFacility);
-        listView=(ListView)findViewById(R.id.lvAddVillasContent);
-        tvCode=(TextView)findViewById(R.id.villaCode);
+        btnUpdate= findViewById(R.id.btnVillaEdit);
+        btnUpdate.setVisibility(View.INVISIBLE);
+        imgVilla= findViewById(R.id.imgVillaSave);
+        btnSend= findViewById(R.id.btnVillaSend);
+        btnAdsImgSelect= findViewById(R.id.btnVillaImgSelect);
+        edtName= findViewById(R.id.txtVillaName);
+        edtMemo= findViewById(R.id.txtVillaMemo);
+        edtPrice= findViewById(R.id.txtVillaPrice);
+        edtTel= findViewById(R.id.txtVillaTel);
+        edtAddress= findViewById(R.id.txtVillaAddress);
+        edtArea= findViewById(R.id.txtVillaArea);
+        edtRoom= findViewById(R.id.txtVillaRoom);
+        edtFacility= findViewById(R.id.txtVillaFacility);
+        listView= findViewById(R.id.lvAddVillasContent);
+        tvCode= findViewById(R.id.villaCode);
 
         dataModels= new ArrayList<>();
-        adapter= new MyVillaAdapter(VillaAddActivity.this,dataModels);
+        adapter= new MyVillaAdapter(VillaAddActivity.this,dataModels,this);
         listView.setAdapter(adapter);
 
         btnAdsImgSelect.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +155,7 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                     kansel=true;
                 }
 
+
                 if (!kansel)
                     updateVilla();
             }
@@ -164,6 +172,8 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                 room=edtRoom.getText().toString();
                 facility=edtFacility.getText().toString();
                 price=edtPrice.getText().toString();
+                kansel=false;
+
                 if(name.length()<3){
                     edtName.setError("نام کوتاه است");
                     focusView=edtName;
@@ -185,18 +195,24 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                     focusView=edtAddress;
                     kansel=true;
                 }
+                if (!imageFlag){
+                    Toast.makeText(VillaAddActivity.this, "لطفا یک عکس انتخاب کنید!", Toast.LENGTH_LONG).show();
+                    kansel=true;
+                }
 
                 if (!kansel){
+                    btnSend.setEnabled(false);
                     ServerUploadPath=server+"/i/setvilla.php";
                     uploadImage();}
             }
         });
 
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(VillaAddActivity.this));
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                btnUpdate.setEnabled(true);
+                btnUpdate.setVisibility(View.VISIBLE);
                 tvCode.setText(""+dataModels.get(position).getId());
                 edtName.setText(dataModels.get(position).getName());
                 edtMemo.setText(dataModels.get(position).getMemo());
@@ -206,11 +222,21 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                 edtFacility.setText(dataModels.get(position).getFacility());
                 edtTel.setText(dataModels.get(position).getTel());
                 edtArea.setText(dataModels.get(position).getArea());
-                com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(dataModels.get(position).getPic(),imgVilla);
+
+                Glide.with(VillaAddActivity.this).load(dataModels.get(position).getPic())
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.nopic)
+                        .into(imgVilla);
 
             }
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         reqVillas();
+
+
     }
 
 
@@ -222,6 +248,7 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
             return;
         }
         if (requestCode==SELECT_FILE) {
+            imageFlag=true;
             if (data != null) {
                 Uri contentURI = data.getData();
                 try {
@@ -273,8 +300,10 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
 
                     @Override
                     public void onResponse(String s) {
+                        btnSend.setEnabled(true);
                         //Disimissing the progress dialog
                         loading.dismiss();
+                        reqVillas();
                         //Showing toast message of the response
                         Log.d(TAG, "onResponse: "+s+"  "+tvCode.getText().toString()+" - "+mobile);
 //                        Toast.makeText(VillaAddActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
@@ -284,7 +313,7 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         //Dismissing the progress dialog
-
+                        btnSend.setEnabled(true);
                         //Showing toast
 //                        Toast.makeText(VillaAddActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
                     }
@@ -335,7 +364,9 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                     @Override
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
+                        btnSend.setEnabled(true);
                         loading.dismiss();
+                        reqVillas();
                         //Showing toast message of the response
 //                        Toast.makeText(VillaAddActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
                     }
@@ -344,7 +375,7 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         //Dismissing the progress dialog
-
+                        btnSend.setEnabled(true);
                         //Showing toast
 //                        Toast.makeText(VillaAddActivity.this, ""+volleyError, Toast.LENGTH_LONG).show();
                     }
@@ -387,6 +418,7 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
 
     }
     public void reqVillas() {
+        progressBar.setVisibility(View.VISIBLE);
         RequestQueue queue = Volley.newRequestQueue(VillaAddActivity.this);
         String url = GET_VILLA_URL;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -394,7 +426,12 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                 {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
                         JSONArray jsonArray= null;
+                        if (response.length()<10){
+                            dataModels.clear();
+                            adapter.notifyDataSetChanged();
+                        }
                         swipeRefreshLayout.setRefreshing(false);
                         try {
                             jsonArray = new JSONArray(response);
@@ -423,14 +460,14 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
                                 dataModels.add(villa);
 
                             }
-                            adapter.notifyDataSetChanged();
+//                            adapter.notifyDataSetChanged();
 
 
                         } catch (JSONException e) {
                             e.printStackTrace();
 
                         }
-
+                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener()
@@ -458,6 +495,7 @@ public class VillaAddActivity extends AppCompatActivity  implements SwipeRefresh
 
     @Override
     public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
         reqVillas();
     }
 }

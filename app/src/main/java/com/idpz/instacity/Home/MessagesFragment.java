@@ -1,6 +1,5 @@
 package com.idpz.instacity.Home;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -15,9 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -46,76 +48,59 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "MessagesFragment";
 
-
-
         ListView lvContentPost;
-        ProgressDialog pd;
+
         ArrayList<Post> dataModels;
         //    DBLastData dbLastData;
         NewsAdapter newsAdapter;
         String server="",fullServer="";
-        int lim1=0,lim2=20;
-        Boolean reqFlag=false,connected=false,refreshFlag=false;
+        int lim1=0,lim2=5;
+        public static volatile int netState=3;
+        Boolean reqFlag=false,connected=false,refreshFlag=false,remain=true;
         Context context;
-
+        int failCount=0;
+        ImageView imgRetry;
+        ProgressBar progressBar;
+        SharedPreferences SP1;
         @Nullable
         @Override
         public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
             View view=inflater.inflate(R.layout.fragment_messages,container,false);
 
-            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+            swipeRefreshLayout = view.findViewById(R.id.refresh);
             swipeRefreshLayout.setOnRefreshListener(this);
+            imgRetry= view.findViewById(R.id.imgMsgRetry);
+            progressBar= view.findViewById(R.id.progressMsg);
 
-            lvContentPost = (ListView) view.findViewById(R.id.lvMsgContent);
-            pd = new ProgressDialog(view.getContext());
+            lvContentPost = view.findViewById(R.id.lvMsgContent);
+
             dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
             newsAdapter = new NewsAdapter(getActivity(), dataModels);
 
-
-            SharedPreferences SP1;
             SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
             server=SP1.getString("server","0");
             fullServer = server+"/i/newsread.php";
+//            remain = SP1.getBoolean("connected", false);
             lvContentPost.setAdapter(newsAdapter);
 
+            if (isConnected()) {
+                reqPosts();
+            }
 
-            new Thread() {
+            imgRetry.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void run() {
-                    while (!reqFlag) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                                if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                        connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                    //we are connected to a network
-                                    connected = true;
-                                } else {
-                                    connected = false;
-
-                                }
-
-                                if (connected && !reqFlag) {
-                                    pd.setMessage("دریافت اطلاعات...");
-                                    pd.setCancelable(true);
-                                    reqPosts();
-                                }
-
-                            }
-                        });
-                        try {
-                            sleep(5000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                public void onClick(View v) {
+                    netState=3;
+                    Log.d(TAG, "onClick: Msg");
+                    if (isConnected()) {
+                        imgRetry.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.VISIBLE);
+                        reqPosts();
                     }
+
                 }
-            }.start();
-
-
-
+            });
 
 
             lvContentPost.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -130,9 +115,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
                     if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
                     {
-                        if (reqFlag) {
+                        if (reqFlag&isConnected()) {
                             reqFlag=false;
-                            lim1 += 20;
+                            lim1 += 5;
 
                             reqPosts();
                         }
@@ -153,7 +138,9 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onResponse(String response) {
                         reqFlag=true;
-                        pd.dismiss();
+                        imgRetry.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        netState=1;
                         if (refreshFlag){
                             refreshFlag=false;
                             dataModels.clear();
@@ -175,7 +162,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                                 post.setUserPhone(jsonObject.getString("title"));
                                 post.setPostComment(jsonObject.getString("body"));
                                 String pic=jsonObject.getString("pic");
-                                if(pic.equals("null")|| pic.isEmpty())pic="blur.jpg";
+//                                if(pic.equals("null")|| pic.isEmpty())pic="blur.jpg";
                                 post.setPostImageUrl(server+"/assets/images/news/"+pic);
 
                                 String dtl = jsonObject.getString("ndate");
@@ -198,6 +185,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                         } catch (JSONException e) {
                             e.printStackTrace();
 
+                            failCount++;
                         }
 
 
@@ -208,8 +196,13 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        Log.d("ERROR","error => "+error.toString());
+                        failCount++;
+                        progressBar.setVisibility(View.GONE);
+                        imgRetry.setVisibility(View.VISIBLE);
+                        Log.d("ERROR","error => "+error.toString()+failCount);
+                        if (error instanceof NetworkError) {
+                            remain = false;
+                        }
                     }
                 }
         ) {
@@ -227,12 +220,38 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        lim1=0;lim2=20;
+        lim1=0;lim2=5;
 //        dataModels.clear();
         refreshFlag=true;
         swipeRefreshLayout.setRefreshing(true);
         reqPosts();
     }
+
+    public boolean isConnected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+
+            Log.d(TAG, "Msg fr: net State="+netState+" connected="+connected);
+            if (netState==0){
+                Log.d(TAG, "Msg fr: net State="+netState);
+                progressBar.setVisibility(View.GONE);
+//                imgRetry.setVisibility(View.VISIBLE);
+                connected=false;
+                remain=false;
+                return false;
+            }
+            return true;
+
+        } else {
+            progressBar.setVisibility(View.GONE);
+//            imgRetry.setVisibility(View.VISIBLE);
+            return false;
+        }
+    }
+
 
 }
 

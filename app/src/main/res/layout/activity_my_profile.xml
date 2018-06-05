@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Profile.MyProfileActivity">
+    <ImageView
+        android:src="@drawable/bbb"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+<LinearLayout
     android:orientation="vertical"
     android:layout_gravity="right"
     android:layout_margin="10dp"
     android:gravity="right"
-    android:layout_height="match_parent"
-    tools:context=".Profile.MyProfileActivity">
-
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/myProfile_photoLikes"
         android:layout_width="80dp"
@@ -28,6 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
+            android:textColor="@color/white"
             android:text=""
             android:hint=""
             android:ems="10"
@@ -37,6 +45,7 @@
         <TextView
             android:text="نام و نام خانوادگی"
             android:layout_width="80dp"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob1"
             android:layout_weight="1" />
@@ -52,6 +61,8 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text=""
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:hint="مثال: 091234567890"
             android:ems="10"
             android:id="@+id/txtCtNumber"
@@ -60,33 +71,36 @@
         <TextView
             android:text="شماره موبایل"
             android:layout_width="80dp"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob2"
             android:layout_weight="1" />
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text=""
-            android:hint="مثال: 01234567890"
-            android:ems="10"
-            android:id="@+id/txtCtmelliid"
-            android:layout_weight="1" />
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+        <!--<EditText-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:inputType="number"-->
+            <!--android:text=""-->
+            <!--android:textColor="@color/white"-->
+            <!--android:hint="مثال: 01234567890"-->
+            <!--android:ems="10"-->
+            <!--android:id="@+id/txtCtmelliid"-->
+            <!--android:layout_weight="1" />-->
 
-        <TextView
-            android:text="شماره ملی"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob21"
-            android:layout_weight="1" />
+        <!--<TextView-->
+            <!--android:text="شماره ملی"-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/tvJob21"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:layout_weight="1" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -95,14 +109,17 @@
         <RadioGroup
             android:layout_width="wrap_content"
             android:orientation="horizontal"
+
             android:layout_height="wrap_content">
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rbZan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="زن"
                 />
             <RadioButton
+                android:textColor="@color/white"
                 android:id="@+id/rbMard"
                 android:layout_width="wrap_content"
                 android:text="مرد"
@@ -114,6 +131,7 @@
 
         <TextView
             android:text="جنسیت"
+            android:textColor="@color/white"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob4"
@@ -129,13 +147,16 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text=""
+            android:textColor="@color/white"
             android:hint="مثال:1375"
+            android:textColorHint="@color/white"
             android:ems="10"
             android:id="@+id/txtCtBirth"
             android:layout_weight="1" />
 
         <TextView
             android:text="سال تولد"
+            android:textColor="@color/white"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvCtBirth"
@@ -152,8 +173,11 @@
 
         <Spinner
             android:id="@+id/spEdu"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:entries="@array/edu"
+            android:theme="@style/MooSpinnerItem"
+            android:popupBackground="#000066"
             android:layout_height="wrap_content">
         </Spinner>
 
@@ -161,6 +185,7 @@
 
         <TextView
             android:text="تحصیلات"
+            android:textColor="@color/white"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob6"
@@ -177,6 +202,8 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text=""
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
             android:hint="مثال: حسابداری صنعتی"
             android:ems="10"
             android:id="@+id/txtEduB"
@@ -184,6 +211,7 @@
 
         <TextView
             android:text="رشته تحصیلی"
+            android:textColor="@color/white"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob7"
@@ -205,8 +233,11 @@
             android:layout_height="wrap_content">
             <Spinner
                 android:id="@+id/spJob"
+                android:textColor="@color/white"
                 android:layout_width="wrap_content"
                 android:entries="@array/job"
+                android:theme="@style/MooSpinnerItem"
+                android:popupBackground="#000066"
                 android:layout_height="wrap_content">
 
             </Spinner>
@@ -214,6 +245,7 @@
 
         <TextView
             android:text="شغل"
+            android:textColor="@color/white"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob8"
@@ -229,13 +261,16 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text=""
+            android:textColor="@color/white"
             android:hint="مثال: مشاور املاک"
             android:ems="10"
             android:id="@+id/txtJobB"
+            android:textColorHint="@color/white"
             android:layout_weight="1" />
 
         <TextView
             android:text="نام شغل"
+            android:textColor="@color/white"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvJob3"
@@ -257,6 +292,7 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav1"
+                    android:textColor="@color/white"
                     android:text="ورزشی"
                     android:layout_height="wrap_content"
                     />
@@ -264,18 +300,21 @@
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav2"
                     android:text="علمی"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav3"
                     android:text="فرهنگی"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav4"
                     android:text="تکنولوژی"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
             </LinearLayout>
@@ -288,24 +327,28 @@
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav5"
                     android:text="سیاسی"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav6"
                     android:text="اجتماعی"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav7"
                     android:text="سلامت"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:id="@+id/chkFav8"
                     android:text="مذهبی"
+                    android:textColor="@color/white"
                     android:layout_height="wrap_content"
                     />
             </LinearLayout>
@@ -314,6 +357,7 @@
         </LinearLayout>
         <TextView
             android:text="علاقمندی"
+            android:textColor="@color/white"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:id="@+id/tvFav"
@@ -330,15 +374,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btnCzReg"
+            android:textColor="@color/white"
+            android:background="@drawable/backblueround"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="61dp" />
 
         <Button
             android:id="@+id/btnCzExit"
+            android:background="@drawable/backblueround"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="خروج از حساب"
+            android:textColor="@color/white"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:layout_marginStart="40dp" />
@@ -355,6 +403,6 @@
         android:id="@+id/txtczStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-
 </LinearLayout>
+
+</RelativeLayout>

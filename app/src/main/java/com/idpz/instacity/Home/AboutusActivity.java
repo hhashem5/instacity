@@ -1,11 +1,12 @@
 package com.idpz.instacity.Home;
 
-import android.support.v7.app.AppCompatActivity;
+
+import android.app.Activity;
 import android.os.Bundle;
 
 import com.idpz.instacity.R;
 
-public class AboutusActivity extends AppCompatActivity {
+public class AboutusActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

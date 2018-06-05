@@ -13,7 +13,7 @@
             android:id="@+id/imgAds"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/jobpic"
+
             />
         <LinearLayout
             android:layout_width="fill_parent"
@@ -51,7 +51,7 @@
                 android:text="سفارشات انواع لباس های آذری ، نیشابوری و دوخت از روی مدل های آماده با پارچه های با کیفیت ارسال به تمام نقاط ایران پذیرفته میشود"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/white"
                 android:layout_marginBottom="5dp"
                 android:layout_height="wrap_content" />
         </LinearLayout>

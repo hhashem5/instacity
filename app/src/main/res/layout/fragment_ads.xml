@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-    android:orientation="vertical"
-              android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:background="@drawable/gray_border_bottom"
-        android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/imgAddAds"
-                android:src="@drawable/ic_addc"
-                android:layout_width="50dp"
-                android:layout_height="50dp" />
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bbb"
+    android:layout_height="match_parent">
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
-    </LinearLayout>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/adsRefresh"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/txtHoshdar"
+        android:layout_alignParentStart="true">
     <ListView
-        android:background="@drawable/bbb"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/lvAdsContent">
 
     </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/txtHoshdar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
 
-</LinearLayout>
+        android:text="@string/hoshdar"
+        android:textColor="@color/white" />
+</RelativeLayout>

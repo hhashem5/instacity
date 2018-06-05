@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -28,10 +29,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.Home.LoginActivity;
 import com.idpz.instacity.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,13 +59,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "MyProfileChangePicture";
-    TextView txtCitizenName, txtCtNumber,txtEduB,txtJobB,txtCtBirth,txtCtMelliid,txtczstatus;
+    TextView txtCitizenName, txtCtNumber,txtEduB,txtJobB,txtCtBirth,txtczstatus;
     RadioButton rbZan, rbMard;
     Spinner spEdu,spJob;
     CheckBox chkFav1,chkFav2,chkFav3,chkFav4,chkFav5,chkFav6,chkFav7,chkFav8;
     Button btnreg,btnexit;
     ProgressDialog pd;
-    private DisplayImageOptions options;
+
     CircleImageView imgProfile;
     Boolean userFlag=false,check=true;
     Bitmap bitmap=null;
@@ -74,45 +75,46 @@ public class MyProfileActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 6;
     private static final int SELECT_FILE = 7;
     String requrl = "",profileImgUrl="";
-    String REGISTER_URL="",server="";
+    String REGISTER_URL="";
     String ServerUploadPath ="";
-    String eduTitle="0",jobTitle="0",serial="0.jpg",lat="0",lng="0",melliid="0",myname="0";
+    String eduTitle="0",jobTitle="0",serial="0.jpg",lat="0",lng="0",myname="0";
     String name="0",pas="", mobile="0", birth="0", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
-
+    private static final String STATIC_SERVER = "http://idpz.ir";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        server=SP1.getString("server", "0");
-         requrl =  server+   "/i/srchprofile.php";
-         REGISTER_URL=server+"/i/profile.php";
 
-        txtCitizenName=(TextView)findViewById(R.id.txtCitizenName);
-        txtCtNumber=(TextView)findViewById(R.id.txtCtNumber);
+         requrl =  STATIC_SERVER+   "/i/srchprofile.php";
+         REGISTER_URL=STATIC_SERVER+"/i/profile.php";
+        ServerUploadPath =STATIC_SERVER+"/i/imgprofile.php" ;
+
+        txtCitizenName= findViewById(R.id.txtCitizenName);
+        txtCtNumber= findViewById(R.id.txtCtNumber);
         txtCtNumber.setEnabled(false);
-        txtEduB=(TextView)findViewById(R.id.txtEduB);
-        txtJobB=(TextView)findViewById(R.id.txtJobB);
-        txtCtBirth=(TextView)findViewById(R.id.txtCtBirth);
-        txtCtMelliid=(TextView)findViewById(R.id.txtCtmelliid);
-        txtczstatus = (TextView) findViewById(R.id.txtczStatus);
-        rbMard=(RadioButton)findViewById(R.id.rbMard);
-        rbZan=(RadioButton)findViewById(R.id.rbZan);
-        spEdu=(Spinner) findViewById(R.id.spEdu);
-        spJob=(Spinner) findViewById(R.id.spJob);
-        chkFav1 = (CheckBox) findViewById(R.id.chkFav1);
-        chkFav2 = (CheckBox) findViewById(R.id.chkFav2);
-        chkFav3 = (CheckBox) findViewById(R.id.chkFav3);
-        chkFav4 = (CheckBox) findViewById(R.id.chkFav4);
-        chkFav5 = (CheckBox) findViewById(R.id.chkFav5);
-        chkFav6 = (CheckBox) findViewById(R.id.chkFav6);
-        chkFav7 = (CheckBox) findViewById(R.id.chkFav7);
-        chkFav8 = (CheckBox) findViewById(R.id.chkFav8);
-        btnreg=(Button)findViewById(R.id.btnCzReg);
-        btnexit=(Button)findViewById(R.id.btnCzExit);
-        imgProfile=(CircleImageView)findViewById(R.id.myProfile_photoLikes);
-        ServerUploadPath =server+"/i/imgprofile.php" ;
+        txtEduB= findViewById(R.id.txtEduB);
+        txtJobB= findViewById(R.id.txtJobB);
+        txtCtBirth= findViewById(R.id.txtCtBirth);
+//        txtCtMelliid=(TextView)findViewById(R.id.txtCtmelliid);
+        txtczstatus = findViewById(R.id.txtczStatus);
+        rbMard= findViewById(R.id.rbMard);
+        rbZan= findViewById(R.id.rbZan);
+        spEdu= findViewById(R.id.spEdu);
+        spJob= findViewById(R.id.spJob);
+        chkFav1 = findViewById(R.id.chkFav1);
+        chkFav2 = findViewById(R.id.chkFav2);
+        chkFav3 = findViewById(R.id.chkFav3);
+        chkFav4 = findViewById(R.id.chkFav4);
+        chkFav5 = findViewById(R.id.chkFav5);
+        chkFav6 = findViewById(R.id.chkFav6);
+        chkFav7 = findViewById(R.id.chkFav7);
+        chkFav8 = findViewById(R.id.chkFav8);
+        btnreg= findViewById(R.id.btnCzReg);
+        btnexit= findViewById(R.id.btnCzExit);
+        imgProfile= findViewById(R.id.myProfile_photoLikes);
+
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,38 +128,43 @@ public class MyProfileActivity extends AppCompatActivity {
 
 
         myname = SP1.getString("myname", "0");
+        if (myname.equals("null")||myname.equals(""))myname="-";
         mobile = SP1.getString("mobile", "0");
-        melliid = SP1.getString("melliid", "0");
+//        melliid = SP1.getString("melliid", "0");
         lat=SP1.getString("lat", "0");
         lng=SP1.getString("lng", "0");
         birth=SP1.getString("birth", "0");
         edu=SP1.getString("edu", "0");
+        if (edu.equals("null")||edu.equals(""))edu="0";
         edub=SP1.getString("edub", "0");
+        if (edub.equals("null")||edub.equals(""))edu="0";
         job=SP1.getString("job", "0");
+        if (job.equals("null")||job.equals(""))edu="0";
         jobb=SP1.getString("jobb", "0");
+        if (jobb.equals("null")||jobb.equals(""))edu="0";
         fav=SP1.getString("fav", "0");
+        if (fav.equals("null")||fav.equals(""))edu="0";
         pas=SP1.getString("pass", "0");
+
 
         txtCtBirth.setText(birth);
 
         profileImgUrl = SP1.getString("pic", "0");
-//        Toast.makeText(this, "pic-url"+profileImgUrl, Toast.LENGTH_LONG).show();
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.ic_empty)
-                .showImageOnFail(R.drawable.ic_error)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
+//        Toast.makeText(this, "pic-url:"+profileImgUrl, Toast.LENGTH_LONG).show();
+
+        Glide.with(this).load(STATIC_SERVER+"/assets/images/users/"+profileImgUrl)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(imgProfile);
+
         txtCitizenName.setText(myname);
         txtCtNumber.setText(mobile);
         txtCtBirth.setText(birth);
         txtEduB.setText(edub);
         txtJobB.setText(jobb);
-        txtczstatus.setText(money);
+        txtczstatus.setText("");
 
         if (fav.contains("1"))chkFav1.setChecked(true);
         if (fav.contains("2"))chkFav2.setChecked(true);
@@ -181,7 +188,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
         txtCitizenName.setText(myname);
         txtCtNumber.setText(mobile);
-        txtCtMelliid.setText(melliid);
+//        txtCtMelliid.setText(melliid);
 
         reqUserInfo();
         txtczstatus.setText("درخواست اطلاعات از سرور");
@@ -200,6 +207,7 @@ public class MyProfileActivity extends AppCompatActivity {
                         SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                         SP2.putString("myname", "0");
                         SP2.putString("mobile", "0");
+                        SP2.putString("pass", "0");
                         SP2.putString("melliid", "0");
                         SP2.putString("lat", "0");
                         SP2.putString("lng", "0");
@@ -211,7 +219,9 @@ public class MyProfileActivity extends AppCompatActivity {
                         SP2.putString("numPosts", "0");
                         SP2.putString("edub", "0");
                         SP2.putString("job", "0");
+                        SP2.putString("money", "100");
                         SP2.putString("jobb", "0");
+                        SP2.putString("notification","0");
                         SP2.apply();
                         finishAffinity();
                         Intent intent=new Intent(MyProfileActivity.this,LoginActivity.class);
@@ -246,7 +256,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                 eduTitle=String.valueOf(spEdu.getSelectedItemPosition());
                 jobTitle=String.valueOf(spJob.getSelectedItemPosition());
-                melliid=txtCtMelliid.getText().toString();
+//                melliid=txtCtMelliid.getText().toString();
                 mobile=txtCtNumber.getText().toString();
                 myname=txtCitizenName.getText().toString();
                 birth=txtCtBirth.getText().toString();
@@ -271,7 +281,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                 SP2.putString("myname", myname);
                 SP2.putString("mobile", mobile);
-                SP2.putString("melliid", melliid);
+//                SP2.putString("melliid", melliid);
                 SP2.putString("lat", lat);
                 SP2.putString("lng", lng);
                 SP2.putString("birth", birth);
@@ -302,7 +312,7 @@ public class MyProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
 
-                        txtczstatus.setText(response.toString());
+                        txtczstatus.setText(response);
                     }
                 },
                 new Response.ErrorListener()
@@ -330,7 +340,7 @@ public class MyProfileActivity extends AppCompatActivity {
                 params.put("jb", txtJobB.getText().toString());
                 params.put("fav", fav);
                 params.put("sn", serial);
-                params.put("meli",melliid);
+//                params.put("meli",melliid);
                 params.put("mny", money);
                 params.put("lat", lat);
                 params.put("lng", lng);
@@ -344,8 +354,9 @@ public class MyProfileActivity extends AppCompatActivity {
 
     public void onBackPressed() {
         Log.d("CDA", "onBackPressed Called");
+        Intent intent =new Intent(MyProfileActivity.this, ProfileActivity.class);
+                startActivity(intent);
         finish();
-        return;
     }
 
 
@@ -506,11 +517,11 @@ public class MyProfileActivity extends AppCompatActivity {
                 SP2.putString("pic", string1);
                 SP2.apply();
                 // Printing uploading success message coming from server on android app.
-                Intent intent =new Intent(MyProfileActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                finish();
+//                Intent intent =new Intent(MyProfileActivity.this, ProfileActivity.class);
+//                startActivity(intent);
                 // Setting image as transparent after done uploading.
 //                imageView.setImageResource(android.R.color.transparent);
+                Toast.makeText(MyProfileActivity.this, "اطلاعات ثبت شد", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -525,9 +536,8 @@ public class MyProfileActivity extends AppCompatActivity {
                 HashMapParams.put(ImageName, mobile);
 
                 HashMapParams.put(ImagePath, ConvertImage);
-                HashMapParams.put("old", profileImgUrl);
                 HashMapParams.put("mob", mobile);
-                HashMapParams.put("pas", pas);
+
 
 
                 String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);

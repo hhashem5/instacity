@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal"
+    android:background="@drawable/white_trans_border_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:weightSum="6"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_weight="1"
+                android:id="@+id/imgWind"
+                android:layout_width="35dp"
+                android:layout_height="40dp"
+                android:src="@drawable/windw" />
+            <TextView
+                android:id="@+id/txtMyWind"
+                android:layout_weight="1.5"
+                android:textColor="@color/white"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:text="5km" />
+            <!--<ImageView-->
+                <!--android:layout_weight="1"-->
+                <!--android:id="@+id/imgHeat"-->
+                <!--android:layout_width="25dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:src="@drawable/heat" />-->
+
+                <TextView
+                    android:id="@+id/txtTempHi"
+                    android:layout_weight=".7"
+                    android:textColor="@color/white"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="↑0°" />
+                <TextView
+                    android:id="@+id/txtTempLo"
+                    android:layout_weight=".7"
+                    android:textColor="@color/link_blue"
+                    android:layout_width="30dp"
+                    android:layout_height="wrap_content"
+                    android:text="↓0°" />
+
+
+            <!--<TextView-->
+                <!--android:id="@+id/txtMySum"-->
+                <!--android:layout_weight="3"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="آسمان صاف" />-->
+            <ImageView
+                android:layout_weight="1"
+                android:id="@+id/imgMyWeather"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/sunny" />
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/txtMyDay"
+                android:textColor="@color/white"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:text="شنبه" />
+        </LinearLayout>
+
+
+</LinearLayout>

@@ -7,7 +7,6 @@ package com.idpz.instacity.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,11 +15,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Arts;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -31,7 +29,7 @@ public class ArtAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Arts> adsList;
     String server="";
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+
 
     public ArtAdapter(Activity activity, List<Arts> adsList) {
         this.activity = activity;
@@ -64,34 +62,24 @@ public class ArtAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.row_ads, null);
 
-        if (imageLoader == null)
-
-            imageLoader = AppController.getInstance().getImageLoader();
-        ImageView thumbNail = (ImageView) convertView
+        ImageView thumbNail = convertView
                 .findViewById(R.id.imgAds);
-        TextView name = (TextView) convertView.findViewById(R.id.textAdsTitle);
-        TextView memo = (TextView) convertView.findViewById(R.id.textAdsMemo);
-        TextView tel = (TextView) convertView.findViewById(R.id.textAdsTel);
-        TextView address = (TextView) convertView.findViewById(R.id.textAdsAddress);
+        TextView name = convertView.findViewById(R.id.textAdsTitle);
+        TextView memo = convertView.findViewById(R.id.textAdsMemo);
+        TextView tel = convertView.findViewById(R.id.textAdsTel);
+        TextView address = convertView.findViewById(R.id.textAdsAddress);
 //        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
+
         // getting Food data for the row
         Arts m = adsList.get(position);
 
         // thumbnail image
-
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.noimage)
-                .showImageOnFail(R.drawable.noimage)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(m.getPic(),thumbNail,options);
-
+        Glide.with(activity).load(m.getPic())
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(thumbNail);
         // title
         name.setText(m.getName());
 

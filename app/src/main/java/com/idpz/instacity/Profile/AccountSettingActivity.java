@@ -40,7 +40,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         setupSettingList();
 
 
-        ImageView imageView = (ImageView) findViewById(R.id.backArrow);
+        ImageView imageView = findViewById(R.id.backArrow);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,7 +54,7 @@ public class AccountSettingActivity extends AppCompatActivity {
 
     private void setupSettingList(){
         Log.d(TAG, "setupSettingList: init acc lsit");
-        ListView listView=(ListView)findViewById(R.id.lvAccountSetting);
+        ListView listView= findViewById(R.id.lvAccountSetting);
         ArrayList<String> options=new ArrayList<>();
         options.add(getString(R.string.edit_profile));
         options.add(getString(R.string.sign_out));

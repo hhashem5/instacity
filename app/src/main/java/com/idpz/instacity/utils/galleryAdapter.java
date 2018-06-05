@@ -3,18 +3,17 @@ package com.idpz.instacity.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.Profile.SinglePostActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
@@ -25,26 +24,10 @@ public class galleryAdapter extends BaseAdapter {
     String lk="0",usrph="",soid="0";
     Context context;
     private ProgressBar mProgressBar;
-    private DisplayImageOptions options;
-    ImageLoader imageLoader;
-
-
-
 
     public galleryAdapter(Activity activity, List<Post> postList) {
         this.activity = activity;
         this.postList = postList;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.ic_empty)
-                .showImageOnFail(R.drawable.ic_error)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-
-
 
     }
 
@@ -73,7 +56,7 @@ public class galleryAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.grid_image_text, null);
 
-        SquareImageView image=(SquareImageView)convertView.findViewById(R.id.gridImageView);
+        SquareImageView image= convertView.findViewById(R.id.gridImageView);
 //        TextView userName = (TextView) convertView.findViewById(R.id.textGridImage);
 
 //        mProgressBar.setVisibility(View.GONE);
@@ -84,8 +67,12 @@ public class galleryAdapter extends BaseAdapter {
 
 
         // thumbnail image
-//        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
-        ImageLoader.getInstance().displayImage(m.getPostImageUrl(), image, options);
+        Glide.with(activity).load(m.getPostImageUrl())
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(image);
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override

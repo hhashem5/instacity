@@ -121,7 +121,7 @@ public class DBAreaHandler extends SQLiteOpenHelper {
         Area contact = new Area(Integer.parseInt(cursor.getString(0)),
                 cursor.getString(1), cursor.getString(2),Float.valueOf(cursor.getString(3)),
                 Float.valueOf(cursor.getString(4)),Float.valueOf(cursor.getString(5)),cursor.getString(6),
-                Integer.valueOf(cursor.getString(7)),cursor.getString(8),cursor.getString(9));
+                Integer.valueOf(cursor.getString(7)),0,cursor.getString(8),cursor.getString(9));
 // return shop
         return contact;
     }

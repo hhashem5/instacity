@@ -15,12 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -29,10 +32,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Arts;
 import com.idpz.instacity.utils.MyArtAdapter;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,18 +64,19 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
     String REGISTER_URL="",server="",ServerUploadPath="";
     String memo="",name="",type="",weight="",material="",mcolor="",price="";
     View focusView = null;
-    Boolean kansel=false,check=true,artsFlag=false;
+    Boolean kansel=false,check=true,artsFlag=false,imageFlag=false;
     MyArtAdapter adapter;
     ArrayList<Arts> dataModels;
     ListView listView;
     TextView tvCode;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_art);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.addArtsRefresh);
+        swipeRefreshLayout = findViewById(R.id.addArtsRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -81,36 +86,38 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
         UpdateArtPath=server+"/i/updateart.php";
         mobile=SP1.getString("mobile", "0");
 
+        progressBar= findViewById(R.id.progressBar);
 
-        imgAds=(ImageView)findViewById(R.id.imgArtSave);
-        btnSend=(Button)findViewById(R.id.btnArtSend);
-        btnUpdate=(Button)findViewById(R.id.btnArtEdit);
-        btnAdsImgSelect=(Button)findViewById(R.id.btnArtImgSelect);
-        edtName=(EditText)findViewById(R.id.txtArtName);
-        edtType=(EditText)findViewById(R.id.txtArtType);
-        edtWeight=(EditText)findViewById(R.id.txtArtWeight);
-        edtMat=(EditText)findViewById(R.id.txtArtMat);
-        edtColor=(EditText)findViewById(R.id.txtArtColor);
-        edtPrice=(EditText)findViewById(R.id.txtArtPrice);
-        edtAddress=(EditText)findViewById(R.id.txtArtAddress);
-        listView=(ListView)findViewById(R.id.lvArtsContent);
-        tvCode=(TextView)findViewById(R.id.artCode);
+        imgAds= findViewById(R.id.imgArtSave);
+        btnSend= findViewById(R.id.btnArtSend);
+        btnUpdate= findViewById(R.id.btnArtEdit);
+        btnUpdate.setVisibility(View.INVISIBLE);
+        btnAdsImgSelect= findViewById(R.id.btnArtImgSelect);
+        edtName= findViewById(R.id.txtArtName);
+        edtType= findViewById(R.id.txtArtType);
+        edtWeight= findViewById(R.id.txtArtWeight);
+        edtMat= findViewById(R.id.txtArtMat);
+        edtColor= findViewById(R.id.txtArtColor);
+        edtPrice= findViewById(R.id.txtArtPrice);
+        edtAddress= findViewById(R.id.txtArtAddress);
+        listView= findViewById(R.id.lvArtsContent);
+        tvCode= findViewById(R.id.artCode);
 
         dataModels= new ArrayList<>();
 
-        adapter= new MyArtAdapter(AddArtActivity.this,dataModels);
+        adapter= new MyArtAdapter(AddArtActivity.this,dataModels,this);
 
         listView.setAdapter(adapter);
 
         reqMyArts();
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(AddArtActivity.this));
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,int position, long arg3)
             {
 //                Toast.makeText(AddArtActivity.this, "id=" + position, Toast.LENGTH_SHORT).show();
-                btnUpdate.setEnabled(true);
+                btnUpdate.setVisibility(View.VISIBLE);
                 edtName.setText(dataModels.get(position).getName());
                 edtType.setText(dataModels.get(position).getType());
                 edtWeight.setText(dataModels.get(position).getWeight());
@@ -119,8 +126,13 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
                 edtPrice.setText(dataModels.get(position).getPrice());
                 edtAddress.setText(dataModels.get(position).getMemo());
                 tvCode.setText(""+dataModels.get(position).getId());
-                com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(dataModels.get(position).getPic(),imgAds);
 
+                Glide.with(AddArtActivity.this).load(dataModels.get(position).getPic())
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.nopic)
+                        .into(imgAds);
             }
         });
 
@@ -135,7 +147,6 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
                 material=edtMat.getText().toString();
                 mcolor=edtColor.getText().toString();
                 price=edtPrice.getText().toString();
-
                 if(name.length()<3){
                     edtName.setError("نام کوتاه است");
                     focusView=edtName;
@@ -207,13 +218,18 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
                     kansel=true;
                 }
 
+                if (!imageFlag){
+                    Toast.makeText(AddArtActivity.this, "لطفا یک عکس انتخاب کنید!", Toast.LENGTH_LONG).show();
+                    kansel=true;
+                }
+
                 if (!kansel) {
                     ServerUploadPath = server + "/i/setart.php";
                     uploadImage();
                 }
             }
         });
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
@@ -227,6 +243,7 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
             return;
         }
         if (requestCode==SELECT_FILE) {
+            imageFlag=true;
             if (data != null) {
                 Uri contentURI = data.getData();
                 try {
@@ -276,6 +293,7 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
                         loading.dismiss();
+                        reqMyArts();
                         //Showing toast message of the response
 //                        Toast.makeText(AddArtActivity.this, s , Toast.LENGTH_LONG).show();
                     }
@@ -329,6 +347,7 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
                         loading.dismiss();
+                        reqMyArts();
                         //Showing toast message of the response
 //                        Toast.makeText(AddArtActivity.this, s , Toast.LENGTH_LONG).show();
                     }
@@ -373,7 +392,7 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
 
     public String getStringImage(Bitmap bmp) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 30, baos);
+        bmp.compress(Bitmap.CompressFormat.JPEG, 20, baos);
         byte[] imageBytes = baos.toByteArray();
         String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodedImage;
@@ -383,6 +402,7 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
 
 
     public void reqMyArts() {
+        progressBar.setVisibility(View.VISIBLE);
         RequestQueue queue = Volley.newRequestQueue(AddArtActivity.this);
         String url = GET_ART_URL;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
@@ -392,6 +412,11 @@ public class AddArtActivity extends AppCompatActivity implements SwipeRefreshLay
 
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        if (response.length()<10){
+                            dataModels.clear();
+                            adapter.notifyDataSetChanged();
+                        }
                         JSONArray jsonArray= null;
                         Log.d(TAG, "onResponse: "+response);
                         try {

@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/bbb"
     android:layout_height="match_parent"
-    tools:context="com.idpz.instacity.Home.RuydadActivity">
+    tools:context="com.idpz.instacity.Home.SmsVerificationActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <EditText
+        android:id="@+id/edtCode"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:inputType="number"
+        android:layout_width="130dp"
+        android:textSize="22sp"
+        android:gravity="center"
+        android:textColorHint="#969696"
+        android:textColor="@color/white"
+        android:hint="کد فعال سازی"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnVerify"
+        android:layout_below="@id/edtCode"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/backblueround"
+        android:text="تایید"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/txtResult"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/btnVerify"
+        android:text="تا چند لحظه دیگر کد فعالسازی پیامک می شود"
+        android:layout_width="wrap_content"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content" />
+    <ProgressBar
+        android:id="@+id/progressReceiveCode"
+        android:layout_below="@id/txtResult"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+</RelativeLayout>

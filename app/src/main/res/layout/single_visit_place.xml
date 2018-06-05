@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:background="@drawable/bbb"
+        android:layout_height="fill_parent" >
+
+        <RelativeLayout
+            android:id="@+id/form_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+             >
+    <TextView
+        android:id="@+id/txtVisitArea"
+        android:text="نام منطقه"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textPlaceTitle"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textPlaceTitle"
+        android:text="نام مکان"
+        android:layout_gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/textPlaceYear"
+        android:text="تاسیس یا قدمت"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/txtVisitArea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/imgPlace"
+        android:layout_below="@id/textPlaceYear"
+
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+
+        android:src="@drawable/noimage"
+        />
+    <LinearLayout
+        android:id="@+id/line1"
+        android:layout_below="@id/imgPlace"
+        android:layout_width="match_parent"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="right"
+            >
+
+
+
+            <ImageView
+                android:id="@+id/imgPlaceTicket"
+                android:src="@drawable/ic_ticket"
+                android:layout_alignParentRight="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceTicket"
+                android:text="بلیط رایگان"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceTicket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceDays"
+                android:src="@drawable/ic_cal"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceTicket"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceDays"
+                android:text="بازدید همه روزه"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceDays"
+                android:layout_below="@id/textPlaceTicket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceHours"
+                android:src="@drawable/ic_clock"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceDays"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceHours"
+                android:text="ساعت 7 الی 22"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceHours"
+                android:layout_below="@id/textPlaceDays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceTel"
+                android:src="@drawable/ic_tel"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceHours"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceTel"
+                android:text="02636889990"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceTel"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/textPlaceHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceAddress"
+                android:src="@drawable/ic_address"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceTel"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceAddress"
+                android:text="آدرس: خیابان امام جنب آموزشگاه"
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceAddress"
+                android:layout_below="@id/textPlaceTel"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/textPlaceMemo"
+            android:layout_below="@id/line1"
+            android:text="سفارشات انواع لباس های آذری ، نیشابوری و دوخت از روی مدل های آماده با پارچه های با کیفیت ارسال به تمام نقاط ایران پذیرفته میشود"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content" />
+
+<Button
+    android:id="@+id/btnVisitTransfer"
+    android:text="برو به منطقه"
+    android:layout_below="@id/textPlaceMemo"
+    android:background="@drawable/white_trans_border_bottom"
+    android:layout_marginLeft="50dp"
+    android:textColor="@color/white"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnVisitMap"
+        android:text="نمایش در نقشه"
+        android:layout_below="@id/textPlaceMemo"
+        android:background="@drawable/white_trans_border_bottom"
+        android:layout_marginRight="50dp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

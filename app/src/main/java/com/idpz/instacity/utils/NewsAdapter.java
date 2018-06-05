@@ -2,7 +2,6 @@ package com.idpz.instacity.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ public class NewsAdapter extends BaseAdapter {
     String lk="0",usrph="",soid="0";
     Context context;
 
-    ImageLoader imageLoader;
 
     public NewsAdapter(Activity activity, List<Post> postList) {
         this.activity = activity;
@@ -56,38 +54,31 @@ public class NewsAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_news, null);
 
-        imageLoader = ImageLoader.getInstance(); // Get singleton instance
 
-        ImageView thumbNail = (ImageView) convertView
+
+        ImageView thumbNail = convertView
                 .findViewById(R.id.imgPostImage);
-        TextView userName = (TextView) convertView.findViewById(R.id.txtPostUser);
-        TextView postComment = (TextView) convertView.findViewById(R.id.txtPostComment);
-        TextView postDetail = (TextView) convertView.findViewById(R.id.txtPostdetail);
-        final TextView editPostComment=(TextView) convertView.findViewById(R.id.edtPostComment);
-        final TextView postView = (TextView) convertView.findViewById(R.id.txtPostView);
-        final ImageView imglike = (ImageView) convertView.findViewById(R.id.imgPostLike);
-        ImageView imgComment = (ImageView) convertView.findViewById(R.id.imgPostComment);
-        ImageView imgPostSend = (ImageView) convertView.findViewById(R.id.imgPostSend);
+        TextView userName = convertView.findViewById(R.id.txtPostUser);
+        TextView postComment = convertView.findViewById(R.id.txtPostComment);
+        TextView postDetail = convertView.findViewById(R.id.txtPostdetail);
+        final TextView editPostComment= convertView.findViewById(R.id.edtPostComment);
+        final TextView postView = convertView.findViewById(R.id.txtPostView);
+        final ImageView imglike = convertView.findViewById(R.id.imgPostLike);
+        ImageView imgComment = convertView.findViewById(R.id.imgPostComment);
+        ImageView imgPostSend = convertView.findViewById(R.id.imgPostSend);
         // getting Food data for the row
         Post m = postList.get(position);
 
         soid=String.valueOf(m.getId());
         final String usr=m.getUserName();
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
-                .showImageForEmptyUri(R.drawable.noimage)
-                .showImageOnFail(R.drawable.noimage)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
+
         // thumbnail image
-//        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
-        imageLoader.displayImage(m.getPostImageUrl(), thumbNail,options);
-
-
+        Glide.with(activity).load(m.getPostImageUrl())
+                .thumbnail(0.5f)
+                .crossFade()
+                .placeholder(R.drawable.nopic)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(thumbNail);
 
 
         // title

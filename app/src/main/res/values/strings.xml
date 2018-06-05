@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">دهکده هوشمند</string>
-    <string name="server">http://mscity.ir</string>
+    <string name="server">http://idpz.ir</string>
     <string name="title_activity_search">نقشه</string>
     <string name="edit_profile">ویرایش پروفایل</string>
     <string name="sign_out">خروج از حساب کاربری</string>
@@ -14,6 +14,9 @@
     <string name="action_sign_in">ورود</string>
     <string name="action_sign_up">ثبت نام</string>
     <string name="action_sign_in_short">ورود</string>
+    <string name="city_search">جستجوی شهر</string>
+    <string name="mobile_start_with09">شماره موبایل را با 09 شروع کنید</string>
+    <string name="select_city">لطفا شهر یا روستای خود را انتخاب کنید</string>
     <string name="action_sign_out_short">خروج</string>
     <string name="error_invalid_email">این موبایل معتبر نیست</string>
     <string name="error_invalid_password">کلمه عبور کوتاه است</string>
@@ -22,7 +25,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-
+    <string name="hoshdar">توجه:مسوولیت صحت  اطلاعات وارد شده به عهده آگهی دهنده است .دهکده هوشمند هیچ گونه مسئولیتی در قبال آن ندارد. </string>
     <!-- fragment names -->
     <string name="edit_profile_fragment">ویرایش اطلاعات شخصی</string>
     <string name="view_post_fragment">مشاهده مطلب</string>
@@ -150,10 +153,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
-    <string name="text_outside_circle_button_text_normal">Text Outside Circle Button(Normal)</string>
+    <string name="text_outside_circle_button_text_normal">دهکده هوشمند</string>
 
-    <string name="text_ham_button_text_normal">Ham Button Text(Normal)</string>
-    <string name="text_ham_button_sub_text_normal">Ham Button Sub Text(Normal)</string>
+    <string name="text_ham_button_text_normal">دهکده هوشمند</string>
+    <string name="text_ham_button_sub_text_normal">دهکده هوشمند</string>
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_food_tab">FoodTab</string>

@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,9 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.Home.CommentActivity;
 import com.idpz.instacity.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +45,9 @@ public class SinglePostActivity extends AppCompatActivity {
     TextView txtusername,txtLikes,txtTime;
     ImageView sImgPost,imgDelPost;
     ImageView imgLike,imgComment,imgPostSend;
-    ImageLoader imageLoader;
+
     EditText txtComment;
-    String lk,usrname,comment,likes,detail,imgurl,mob,ans,server,delSoUrl;
+    String lk,usrname,comment,likes,detail,imgurl,mob,ans,server,delSoUrl,profileImgUrl="";
 
 
     @Override
@@ -55,20 +57,22 @@ public class SinglePostActivity extends AppCompatActivity {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
+        profileImgUrl = SP1.getString("pic", "0");
         urlEditPost=server+"/i/socialedit.php";
-        cimgUser=(CircleImageView)findViewById(R.id.imgPostUserImage);
-        txtusername=(TextView)findViewById(R.id.txtPostUser);
-        sImgPost=(ImageView)findViewById(R.id.imgPostImage);
-        imgLike=(ImageView) findViewById(R.id.imgPostLike);
-        imgDelPost=(ImageView) findViewById(R.id.imgDelSinglePost);
-        imgComment=(ImageView) findViewById(R.id.imgPostComment);
-        imgPostSend=(ImageView) findViewById(R.id.imgPostSend);
-        txtLikes=(TextView)findViewById(R.id.txtPostView);
-        txtTime=(TextView)findViewById(R.id.txtPostdetail);
-        txtComment=(EditText) findViewById(R.id.txtPostComment);
-         TextView editPostComment=(TextView)findViewById(R.id.edtPostComment);
 
-        imageLoader = ImageLoader.getInstance(); // Get singleton instance
+        cimgUser= findViewById(R.id.imgPostUserImage);
+        txtusername= findViewById(R.id.txtPostUser);
+        sImgPost= findViewById(R.id.imgPostImage);
+        imgLike= findViewById(R.id.imgPostLike);
+        imgDelPost= findViewById(R.id.imgDelSinglePost);
+        imgComment= findViewById(R.id.imgPostComment);
+        imgPostSend= findViewById(R.id.imgPostSend);
+        txtLikes= findViewById(R.id.txtPostView);
+        txtTime= findViewById(R.id.txtPostdetail);
+        txtComment= findViewById(R.id.txtPostComment);
+         TextView editPostComment= findViewById(R.id.edtPostComment);
+
+
 
         imgDelPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +137,12 @@ public class SinglePostActivity extends AppCompatActivity {
         fullServer =server+ "/i/socialpost.php";
         delSoUrl =server+ "/i/socialdel.php";
 
-
+        Glide.with(this).load(getString(R.string.server)+"/assets/images/users/"+profileImgUrl)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(cimgUser);
 
         txtusername.setText(usrname);
 
@@ -142,8 +151,12 @@ public class SinglePostActivity extends AppCompatActivity {
 
         txtTime.setText(detail);
 
-        ImageLoader.getInstance().displayImage(imgurl, sImgPost);
-
+        Glide.with(this).load(imgurl)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(sImgPost);
 
         imgLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,6 +222,9 @@ public class SinglePostActivity extends AppCompatActivity {
 
             }
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
     }
 
     public void regSocial() {

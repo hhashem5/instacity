@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,13 +23,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.idpz.instacity.Like.VillaAddActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Villa;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,11 +42,12 @@ public class MyVillaAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Villa> adsList;
     String server="",delArtPath="";
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+    private Context context;
 
-    public MyVillaAdapter(Activity activity, List<Villa> adsList) {
+    public MyVillaAdapter(Activity activity, List<Villa> adsList,Context context) {
         this.activity = activity;
         this.adsList = adsList;
+        this.context=context;
     }
 
     @Override
@@ -77,34 +77,25 @@ public class MyVillaAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.row_arts, null);
 
-        if (imageLoader == null)
 
-            imageLoader = AppController.getInstance().getImageLoader();
-        ImageView thumbNail = (ImageView) convertView
+        ImageView thumbNail = convertView
                 .findViewById(R.id.imgAds);
-        ImageView imgDelArt = (ImageView) convertView.findViewById(R.id.imgDelArt);
-        ImageView imgEditArt = (ImageView) convertView.findViewById(R.id.imgEditArt);
-        TextView name = (TextView) convertView.findViewById(R.id.textAdsTitle);
-        TextView memo = (TextView) convertView.findViewById(R.id.textAdsMemo);
+        ImageView imgDelArt = convertView.findViewById(R.id.imgDelArt);
+        ImageView imgEditArt = convertView.findViewById(R.id.imgEditArt);
+        TextView name = convertView.findViewById(R.id.textAdsTitle);
+        TextView memo = convertView.findViewById(R.id.textAdsMemo);
 
-//        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
+
         // getting Food data for the row
         Villa m = adsList.get(position);
 
         // thumbnail image
-
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
-                .showImageForEmptyUri(R.drawable.noimage)
-                .showImageOnFail(R.drawable.noimage)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(m.getPic(),thumbNail,options);
+        Glide.with(activity).load(m.getPic())
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(thumbNail);
 
         // title
         name.setText(m.getName());
@@ -127,7 +118,9 @@ public class MyVillaAdapter extends BaseAdapter {
                                                 int arg1) {
 
                                 delArt(adsList.get(position).getId()+"",adsList.get(position).getOwner()+"");
-
+                                if(context instanceof VillaAddActivity){
+                                    ((VillaAddActivity)context).reqVillas();
+                                }
                             }
                         });
                 alertbox.setNegativeButton("خیر",new DialogInterface.OnClickListener() {

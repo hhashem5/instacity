@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/appback"
     tools:context="com.idpz.instacity.Like.AdsAddActivity">
 
+    <ImageView
+        android:src="@drawable/bbb"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
+        android:id="@+id/ln1"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -28,7 +35,8 @@
                 android:id="@+id/btnAdsImgSelect"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:background="@drawable/white_gray_border_bottom"
+                android:background="@drawable/backblueround"
+                android:textColor="@color/white"
                 android:text="انتخاب عکس"
                 />
             <TextView
@@ -38,7 +46,13 @@
                 android:layout_gravity="center"
                 android:text=""
                 />
-
+            <TextView
+                android:id="@+id/txtHoshdar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/hoshdar"
+                android:textColor="@color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -56,6 +70,7 @@
                     android:inputType="textPersonName"
                     android:text=""
                     android:hint=""
+                    android:textColor="@color/white"
                     android:ems="8"
                     android:id="@+id/txtAdsTitle"
                     android:layout_weight="1" />
@@ -65,6 +80,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob1"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -80,6 +96,7 @@
                     android:text=""
                     android:hint=""
                     android:ems="10"
+                    android:textColor="@color/white"
                     android:lines="2"
                     android:id="@+id/txtAdsMemo"
                     android:layout_weight="1" />
@@ -89,6 +106,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob22"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -103,6 +121,7 @@
                     android:text=""
                     android:hint=""
                     android:ems="10"
+                    android:textColor="@color/white"
                     android:id="@+id/txtAdsTel"
                     android:layout_weight="1" />
 
@@ -111,6 +130,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob21"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -125,7 +145,7 @@
                     android:text=""
                     android:hint=""
                     android:ems="10"
-
+                    android:textColor="@color/white"
                     android:lines="2"
                     android:id="@+id/txtAdsAddress"
                     android:layout_weight="1" />
@@ -135,6 +155,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob2"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -148,26 +169,33 @@
 
 
     <LinearLayout
+        android:id="@+id/ln2"
+        android:layout_below="@id/ln1"
         android:orientation="horizontal"
-        android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:layout_width="wrap_content"
+
+        android:gravity="center"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
             android:id="@+id/btnAdsEdit"
-            android:layout_gravity="center"
-            android:background="@drawable/white_gray_border_bottom"
+            android:layout_gravity="right"
+            android:background="@drawable/backblueround"
             android:layout_width="wrap_content"
+            android:layout_weight="1"
             android:layout_height="30dp"
+            android:textColor="@color/white"
             android:text="ویرایش"
             android:enabled="false"
             />
 
         <Button
             android:id="@+id/btnAdsSend"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:layout_marginLeft="5dp"
-            android:background="@drawable/white_gray_border_bottom"
+            android:background="@drawable/backblueround"
+            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:text=" ثبت جدید"
@@ -175,10 +203,17 @@
 
     </LinearLayout>
 
-
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:id="@+id/progressBar"
+        android:layout_below="@id/ln2"
+        android:layout_centerHorizontal="true"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_marginTop="5dp"
         android:id="@+id/addAdsRefresh"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/ln2"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
         <ListView
@@ -188,4 +223,4 @@
 
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
-</LinearLayout>
+</RelativeLayout>

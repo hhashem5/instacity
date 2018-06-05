@@ -6,10 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.GiftPlace;
 
@@ -19,7 +20,6 @@ public class GiftPlacesAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<GiftPlace> giftList;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     public GiftPlacesAdapter(Activity activity, List<GiftPlace> govList) {
         this.activity = activity;
@@ -50,19 +50,24 @@ public class GiftPlacesAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.gift_place_row, null);
 
-        if (imageLoader == null)
-            imageLoader = AppController.getInstance().getImageLoader();
-        NetworkImageView thumbNail = (NetworkImageView) convertView
+
+        ImageView thumbNail = convertView
                 .findViewById(R.id.imgGiftPLace);
-        TextView name = (TextView) convertView.findViewById(R.id.txtGiftPlaceName);
-        TextView txtDiscount = (TextView) convertView.findViewById(R.id.txtGiftDiscount);
+        TextView name = convertView.findViewById(R.id.txtGiftPlaceName);
+        TextView txtDiscount = convertView.findViewById(R.id.txtGiftDiscount);
 //        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
 
         // getting Food data for the row
         GiftPlace m = giftList.get(position);
 
         // thumbnail image
-        thumbNail.setImageUrl(m.getPic(), imageLoader);
+
+        Glide.with(activity).load(m.getPic())
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(thumbNail);
 
         // title
         name.setText(m.getName());

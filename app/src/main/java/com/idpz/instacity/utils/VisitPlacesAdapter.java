@@ -2,7 +2,6 @@ package com.idpz.instacity.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.VisitPlace;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
@@ -52,16 +51,16 @@ public class VisitPlacesAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.row_visit_place, null);
 
-        ImageView thumbNail = (ImageView) convertView
+        ImageView thumbNail = convertView
                 .findViewById(R.id.imgPlace);
-        TextView title = (TextView) convertView.findViewById(R.id.textPlaceTitle);
-        TextView placeYear = (TextView) convertView.findViewById(R.id.textPlaceYear);
-        TextView ticket = (TextView) convertView.findViewById(R.id.textPlaceTicket);
-        TextView placeDays = (TextView) convertView.findViewById(R.id.textPlaceDays);
-        TextView placeHours = (TextView) convertView.findViewById(R.id.textPlaceHours);
-        TextView tel = (TextView) convertView.findViewById(R.id.textPlaceTel);
-        TextView address = (TextView) convertView.findViewById(R.id.textPlaceAddress);
-        TextView memo = (TextView) convertView.findViewById(R.id.textPlaceMemo);
+        TextView title = convertView.findViewById(R.id.textPlaceTitle);
+        TextView placeYear = convertView.findViewById(R.id.textPlaceYear);
+        TextView ticket = convertView.findViewById(R.id.textPlaceTicket);
+        TextView placeDays = convertView.findViewById(R.id.textPlaceDays);
+        TextView placeHours = convertView.findViewById(R.id.textPlaceHours);
+        TextView tel = convertView.findViewById(R.id.textPlaceTel);
+        TextView address = convertView.findViewById(R.id.textPlaceAddress);
+        TextView memo = convertView.findViewById(R.id.textPlaceMemo);
 //        ImageView thumbNail = (ImageView) convertView.findViewById(R.id.thumbnail);
 
         // getting Food data for the row
@@ -78,20 +77,13 @@ public class VisitPlacesAdapter extends BaseAdapter {
         memo.setText(m.getMemo());
 
         // thumbnail image
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.blur)
-                .showImageForEmptyUri(R.drawable.blur)
-                .showImageOnFail(R.drawable.blur)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        // thumbnail image
-//        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
-        ImageLoader.getInstance().displayImage(m.getPic(),thumbNail,options);
 
+        Glide.with(activity).load(m.getPic())
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(thumbNail);
         return convertView;
     }
 

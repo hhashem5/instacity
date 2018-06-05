@@ -78,10 +78,12 @@
     </FrameLayout>
 
     <RelativeLayout
+        android:id="@+id/relLayout1"
         android:layout_below="@id/line1"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_above="@id/lineVP"
+        android:layout_height="188dp"
         >
         <TextView
             android:id="@+id/city_field"
@@ -100,16 +102,17 @@
             android:layout_below="@+id/city_field"
             android:layout_centerHorizontal="true"
             android:textColor="@color/white"
-            android:text="آب و هوا"
+            android:text="درحال دریافت آب و هوا"
             android:textSize="14sp" />
+
         <ImageView
             android:id="@+id/imgWeather"
-            android:layout_below="@id/updated_field"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/sunny"
             android:layout_width="100dp"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+
+            android:src="@drawable/sunny" />
         <TextView
             android:id="@+id/weather_icon"
             android:layout_width="wrap_content"
@@ -125,13 +128,12 @@
             android:id="@+id/current_temperature_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:layout_below="@+id/max_field"
+            android:layout_toEndOf="@+id/imgHeat"
             android:text="دمای هوا"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="18sp"
-            android:layout_alignBaseline="@+id/speed_field"
-            android:layout_alignBottom="@+id/speed_field"
-            android:layout_toEndOf="@+id/imgHeat" />
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <!--<TextView-->
             <!--android:id="@+id/details_field"-->
@@ -151,44 +153,48 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_alignTop="@+id/updated_field"
             android:layout_toEndOf="@+id/imgHumidty" />
-        <TextView
-            android:id="@+id/min_field"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="حداقل دما"
-            android:layout_alignBaseline="@+id/max_field"
-            android:layout_alignBottom="@+id/max_field"
-            android:layout_toStartOf="@+id/max_field" />
+        <!--<TextView-->
+            <!--android:id="@+id/min_field"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:text="حداقل دما"-->
+            <!--android:layout_alignBaseline="@+id/max_field"-->
+            <!--android:layout_alignBottom="@+id/max_field"-->
+            <!--android:layout_toStartOf="@+id/max_field" />-->
         <TextView
             android:id="@+id/max_field"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:text="حداکثر دما"
             android:layout_above="@+id/imgHeat"
-            android:layout_toEndOf="@+id/imgHeat" />
+            android:layout_alignStart="@+id/imgHeat"
+            android:text="حداکثر دما"
+            android:textColor="@color/white" />
+
         <ImageView
             android:id="@+id/imgHeat"
-            android:src="@drawable/heat"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true" />
+            android:layout_alignBottom="@+id/imgWeather"
+            android:layout_alignStart="@+id/updated_field"
+            android:src="@drawable/heat" />
+
         <ImageView
             android:id="@+id/imgHumidty"
-            android:src="@drawable/humidity"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:layout_width="40dp"
-            android:layout_height="40dp" />
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/humidity" />
+
         <ImageView
             android:id="@+id/imgWind"
-            android:src="@drawable/windw"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/max_field"
             android:layout_width="40dp"
-            android:layout_height="40dp" />
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/imgHumidty"
+            android:src="@drawable/windw" />
 
         <TextView
             android:id="@+id/speed_field"
@@ -199,13 +205,53 @@
             android:layout_alignBottom="@+id/imgWind"
             android:layout_toEndOf="@+id/imgWind"
             android:layout_marginBottom="10dp" />
-
-
-    </RelativeLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/txtForecast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:padding="5dp"
+            android:background="@drawable/white_trans_border_bottom"
+            android:text="پیش بینی هوای روزهای آینده"
+            android:layout_below="@+id/imgHeat"
+            android:layout_centerHorizontal="true"
+             />
+        <ListView
+            android:id="@+id/lvForecast"
+            android:layout_below="@id/txtForecast"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="85dp">
+
+        </ListView>
+    </RelativeLayout>
+<ProgressBar
+    android:id="@+id/progressFirst"
+    android:layout_below="@id/relLayout1"
+    android:layout_centerHorizontal="true"
+    android:layout_width="72dp"
+    android:layout_height="72dp" />
+
+    <ImageView
+        android:id="@+id/imgErrorConnect"
+        android:layout_below="@id/relLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_width="72dp"
+        android:src="@drawable/ic_connect_error"
+        android:visibility="gone"
+    android:layout_height="72dp" />
+    <ImageView
+        android:id="@+id/imgVRetry"
+        android:layout_below="@id/imgErrorConnect"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_refresh"
+        android:visibility="gone"
+        android:layout_width="72dp"
+        android:layout_height="72dp" />
+        <LinearLayout
+            android:id="@+id/lineVP"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             android:layout_alignParentBottom="true"
             android:layout_margin="5dp">
 

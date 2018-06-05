@@ -40,16 +40,16 @@ public class TourismActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: starting.");
 
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
-        mFrameLayout = (FrameLayout) findViewById(R.id.container);
-        mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
+        mViewPager = findViewById(R.id.viewpager_container);
+        mFrameLayout = findViewById(R.id.container);
+        mRelativeLayout = findViewById(R.id.relLayoutParent);
 
         setupBottomNavigationView();
         setupViewPager();
 //        hideLayout();
 //        showPopup();
 
-        relLayout1 = (RelativeLayout) findViewById(R.id.relLayout1);
+        relLayout1 = findViewById(R.id.relLayout1);
 
         //end oncreate
     }
@@ -91,7 +91,7 @@ public class TourismActivity extends AppCompatActivity {
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(2);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
 //        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
@@ -112,7 +112,7 @@ public class TourismActivity extends AppCompatActivity {
     // تنظیم نوار پایین برنامه
     private void setupBottomNavigationView(){
         Log.d(TAG,"seting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx=(BottomNavigationViewEx)findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx= findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(TourismActivity.this,bottomNavigationViewEx);
         Menu menu=bottomNavigationViewEx.getMenu();

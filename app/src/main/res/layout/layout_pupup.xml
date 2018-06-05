@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="#000"
-    android:padding="10px">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/tvPopup"

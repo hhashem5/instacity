@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.Home.HomeActivity;
+import com.idpz.instacity.Search.SearchActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +48,7 @@ public class AlarmService extends Service {
     public static volatile int alarmDist = 300;
     Boolean isMsg=true,connected=false;
     Context context;
-    String msgid="1";
+    public static volatile String msgid="1";
     SharedPreferences SP;
     String lastNewsId="1";
     String server="",REGISTER_URL="";
@@ -71,7 +72,9 @@ public class AlarmService extends Service {
 //        isRunning=SP.getBoolean("alarm",false);
 
 //        rcode=MainActivity.carCode;
-        isMsg=SP.getBoolean("msg",true);
+//        isMsg=SP.getBoolean("msg",true);
+        isMsg=false;
+        isRunning=false;
 
         myLocation=new Location("");
         carLocation=new Location("");
@@ -98,38 +101,34 @@ public class AlarmService extends Service {
                 while (isRunning || isMsg){
                     //Your logic that service will perform will be placed here
                     ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                    if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                            connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                        //we are connected to a network
-                        connected = true;
-                    } else {
-                        connected = false;
+                    //we are connected to a network
 //                                txtNews.setText("اینترنت وصل نیست");
-                    }
+                    connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                            connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
                     try {
 //                        REGISTER_URL=server+"/i/rcv.php";
                         MSG_URL=server+"/i/msgrcv.php";
                         MSG_VU=server+"/i/msgview.php";
+
 //                        if (isRunning)
-                        isRunning=SP.getBoolean("alarm",false);
-                        if (isRunning)reqRcv();
+//                        isRunning=SP.getBoolean("alarm",false);
+//                        isMsg=SP.getBoolean("msg",false);
+//                        server=SP.getString("server","http://idpz.ir");
+
                         if (connected) {
+                            if (isRunning)reqRcv();
                             if (isMsg) {
-//                            Toast.makeText(context, "msg requested", Toast.LENGTH_SHORT).show();
-//                            Log.d(TAG, "AlarmService run: requested"+MSG_URL);
+                                if (lastNewsId.equals("1"))msgid="1";
                                 reqNews();
-
                             }
-
                         }
+
                         Thread.sleep(15000);
 
-
                     } catch (Exception e) {
+                        Log.e(TAG, "run: loop", e);
                     }
-
-
 
             }
                 //Stop service once it finishes its task
@@ -156,6 +155,8 @@ public class AlarmService extends Service {
     }
 
 
+
+
     public void reqNews() {
 //        Log.d(TAG, "reqNews: reqnews started");
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -165,7 +166,7 @@ public class AlarmService extends Service {
                 {
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "onResponse: received");
+//                        Log.d(TAG, "onResponse: received "+server+" news id:"+lastNewsId +" msgid:"+msgid);
                         if (response.length()>4) {
                             String title, body = "", sender = "", sendtime = "";
                             JSONArray jsonArray = null;
@@ -179,8 +180,14 @@ public class AlarmService extends Service {
 
                                     msgid = jsonObject.getString("id");
 
-                                    if (lastNewsId.toString().equals("null"))
-                                        lastNewsId = "0";
+                                    if (lastNewsId.equals("1")){
+                                        lastNewsId = msgid;
+                                        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                                        SP.putString("notification", msgid);
+                                        SP.commit();
+                                        return;
+                                    }
+
                                     if (Integer.valueOf(msgid) > Integer.valueOf(lastNewsId)) {
                                         lastNewsId = msgid;
                                         title = jsonObject.getString("title");
@@ -193,7 +200,7 @@ public class AlarmService extends Service {
                                         c2.putString("key", msgid); //Your id
                                         c2.putString("position","2");
                                         intent.putExtras(c2); //Put your id to your next Intent
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
 
 
                                         PendingIntent contentIntent = PendingIntent.getActivity(AlarmService.this, 0, intent, 0);
@@ -204,7 +211,7 @@ public class AlarmService extends Service {
                                                 .setDefaults(Notification.DEFAULT_ALL)
                                                 .setWhen(System.currentTimeMillis())
                                                 .setSmallIcon(R.drawable.mlogo64)
-                                                .setTicker("پیام از:دهکده هوشمند")
+                                                .setTicker("پیام از:دهکده هوشمند"+body)
                                                 .setContentTitle(title)
                                                 .setContentText(body)
                                                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
@@ -215,49 +222,15 @@ public class AlarmService extends Service {
                                         NotificationManager notificationManager = (NotificationManager) AlarmService.this.getSystemService(Context.NOTIFICATION_SERVICE);
                                         notificationManager.notify(1, b.build());
 
-
-
-                                        // Sets an ID for the notification
-//                                        int mNotificationId = 001;
-
-                                        // Build Notification , setOngoing keeps the notification always in status bar
-//                                        android.support.v4.app.NotificationCompat.Builder mBuilder =
-//                                                new NotificationCompat.Builder(getApplicationContext())
-//                                                        .setSmallIcon(R.drawable.mlogo64)
-//                                                        .setContentTitle(title)
-//                                                        .setContentText(body)
-//                                                        .setOngoing(true);
-
-                                        // Create pending intent, mention the Activity which needs to be
-                                        //triggered when user clicks on notification(StopScript.class in this case)
-
-//                                        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0,
-//                                                new Intent(getApplicationContext(), LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//
-//                                        mBuilder.setContentIntent(contentIntent);
-//
-//
-//                                        // Gets an instance of the NotificationManager service
-//                                        NotificationManager mNotifyMgr =
-//                                                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//
-//                                        // Builds the notification and issues it.
-//                                        mNotifyMgr.notify(mNotificationId, mBuilder.build());
-
-
-
                                         regVU();
 //                                    isRunning = false;
                                         SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                                         SP.putString("notification", msgid);
-//                                    SP.putBoolean("alarm", false);
+                                        SP.putString("tabpos", "2");
                                         SP.commit();
                                     }
-
-
 //                            Toast.makeText(CarAlarmService.this," alarm distance="+alarmDist+ "Lat="+lat+" Lng="+lng+" Speed="+speed+" dist="+myDist, Toast.LENGTH_SHORT).show();
-                                }
+                                } //end for loop
 
 
                             } catch (JSONException e) {
@@ -319,6 +292,14 @@ public class AlarmService extends Service {
 
     }
 
+
+
+
+
+
+
+
+
     public void reqRcv() {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = REGISTER_URL;
@@ -366,6 +347,32 @@ public class AlarmService extends Service {
                                                     mp.release();
                                                 }
                                             });
+                                            Intent intent = new Intent(AlarmService.this, SearchActivity.class);
+                                            Bundle c2 = new Bundle();
+                                            c2.putString("key", msgid); //Your id
+                                            intent.putExtras(c2); //Put your id to your next Intent
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+
+
+                                            PendingIntent contentIntent = PendingIntent.getActivity(AlarmService.this, 0, intent, 0);
+
+                                            NotificationCompat.Builder b = new NotificationCompat.Builder(AlarmService.this);
+
+                                            b.setAutoCancel(true)
+                                                    .setDefaults(Notification.DEFAULT_ALL)
+                                                    .setWhen(System.currentTimeMillis())
+                                                    .setSmallIcon(R.drawable.mlogo64)
+                                                    .setTicker("پیام از:دهکده هوشمند")
+                                                    .setContentTitle("خودروی شهری")
+                                                    .setContentText("خودرو به شما نزدیک است")
+                                                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                                                    .setContentIntent(contentIntent)
+                                                    .setContentInfo("");
+
+
+                                            NotificationManager notificationManager = (NotificationManager) AlarmService.this.getSystemService(Context.NOTIFICATION_SERVICE);
+                                            notificationManager.notify(1, b.build());
+
                                             Log.d(TAG, "alarm playing: ");
                                             stopSelf();
                                         } catch (Exception e) {
@@ -374,6 +381,7 @@ public class AlarmService extends Service {
                                         isRunning = false;
                                         SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                                         SP.putBoolean("alarm", false);
+                                        SP.putString("tabpos", "1");
                                         SP.commit();
                                     }
 

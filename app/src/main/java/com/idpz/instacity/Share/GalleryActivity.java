@@ -3,11 +3,12 @@ package com.idpz.instacity.Share;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,10 +25,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.GridImageAdapter;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,22 +53,18 @@ public class GalleryActivity extends AppCompatActivity {
     private ArrayList<String> directories;
     private String mAppend = "file:/";
     private String mSelectedImage,mstatus="1";
-    DisplayImageOptions options;
-    ImageLoader imageLoader;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
 
 
+        galleryImage = findViewById(R.id.galleryImageView);
+        gridView = findViewById(R.id.gridView);
 
-        imageLoader=ImageLoader.getInstance();
-
-
-        galleryImage = (ImageView) findViewById(R.id.galleryImageView);
-        gridView = (GridView) findViewById(R.id.gridView);
-
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar = findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.GONE);
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started.");
@@ -77,11 +75,11 @@ public class GalleryActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         // there are a lot of settings, for dialog, check them all out!
         // set up radiobutton
-        final RadioButton rd0 = (RadioButton) dialog.findViewById(R.id.rd_0);
-        final RadioButton rd1 = (RadioButton) dialog.findViewById(R.id.rd_1);
-        final RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.rd_2);
-        final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.rd_3);
-        Button btnDialog=(Button)dialog.findViewById(R.id.btnOpinion);
+        final RadioButton rd0 = dialog.findViewById(R.id.rd_0);
+        final RadioButton rd1 = dialog.findViewById(R.id.rd_1);
+        final RadioButton rd2 = dialog.findViewById(R.id.rd_2);
+        final RadioButton rd3 = dialog.findViewById(R.id.rd_3);
+        Button btnDialog= dialog.findViewById(R.id.btnOpinion);
         rd0.setSelected(true);
         // now that the dialog is set up, it's time to show it
         dialog.show();
@@ -113,7 +111,7 @@ public class GalleryActivity extends AppCompatActivity {
                 if (rd3.isChecked())mstatus="4";
             }
         });
-        ImageView shareClose = (ImageView) findViewById(R.id.ivCloseShare);
+        ImageView shareClose = findViewById(R.id.ivCloseShare);
         shareClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,14 +126,13 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
-        TextView nextScreen = (TextView) findViewById(R.id.tvNext);
+        TextView nextScreen = findViewById(R.id.tvNext);
         nextScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to the final share screen.");
                 Toast.makeText(GalleryActivity.this, "لطفا کمی صبر کنید", Toast.LENGTH_SHORT).show();
-                if (imageLoader.getMemoryCache() != null)
-                    imageLoader.clearMemoryCache();
+
                     Intent intent = new Intent(GalleryActivity.this, ShareActivity.class);
                     intent.putExtra(getString(R.string.selected_image), mSelectedImage);
                     intent.putExtra("status", mstatus);
@@ -144,7 +141,7 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
-        TextView tvNopic = (TextView) findViewById(R.id.tvNoPic);
+        TextView tvNopic = findViewById(R.id.tvNoPic);
         tvNopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,6 +170,9 @@ public class GalleryActivity extends AppCompatActivity {
             setupGridView();
         }
 
+        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+        SP.putString("tabpos", "0");
+        SP.apply();
 
     }
 
@@ -239,19 +239,13 @@ public class GalleryActivity extends AppCompatActivity {
 
     private void setImage(String imgURL, ImageView image, String append){
         Log.d(TAG, "setImage: setting image");
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.noimage)
-                .showImageOnFail(R.drawable.noimage)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
+        Glide.with(GalleryActivity.this).load(imgURL)
+                .thumbnail(0.5f)
+                .crossFade()
+                .placeholder(R.drawable.nopic)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(image);
 
-        imageLoader.displayImage(append + imgURL, image,options);
-//        image.setImageURI(Uri.withAppendedPath(
-//                MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, "" + imageID));
     }
 
     public ArrayList<String> getFilePaths()
@@ -263,7 +257,7 @@ public class GalleryActivity extends AppCompatActivity {
         Cursor c = null;
         SortedSet<String> dirList = new TreeSet<String>();
         ArrayList<String> resultIAV = new ArrayList<String>();
-        String orderBy = MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC";
+        String orderBy = MediaStore.Images.ImageColumns.DATE_TAKEN + " ASC";
         String[] directories = null;
         if (u != null)
         {

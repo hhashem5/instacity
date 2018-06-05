@@ -17,11 +17,16 @@ public class VisitPlace {
     private String address;
     private String memo;
     private String pic;
-
+    private String alat;
+    private String alng;
+    private String aename;
+    private String afname;
     public VisitPlace() {
     }
 
-    public VisitPlace(int id, String name, String year, String ticket, String days, String hours, String lat, String lng, String tel, String address, String memo, String pic) {
+    public VisitPlace(int id, String name, String year, String ticket, String days, String hours, String lat,
+                      String lng, String tel, String address, String memo,
+                      String pic,String alat,String alng,String aename,String afname) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -34,6 +39,10 @@ public class VisitPlace {
         this.pic = pic;
         this.tel = tel;
         this.address = address;
+        this.alat = alat;
+        this.alng = alng;
+        this.aename = aename;
+        this.afname = afname;
     }
 
     public int getId() {
@@ -130,5 +139,37 @@ public class VisitPlace {
 
     public void setPic(String pic) {
         this.pic = pic;
+    }
+
+    public String getAlat() {
+        return alat;
+    }
+
+    public void setAlat(String alat) {
+        this.alat = alat;
+    }
+
+    public String getAlng() {
+        return alng;
+    }
+
+    public void setAlng(String alng) {
+        this.alng = alng;
+    }
+
+    public String getAename() {
+        return aename;
+    }
+
+    public void setAename(String aename) {
+        this.aename = aename;
+    }
+
+    public String getAfname() {
+        return afname;
+    }
+
+    public void setAfname(String afname) {
+        this.afname = afname;
     }
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bbb"
+    tools:context="com.idpz.instacity.Home.NamePlaceActivity">
+<EditText
+    android:id="@+id/edtMyName"
+    android:layout_alignParentRight="true"
+    android:layout_margin="10dp"
+    android:hint="نام و نام خانوادگی"
+    android:layout_width="200dp"
+    android:textColorHint="#969696"
+    android:textColor="@color/white"
+    android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="100"
+        android:layout_marginTop="20dp"
+        android:layout_margin="5dp"
+        android:layout_below="@id/edtMyName"
+        android:layout_centerHorizontal="true"
+
+        android:gravity="center"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:id="@+id/spnLoginSelCity"
+            android:layout_width="wrap_content"
+            android:layout_weight="80"
+
+            android:theme="@style/MooSpinnerItem"
+            android:popupBackground="#000066"
+            android:layout_height="wrap_content">
+
+        </Spinner>
+        <TextView
+            android:text="شهر خود را انتخاب کنید"
+            android:layout_width="wrap_content"
+            android:layout_weight="50"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnLogin"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/line1"
+        android:text="@string/action_sign_in"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -45,7 +45,7 @@ public class AdsFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     List<Ads> allAds;
     ArrayList<Ads> dataModels;
     ListView listView;
-    ImageView btnAdsReg;
+//    ImageView btnAdsReg;
     AdsAdapter adapter;
     Boolean adsFlag=false,connected=false;
     String GET_ADS_URL="",server="";
@@ -54,12 +54,12 @@ public class AdsFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_ads,container,false);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.adsRefresh);
+        swipeRefreshLayout = view.findViewById(R.id.adsRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView=(ListView)view.findViewById(R.id.lvAdsContent);
+        listView= view.findViewById(R.id.lvAdsContent);
 
-        btnAdsReg=(ImageView) view.findViewById(R.id.imgAddAds);
+//        btnAdsReg=(ImageView) view.findViewById(R.id.imgAddAds);
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
         server=SP1.getString("server", "0");
@@ -71,15 +71,23 @@ public class AdsFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
         reqAds();
 
-        btnAdsReg.setOnClickListener(new View.OnClickListener() {
+//        btnAdsReg.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent in =new Intent(getContext(),AdsAddActivity.class);
+//                getActivity().startActivity(in);
+//            }
+//        });
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setAlpha(0.65f);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent in =new Intent(getContext(),AdsAddActivity.class);
-                getActivity().startActivity(in);
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),AdsAddActivity.class);
+                startActivity(intent);
             }
         });
-
-
 
         return view;
     }

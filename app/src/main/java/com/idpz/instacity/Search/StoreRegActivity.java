@@ -1,6 +1,8 @@
 package com.idpz.instacity.Search;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
@@ -19,11 +22,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -32,74 +40,100 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.idpz.instacity.R;
+import com.idpz.instacity.models.Shop;
 import com.idpz.instacity.utils.GPSTracker;
+import com.idpz.instacity.utils.ShopAdapter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.util.concurrent.ExecutionException;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class StoreRegActivity extends AppCompatActivity {
+public class StoreRegActivity extends AppCompatActivity implements OnMapReadyCallback,GoogleMap.OnMapClickListener,
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerDragListener {
 
     private static final int SELECT_FILE = 7;
     private static final String TAG = "ShopRegActivity";
     private static final int REQUEST_ACCESS_LOCATION = 0;
     private static final int REQUEST_CAMERA = 6;
-
-    ProgressDialog progressDialog;
-    EditText txtShopName,txtShopOwner,txtShopTel,txtShopMobile,txtShopAddress,txtShopKey,txtShopMemo;
-    Button btnShopPic,btnShopReg;
+    TextView tvCode;
+    private GoogleMap mMap;
+    SupportMapFragment mapFragment;
+    LatLng shopLoc;
+    Boolean showMap=true;
+    EditText txtShopName,txtShopOwner,txtShopTel,txtShopMobile,txtShopAddress,txtShopKey;
+    Button btnShopPic,btnShopReg,btnFinalShop;
     ImageView imgShop;
     TextView txtJobStatus;
     Spinner spnShopTag;
     String REGISTER_URL="";
-    String ServerUploadPath ="";
-    String shopName,owner,tel,mobile,address,shopKey,memo,shoptag,lat="0",lng="0";
+    String ServerUploadPath ="",SHOP_URL="";
+    String shopName,owner,tel,mobile,address,shopKey,shoptag,lat="0",lng="0",mymobile="";
     View focusView = null;
-    boolean kansel=false,check=true,hasImage=false;
+    boolean kansel=false,check=true,hasImage=false,placesFlag=false;
     Bitmap bitmap=null;
     String ImageName = "image_name";
     String ImagePath = "image_path",server;
-
+    ArrayList<Shop> shops;
+    ListView listView;
+    ShopAdapter adapter;
+    ProgressBar progressBar;
+    Uri contentURI;
+    SharedPreferences SP1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_reg);
-        txtShopName=(EditText) findViewById(R.id.txtShopName);
-        txtShopOwner=(EditText) findViewById(R.id.txtShopOwner);
-        txtShopTel=(EditText) findViewById(R.id.txtShopTel);
-        txtShopMobile=(EditText) findViewById(R.id.txtShopMobile);
-        txtShopAddress=(EditText) findViewById(R.id.txtShopAddress);
-        txtShopKey=(EditText) findViewById(R.id.txtShopKey);
-        txtShopMemo=(EditText) findViewById(R.id.txtShopMemo);
-        btnShopPic=(Button) findViewById(R.id.btnShopPic);
-        btnShopReg=(Button) findViewById(R.id.btnShopReg);
-        imgShop=(ImageView) findViewById(R.id.imgShop);
-        txtJobStatus=(TextView) findViewById(R.id.txtJobStatus);
-        spnShopTag=(Spinner) findViewById(R.id.spnShopTag);
+
+        progressBar= findViewById(R.id.progressBar);
+        tvCode= findViewById(R.id.storeCode);
+        tvCode.setVisibility(View.INVISIBLE);
+        txtShopName= findViewById(R.id.txtShopName);
+        txtShopOwner= findViewById(R.id.txtShopOwner);
+        txtShopTel= findViewById(R.id.txtShopTel);
+        txtShopMobile= findViewById(R.id.txtShopMobile);
+        txtShopAddress= findViewById(R.id.txtShopAddress);
+        txtShopKey= findViewById(R.id.txtShopKey);
+//        txtShopMemo=(EditText) findViewById(R.id.txtShopMemo);
+        btnShopPic= findViewById(R.id.btnShopPic);
+        btnShopReg= findViewById(R.id.btnShopReg);
+        btnFinalShop= findViewById(R.id.btnFinalShop);
+        imgShop= findViewById(R.id.imgShop);
+        txtJobStatus= findViewById(R.id.txtJobStatus);
+        spnShopTag= findViewById(R.id.spnShopTag);
 
         populateGPS();
-        SharedPreferences SP1;
+
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
-        REGISTER_URL=server+"/i/shopreg.php";
+        mymobile=SP1.getString("mobile", "0");
+        lat=SP1.getString("lat","35.711");
+        lng=SP1.getString("lng","35.711");
+
+        REGISTER_URL=server+"/i/imgplace.php";
         ServerUploadPath =server+"/i/imgplace.php" ;
+        SHOP_URL=server+"/i/shoprec.php";
 
         btnShopPic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +142,55 @@ public class StoreRegActivity extends AppCompatActivity {
                         Intent.ACTION_PICK,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent,SELECT_FILE);
+            }
+        });
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.shop_fragment);
+        shopLoc=new LatLng(Double.valueOf(lat),
+                Double.valueOf(lng));
+        mapFragment.getMapAsync(this);
+
+        if (showMap) {
+            mapFragment.getView().setVisibility(View.GONE);
+            btnFinalShop.setVisibility(View.GONE);
+            showMap=false;
+        }
+
+
+        listView= findViewById(R.id.lvMyShops);
+        shops= new ArrayList<>();
+        adapter= new ShopAdapter(StoreRegActivity.this,R.layout.shop_row,shops);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                btnAdsUpdate.setEnabled(true);
+                txtShopName.setText(shops.get(position).getName());
+                txtShopOwner.setText(shops.get(position).getOwner());
+                txtShopTel.setText(shops.get(position).getTel());
+                txtShopMobile.setText(shops.get(position).getMobile());
+                txtShopAddress.setText(shops.get(position).getAddress());
+                txtShopKey.setText(shops.get(position).getJkey());
+                tvCode.setText(""+shops.get(position).getId());
+                Log.d(TAG, "onItemClick: id:"+shops.get(position).getId()+" owner:"+shops.get(position).getOwner()+" ");
+                String[]tags={"edu","store","health","religion","services","sport","food","tourist"};
+                int index =0;
+                for (int i=0;i<tags.length;i++) {
+                    if (tags[i].equals(shops.get(position).getTag())) {
+                        index = i;
+                        break;
+                    }
+                }
+                spnShopTag.setSelection(index);
+
+                Glide.with(StoreRegActivity.this).load(shops.get(position).getPic())
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.nopic)
+                        .into(imgShop);
             }
         });
 
@@ -121,32 +204,8 @@ public class StoreRegActivity extends AppCompatActivity {
                 mobile=txtShopMobile.getText().toString();
                 address=txtShopAddress.getText().toString();
                 shopKey=txtShopKey.getText().toString();
-                memo=txtShopMemo.getText().toString();
-
-                int pos=spnShopTag.getSelectedItemPosition();
-                switch (pos){
-                    case 0:
-                        shoptag="edu";
-                        break;
-                    case 1:
-                        shoptag="shop";
-                        break;
-                    case 2:
-                        shoptag="health";
-                        break;
-                    case 3:
-                        shoptag="region";
-                        break;
-                    case 4:
-                        shoptag="services";
-                        break;
-                    case 5:
-                        shoptag="sport";
-                        break;
-                    case 6:
-                        shoptag="food";
-                        break;
-                }
+//                memo=txtShopMemo.getText().toString();
+                selectTag();
 
                 txtShopName.setError(null);
                 txtShopOwner.setError(null);
@@ -154,7 +213,8 @@ public class StoreRegActivity extends AppCompatActivity {
                 txtShopMobile.setError(null);
                 txtShopAddress.setError(null);
                 txtShopKey.setError(null);
-                txtShopMemo.setError(null);
+
+//                txtShopMemo.setError(null);
 
 
                 if(shopName.length()<2){
@@ -184,7 +244,7 @@ public class StoreRegActivity extends AppCompatActivity {
                     focusView=txtShopAddress;
                     kansel=true;
                 }
-                if(shopKey.length()<4){
+                if(shopKey.length()<3){
                     txtShopKey.setError("کلید واژه کوتاه است و برای شناسایی بهتر خدمات توسط مردم است");
                     focusView=txtShopKey;
                     kansel=true;
@@ -192,11 +252,17 @@ public class StoreRegActivity extends AppCompatActivity {
 
 
                 if (!kansel) {
-                    if (hasImage){
-                        ImageUploadToServerFunction();
-                    }else {
-                        regShopInfo();
-                    }
+
+                        mapFragment.getView().setVisibility(View.VISIBLE);
+                        btnFinalShop.setVisibility(View.VISIBLE);
+                        btnShopPic.setVisibility(View.INVISIBLE);
+                        btnShopReg.setVisibility(View.INVISIBLE);
+                        mMap.clear();
+                        mMap.addMarker(new MarkerOptions().position(shopLoc).title("موقعیت شما").snippet(shopName+"-"+tel+"("+owner+")"));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(shopLoc,16));
+                        showMap = true;
+
+
 
                 }else {
                     focusView.requestFocus();
@@ -208,6 +274,33 @@ public class StoreRegActivity extends AppCompatActivity {
             }
         });
 
+
+        btnFinalShop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnShopPic.setVisibility(View.VISIBLE);
+                btnShopReg.setVisibility(View.VISIBLE);
+                mapFragment.getView().setVisibility(View.GONE);
+                btnFinalShop.setVisibility(View.GONE);
+
+                if (hasImage){
+                    ServerUploadPath =server+"/i/imgplace.php" ;
+                    try {
+                        setImage();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    regShopInfo();
+
+                }
+
+            }
+        });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+reqMyShop();
+//        Toast.makeText(this, mymobile, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -221,7 +314,9 @@ public class StoreRegActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
 
-                        txtJobStatus.setText(response.toString());
+                        txtJobStatus.setText(response);
+                        reqMyShop();
+                        Toast.makeText(StoreRegActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
                     }
                 },
                 new Response.ErrorListener()
@@ -240,13 +335,15 @@ public class StoreRegActivity extends AppCompatActivity {
 
                 params.put("name", shopName);
                 params.put("mob", mobile);
-                params.put("owner", owner);
+                params.put("owner", mymobile);
+                params.put("oname", owner);
                 params.put("tel",tel);
                 params.put("adr", address);
                 params.put("key", shopKey);
                 params.put("tag", shoptag);
                 params.put("lat", lat);
                 params.put("lng", lng);
+//                params.put("memo", memo);
                 return params;
             }
         };
@@ -258,220 +355,61 @@ public class StoreRegActivity extends AppCompatActivity {
     public void onBackPressed() {
         Log.d("CDA", "onBackPressed Called");
         finish();
-        return;
     }
 
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_CANCELED) {
-            return;
-        }
-        if (requestCode==SELECT_FILE) {
-            if (data != null) {
-                Uri contentURI = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-//                    Log.e("The image", imageToString(bitmap));
-                    imgShop.setImageBitmap(bitmap);
-                    hasImage=true;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if(requestCode == REQUEST_CAMERA){
-            Log.d(TAG, "onActivityResult: done taking a photo.");
-
-            bitmap = (Bitmap) data.getExtras().get("data");
-            imgShop.setImageBitmap(bitmap);
-            ImageUploadToServerFunction();
-        }
-    }
-
-
-
-    public void ImageUploadToServerFunction(){
-
-
-        ByteArrayOutputStream byteArrayOutputStreamObject ;
-
-        byteArrayOutputStreamObject = new ByteArrayOutputStream();
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 20, byteArrayOutputStreamObject);
-
-        byte[] byteArrayVar = byteArrayOutputStreamObject.toByteArray();
-
-        final String ConvertImage = Base64.encodeToString(byteArrayVar, Base64.DEFAULT);
-
-        class AsyncTaskUploadClass extends AsyncTask<Void,Void,String> {
-
-            @Override
-            protected void onPreExecute() {
-
-                super.onPreExecute();
-
-                progressDialog = ProgressDialog.show(StoreRegActivity.this,"درحال ارسال عکس","کمی صبر کنید",false,false);
-            }
-
-            @Override
-            protected void onPostExecute(String string1) {
-
-                super.onPostExecute(string1);
-
-                // Dismiss the progress dialog after done uploading.
-                progressDialog.dismiss();
-                SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-                SP2.putString("pic", string1);
-                SP2.apply();
-                // Printing uploading success message coming from server on android app.
-                Intent intent =new Intent(StoreRegActivity.this, SearchActivity.class);
-                startActivity(intent);
-                finish();
-                // Setting image as transparent after done uploading.
-//                imageView.setImageResource(android.R.color.transparent);
-
-
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-
-                StoreRegActivity.ImageProcessClass imageProcessClass = new StoreRegActivity.ImageProcessClass();
-
-                HashMap<String,String> HashMapParams = new HashMap<String,String>();
-
-                HashMapParams.put(ImageName, mobile);
-
-                HashMapParams.put(ImagePath, ConvertImage);
-                HashMapParams.put("name", shopName);
-                HashMapParams.put("mob", mobile);
-                HashMapParams.put("owner", owner);
-                HashMapParams.put("tel",tel);
-                HashMapParams.put("adr", address);
-                HashMapParams.put("key", shopKey);
-                HashMapParams.put("tag", shoptag);
-                HashMapParams.put("lat", lat);
-                HashMapParams.put("lng", lng);
-
-
-                String FinalData = imageProcessClass.ImageHttpRequest(ServerUploadPath, HashMapParams);
-
-                return FinalData;
-            }
-        }
-        AsyncTaskUploadClass AsyncTaskUploadClassOBJ = new AsyncTaskUploadClass();
-
-        AsyncTaskUploadClassOBJ.execute();
-    }
-
-    public class ImageProcessClass{
-
-        public String ImageHttpRequest(String requestURL,HashMap<String, String> PData) {
-
-            StringBuilder stringBuilder = new StringBuilder();
-
+    @SuppressLint("StaticFieldLeak")
+    private void setImage() throws IOException {
+    new AsyncTask<Void, Void, Void>() {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Log.d(TAG, "doInBackground: Upload: 1 setimage before glide to bitmap");
+            Looper.prepare();
             try {
-
-                URL url;
-                HttpURLConnection httpURLConnectionObject ;
-                OutputStream OutPutStream;
-                BufferedWriter bufferedWriterObject ;
-                BufferedReader bufferedReaderObject ;
-                int RC ;
-
-                url = new URL(requestURL);
-
-                httpURLConnectionObject = (HttpURLConnection) url.openConnection();
-
-                httpURLConnectionObject.setReadTimeout(19000);
-
-                httpURLConnectionObject.setConnectTimeout(19000);
-
-                httpURLConnectionObject.setRequestMethod("POST");
-
-                httpURLConnectionObject.setDoInput(true);
-
-                httpURLConnectionObject.setDoOutput(true);
-
-                OutPutStream = httpURLConnectionObject.getOutputStream();
-
-                bufferedWriterObject = new BufferedWriter(
-
-                        new OutputStreamWriter(OutPutStream, "UTF-8"));
-
-                bufferedWriterObject.write(bufferedWriterDataFN(PData));
-
-                bufferedWriterObject.flush();
-
-                bufferedWriterObject.close();
-
-                OutPutStream.close();
-
-                RC = httpURLConnectionObject.getResponseCode();
-
-                if (RC == HttpsURLConnection.HTTP_OK) {
-
-                    bufferedReaderObject = new BufferedReader(new InputStreamReader(httpURLConnectionObject.getInputStream()));
-
-                    stringBuilder = new StringBuilder();
-
-                    String RC2;
-
-                    while ((RC2 = bufferedReaderObject.readLine()) != null){
-
-                        stringBuilder.append(RC2);
-                    }
-                }
-
-            } catch (Exception e) {
+                bitmap = Glide.
+                        with(StoreRegActivity.this).
+                        load(contentURI).
+                        asBitmap().
+                        into(500,500).
+                        get();
+            } catch (final ExecutionException e) {
+                Log.e(TAG, e.getMessage());
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return stringBuilder.toString();
+
+            return null;
         }
-
-        private String bufferedWriterDataFN(HashMap<String, String> HashMapParams) throws UnsupportedEncodingException {
-
-            StringBuilder stringBuilderObject;
-
-            stringBuilderObject = new StringBuilder();
-
-            for (Map.Entry<String, String> KEY : HashMapParams.entrySet()) {
-
-                if (check)
-
-                    check = false;
-                else
-                    stringBuilderObject.append("&");
-
-                stringBuilderObject.append(URLEncoder.encode(KEY.getKey(), "UTF-8"));
-
-                stringBuilderObject.append("=");
-
-                stringBuilderObject.append(URLEncoder.encode(KEY.getValue(), "UTF-8"));
+        @Override
+        protected void onPostExecute(Void dummy) {
+            if (null != bitmap) {
+                // The full bitmap should be available here
+                Log.d(TAG, "doInBackground: Upload: 2  onPostExecute");
+                imgShop.setImageBitmap(bitmap);
+                uploadImage();
+                Log.d(TAG, "Image loaded");
             }
-
-            return stringBuilderObject.toString();
         }
+    }.execute();
 
-    }
+}
+
+
 
     private void populateGPS() {
         if (!mayRequestLocation()) {
             return;
         }
         GPSTracker gps =new GPSTracker(this);
-        lat=String.valueOf(gps.getLatitude());
-        lng=String.valueOf(gps.getLongitude());
+        lat=gps.getLatitude()+"";
+        lng=gps.getLongitude()+"";
         if (!lat.equals("0.0")) {
             SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-            SP.putString("lat", String.valueOf(gps.getLatitude()));
-            SP.putString("lng", String.valueOf(gps.getLongitude()));
-            SP.commit();
-            btnShopReg.setTextColor(Color.BLACK);
+            lat=gps.getLatitude()+"";
+            lng=gps.getLongitude()+"";
+            SP.putString("lat", lat);
+            SP.putString("lng", lng);
+            SP.apply();
+            btnShopReg.setTextColor(Color.WHITE);
             btnShopReg.setEnabled(true);
             txtJobStatus.setText("");
             txtJobStatus.setTextColor(Color.BLACK);
@@ -491,7 +429,10 @@ public class StoreRegActivity extends AppCompatActivity {
                         Intent i = new
                                 Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(i);
+                        dialog.dismiss();
                     } else if (items[item].equals("خیر")) {
+                        lat=SP1.getString("lat","35.711");
+                        lng=SP1.getString("lng","35.711");
                         dialog.dismiss();
                     }
                 }
@@ -528,9 +469,314 @@ public class StoreRegActivity extends AppCompatActivity {
         return false;
     }
 
+    public void reqMyShop() {
+        progressBar.setVisibility(View.VISIBLE);
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = SHOP_URL;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        JSONArray jsonArray= null;
+                        placesFlag=true;
+                        shops.clear();
+                        try {
+
+                            jsonArray = new JSONArray(response);
+
+                            JSONObject jsonObject;
+//                        dbSocialHandler.removeAll();
+
+                            for (int i=0 ;i<jsonArray.length();i++) {
+                                jsonObject=jsonArray.getJSONObject(i);
+                                Shop shop=new Shop();
+                                shop.setId(jsonObject.getInt("id"));
+                                shop.setName(jsonObject.getString("name"));
+                                shop.setOwner(jsonObject.getString("ownername")) ;
+                                shop.setTel (jsonObject.getString("tel"));
+                                shop.setMobile (jsonObject.getString("mobile")) ;
+                                shop.setAddress ( jsonObject.getString("address"));
+                                shop.setJlat (jsonObject.getString("jlat"));
+                                shop.setJlng (jsonObject.getString("jlng"));
+                                shop.setTag(jsonObject.getString("tag"));
+                                shop.setJkey (jsonObject.getString("jkey"));
+                                shop.setPic(server+"/assets/images/shops/"+jsonObject.getString("pic"));
+                                shop.setMemo(jsonObject.getString("owner"));
+//                                if (value.equals(tag)) {
+//                                    shops.add(new Shop(id, name, owner,
+//                                            tel, mobile, "", address, jlat, jlng, tag, jkey, "", ""));
+//                                    showShops.add(new Shop(id, name, owner,
+//                                            tel, mobile, "", address, jlat, jlng, tag, jkey, "", ""));
+//                                }
+//                                Log.d(TAG, "onResponse: receive lat"+shop.getJlat());
+                                shops.add(shop);
+
+                            }
+                            adapter.notifyDataSetChanged();
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            progressBar.setVisibility(View.GONE);
+
+                        }
+
+
+
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+                params.put("owner",mymobile);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+
+    }
+
+
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
         populateGPS();
     }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode==SELECT_FILE) {
+            if (data != null) {
+                contentURI = data.getData();
+
+
+                    Glide.with(StoreRegActivity.this).load(contentURI)
+                            .thumbnail(0.5f)
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.drawable.nopic)
+                            .into(imgShop);
+                    hasImage=true;
+
+                    if (tvCode.getText().toString().length()>0){
+                        AlertDialog.Builder alertbox = new AlertDialog.Builder(StoreRegActivity.this);
+                        alertbox.setMessage("عکس جدید محصول، جایگزین شود");
+                        alertbox.setTitle("تغییر عکس محصول");
+                        alertbox.setIcon(R.drawable.ic_del);
+
+                        alertbox.setPositiveButton("بله",
+                                new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface arg0,
+                                                        int arg1) {
+                                        shopName=txtShopName.getText().toString();
+                                        owner=txtShopOwner.getText().toString();
+                                        tel=txtShopTel.getText().toString();
+                                        mobile=txtShopMobile.getText().toString();
+                                        address=txtShopAddress.getText().toString();
+                                        shopKey=txtShopKey.getText().toString();
+                                        selectTag();
+                                        ServerUploadPath=server+"/i/updpic.php";
+                                        try {
+                                            setImage();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                });
+                        alertbox.setNegativeButton("خیر",new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface arg0,
+                                                int arg1) {
+
+                            }
+                        });
+                        alertbox.show();
+                    }
+
+            }
+        }
+
+    }
+
+    private void uploadImage(){
+        Log.d(TAG, "doInBackground: Upload: 3 uploadImage ");
+        //Showing the progress dialog
+        final ProgressDialog loading = ProgressDialog.show(this,"ارسال ...","لطفا صبر کنید...",false,false);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, ServerUploadPath,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        //Disimissing the progress dialog
+                        loading.dismiss();
+                        reqMyShop();
+                        //Showing toast message of the response
+                        Toast.makeText(StoreRegActivity.this, "با موفقیت ارسال شد" , Toast.LENGTH_LONG).show();
+                        Log.d(TAG, "doInBackground: Upload: 4 uploadImage Success ");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        Log.d(TAG, "doInBackground: Upload: 3 On uploadImage error");
+                        loading.dismiss();
+
+                        //Showing toast
+                        Toast.makeText(StoreRegActivity.this, "خطا در ثبت اطلاعات دوباره تلاش کنید", Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                //Converting Bitmap to String
+                String image = getStringImage(bitmap);
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+
+                params.put(ImageName, mymobile);
+                params.put(ImagePath, image);
+
+                params.put("name", shopName);
+                params.put("mob", mobile);
+                params.put("owner", mymobile);
+                params.put("oname", owner);
+                params.put("tel",tel);
+                params.put("adr", address);
+                params.put("key", shopKey);
+                params.put("tag", shoptag);
+                params.put("lat", lat);
+                params.put("lng", lng);
+                params.put("id", tvCode.getText().toString());
+                params.put("table", "shops");
+                //returning parameters
+                Log.d(TAG, "getParams: id:"+tvCode.getText().toString()+" owner="+mymobile);
+                return params;
+            }
+        };
+
+        //Creating a Request Queue
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        //Adding request to the queue
+        requestQueue.add(stringRequest);
+    }
+
+    public String getStringImage(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 40, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+
+    }
+
+    private void selectTag(){
+        int pos=spnShopTag.getSelectedItemPosition();
+        switch (pos){
+            case 0:
+                shoptag="edu";
+                break;
+            case 1:
+                shoptag="store";
+                break;
+            case 2:
+                shoptag="health";
+                break;
+            case 3:
+                shoptag="region";
+                break;
+            case 4:
+                shoptag="services";
+                break;
+            case 5:
+                shoptag="sport";
+                break;
+            case 6:
+                shoptag="food";
+                break;
+            case 7:
+                shoptag="tourist";
+                break;
+        }
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney, Australia, and move the camera.
+        LatLng sydney = new LatLng(Double.valueOf(lat),Double.valueOf(lng));
+
+        mMap.addMarker(new MarkerOptions().position(sydney).title(" موقعیت شما "));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney,16));
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerDragListener(this);
+    }
+
+
+    @Override
+    public void onMapClick(LatLng point) {
+//        tvLocInfo.setText(point.toString());
+        mMap.clear();
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(point));
+        mMap.addMarker(new MarkerOptions()
+                .position(point)
+                .draggable(true));
+//        Toast.makeText(getApplicationContext(), "click", Toast.LENGTH_SHORT).show();
+//        markerClicked = false;
+    }
+
+    @Override
+    public void onMapLongClick(LatLng point) {
+//        tvLocInfo.setText("New marker added@" + point.toString());
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions()
+                .position(point)
+                .draggable(true));
+//        Toast.makeText(getApplicationContext(), "Long click", Toast.LENGTH_SHORT).show();
+//        markerClicked = false;
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+//        tvLocInfo.setText("Marker " + marker.getId() + " Drag@" + marker.getPosition());
+//        Toast.makeText(getApplicationContext(), "draged", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+//        tvLocInfo.setText("Marker " + marker.getId() + " DragEnd");
+        lat=marker.getPosition().latitude+"";
+        lng=marker.getPosition().longitude+"";
+//        Toast.makeText(getApplicationContext(), "drag end", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+//        tvLocInfo.setText("Marker " + marker.getId() + " DragStart");
+//        Toast.makeText(getApplicationContext(), "drag start", Toast.LENGTH_SHORT).show();
+    }
+
 }

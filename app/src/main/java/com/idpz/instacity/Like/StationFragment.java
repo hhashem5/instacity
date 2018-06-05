@@ -5,13 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
@@ -45,7 +45,7 @@ public class StationFragment extends Fragment  implements SwipeRefreshLayout.OnR
 
     ArrayList<Villa> dataModels;
     ListView listView;
-    ImageView btnVillaReg;
+//    ImageView btnVillaReg;
     VillaAdapter adapter;
     Boolean artsFlag=false,connected=false;
     String GET_VILLA_URL ="",server="";
@@ -55,19 +55,19 @@ public class StationFragment extends Fragment  implements SwipeRefreshLayout.OnR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_station,container,false);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.villasRefresh);
+        swipeRefreshLayout = view.findViewById(R.id.villasRefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        listView=(ListView)view.findViewById(R.id.lvVillaContent);
-        btnVillaReg=(ImageView) view.findViewById(R.id.imgAddVilla);
+        listView= view.findViewById(R.id.lvVillaContent);
+//        btnVillaReg=(ImageView) view.findViewById(R.id.imgAddVilla);
 
-        btnVillaReg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getContext(),VillaAddActivity.class);
-                getActivity().startActivity(intent);
-            }
-        });
+//        btnVillaReg.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent=new Intent(getContext(),VillaAddActivity.class);
+//                getActivity().startActivity(intent);
+//            }
+//        });
 
         dataModels= new ArrayList<>();
 
@@ -78,12 +78,21 @@ public class StationFragment extends Fragment  implements SwipeRefreshLayout.OnR
         GET_VILLA_URL =  server+"/i/getvillas.php";
         dataModels= new ArrayList<>();
 
-
         adapter= new VillaAdapter(getActivity(),dataModels);
 
         listView.setAdapter(adapter);
 
         reqArts();
+
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setAlpha(0.65f);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),VillaAddActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return view;
     }

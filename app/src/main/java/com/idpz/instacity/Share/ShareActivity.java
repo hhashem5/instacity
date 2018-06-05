@@ -1,5 +1,6 @@
 package com.idpz.instacity.Share;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -8,10 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,19 +38,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.GPSTracker;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -75,7 +76,7 @@ public class ShareActivity extends AppCompatActivity {
     String ServerUploadPath ="", REG_USER_LAT ="",server ;
     //widgets
     private EditText mCaption;
-    boolean check = true,nopicFlag=false;
+    boolean check = true,nopicFlag=true;
     ProgressDialog progressDialog;
     //vars
     private String mAppend = "file:/";
@@ -88,7 +89,8 @@ public class ShareActivity extends AppCompatActivity {
     TextView tvMessage,tvShare,tvStatusSend;
     ImageView image,ivBackArrow;
     private Context mContext = ShareActivity.this;
-    DisplayImageOptions options;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,14 +108,14 @@ public class ShareActivity extends AppCompatActivity {
 
         ServerUploadPath =server+"/i/img1.php" ;
 
-        mCaption = (EditText) findViewById(R.id.textBody) ;
+        mCaption = findViewById(R.id.textBody);
 
 //        spnMoavenat=(Spinner)findViewById(R.id.spnMoavenat);
-        image=(ImageView) findViewById(R.id.imgSharePic);
-        ivBackArrow=(ImageView) findViewById(R.id.ivBackArrow);
-        tvMessage=(TextView) findViewById(R.id.shareTextMessage);
-        tvShare=(TextView) findViewById(R.id.tvShare);
-        tvStatusSend=(TextView) findViewById(R.id.tvStatusSend);
+        image= findViewById(R.id.imgSharePic);
+        ivBackArrow= findViewById(R.id.ivBackArrow);
+        tvMessage= findViewById(R.id.shareTextMessage);
+        tvShare= findViewById(R.id.tvShare);
+        tvStatusSend= findViewById(R.id.tvStatusSend);
 
         mstatus="0";
 
@@ -132,14 +134,14 @@ public class ShareActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         // there are a lot of settings, for dialog, check them all out!
         // set up radiobutton
-        final RadioButton rd0 = (RadioButton) dialog.findViewById(R.id.mrd_0);
-        final RadioButton rd1 = (RadioButton) dialog.findViewById(R.id.mrd_1);
-        final RadioButton rd2 = (RadioButton) dialog.findViewById(R.id.mrd_2);
-        final RadioButton rd3 = (RadioButton) dialog.findViewById(R.id.mrd_3);
-        final RadioButton rd4 = (RadioButton) dialog.findViewById(R.id.mrd_4);
-        final RadioButton rd5 = (RadioButton) dialog.findViewById(R.id.mrd_5);
-        final RadioButton rd6 = (RadioButton) dialog.findViewById(R.id.mrd_6);
-        Button btnDialog=(Button)dialog.findViewById(R.id.btnMov);
+        final RadioButton rd0 = dialog.findViewById(R.id.mrd_0);
+        final RadioButton rd1 = dialog.findViewById(R.id.mrd_1);
+        final RadioButton rd2 = dialog.findViewById(R.id.mrd_2);
+        final RadioButton rd3 = dialog.findViewById(R.id.mrd_3);
+        final RadioButton rd4 = dialog.findViewById(R.id.mrd_4);
+        final RadioButton rd5 = dialog.findViewById(R.id.mrd_5);
+        final RadioButton rd6 = dialog.findViewById(R.id.mrd_6);
+        Button btnDialog= dialog.findViewById(R.id.btnMov);
         rd0.setSelected(true);
         // now that the dialog is set up, it's time to show it
         dialog.show();
@@ -225,7 +227,12 @@ public class ShareActivity extends AppCompatActivity {
                     if (nopicFlag){
                         regSocial();
                     }else{
-                        uploadImage();
+                        try {
+                            setImage();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
                 }else {
@@ -238,10 +245,20 @@ public class ShareActivity extends AppCompatActivity {
         populateGPS();
 
         setupBottomNavigationView();
-        try {
-            setImage();
-        } catch (IOException e) {
-            e.printStackTrace();
+        intent = getIntent();
+        if(intent.hasExtra(getString(R.string.selected_image))) {
+            nopicFlag=false;
+            imgUrl = intent.getStringExtra(getString(R.string.selected_image));
+            Glide.with(ShareActivity.this).load(imgUrl)
+                    .thumbnail(0.5f)
+                    .crossFade()
+                    .placeholder(R.drawable.nopic)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(image);
+
+
+        }else {
+            nopicFlag=true;
         }
 
     }
@@ -254,7 +271,7 @@ public class ShareActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView(){
         Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
-        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
         Menu menu = bottomNavigationViewEx.getMenu();
@@ -267,6 +284,7 @@ public class ShareActivity extends AppCompatActivity {
     /**
      * gets the image url from the incoming intent and displays the chosen image
      */
+    @SuppressLint("StaticFieldLeak")
     private void setImage() throws IOException {
         intent = getIntent();
 
@@ -276,43 +294,45 @@ public class ShareActivity extends AppCompatActivity {
             lat=intent.getStringExtra("lat");
             lng=intent.getStringExtra("lng");
             Log.d(TAG, "setImage: got new image url: " + imgUrl);
-            options = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.drawable.ic_stub)
-                    .showImageForEmptyUri(R.drawable.noimage)
-                    .showImageOnFail(R.drawable.noimage)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .considerExifParams(true)
-                    .bitmapConfig(Bitmap.Config.RGB_565)
-                    .build();
-
-            com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(mAppend+imgUrl,image,options,new ImageLoadingListener() {
 
 
+
+
+
+            new AsyncTask<Void, Void, Void>() {
                 @Override
-                public void onLoadingStarted(String s, View view) {
-
+                protected Void doInBackground(Void... params) {
+                    Looper.prepare();
+                    try {
+                        bitmap = Glide.
+                                with(ShareActivity.this).
+                                load(imgUrl).
+                                asBitmap().
+                                into(500,500).
+                                get();
+                    } catch (final ExecutionException e) {
+                        Log.e(TAG, e.getMessage());
+                    } catch (final InterruptedException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                    uploadImage();
+                    return null;
                 }
-
                 @Override
-                public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+                protected void onPostExecute(Void dummy) {
+                    if (null != bitmap) {
+                        // The full bitmap should be available here
+                        image.setImageBitmap(bitmap);
+                        Log.d(TAG, "Image loaded");
+                    }
                 }
+            }.execute();
 
-                @Override
-                public void onLoadingComplete(String urlLink, View arg1, Bitmap loadedImage) {
-
-                    Log.i("loading complete", "loading complete " + loadedImage);
-                    bitmap=loadedImage;
-
-                }
-
-                @Override
-                public void onLoadingCancelled(String s, View view) {
-
-                }
-            });
-
+//            Glide.with(ShareActivity.this).load(imgUrl)
+//                    .thumbnail(0.5f)
+//                    .crossFade()
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .into(image);
 
         }
     }
@@ -403,7 +423,7 @@ public class ShareActivity extends AppCompatActivity {
             SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
             SP.putString("lat", String.valueOf(lat));
             SP.putString("lng",String.valueOf(lat));
-            SP.commit();
+            SP.apply();
             regLat();
         }
 
@@ -525,44 +545,6 @@ public class ShareActivity extends AppCompatActivity {
 
     }
 
-
-
-    public static Bitmap modifyOrientation(Bitmap bitmap, String image_absolute_path) throws IOException {
-        ExifInterface ei = new ExifInterface(image_absolute_path);
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                return rotate(bitmap, 90);
-
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                return rotate(bitmap, 180);
-
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                return rotate(bitmap, 270);
-
-            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-                return flip(bitmap, true, false);
-
-            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-                return flip(bitmap, false, true);
-
-            default:
-                return bitmap;
-        }
-    }
-
-    public static Bitmap rotate(Bitmap bitmap, float degrees) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degrees);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
-
-    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
-        Matrix matrix = new Matrix();
-        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
 
 
 }

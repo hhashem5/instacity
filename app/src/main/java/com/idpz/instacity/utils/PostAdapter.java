@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -21,13 +20,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.Home.CommentActivity;
 import com.idpz.instacity.Home.LikersActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +42,7 @@ public class PostAdapter extends BaseAdapter {
     String mtext;
     String ph;
     String server="";
-    ImageLoader imageLoader;
+
 //    GestureDetector detector;
 
     public PostAdapter(Activity activity, List<Post> postList) {
@@ -79,40 +77,42 @@ public class PostAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_post, null);
 
-        imageLoader = ImageLoader.getInstance(); // Get singleton instance
 
-        ImageView thumbNail = (ImageView) convertView
+
+        ImageView thumbNail = convertView
                 .findViewById(R.id.imgPostImage);
-        CircleImageView userImg=(CircleImageView)convertView.findViewById(R.id.imgPostUserImage);
-        TextView userName = (TextView) convertView.findViewById(R.id.txtPostUser);
-        TextView postComment = (TextView) convertView.findViewById(R.id.txtPostComment);
-        TextView postDetail = (TextView) convertView.findViewById(R.id.txtPostdetail);
-        final TextView editPostComment=(TextView)convertView.findViewById(R.id.edtPostComment);
-        final TextView postView = (TextView) convertView.findViewById(R.id.txtPostView);
-        final ImageView imglike = (ImageView) convertView.findViewById(R.id.imgPostLike);
-        ImageView imgComment = (ImageView) convertView.findViewById(R.id.imgPostComment);
-        ImageView imgPostSend = (ImageView) convertView.findViewById(R.id.imgPostSend);
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
+        CircleImageView userImg= convertView.findViewById(R.id.imgPostUserImage);
+        TextView userName = convertView.findViewById(R.id.txtPostUser);
+        CustomTextView postComment = convertView.findViewById(R.id.txtPostComment);
+        TextView postDetail = convertView.findViewById(R.id.txtPostdetail);
+        final TextView editPostComment= convertView.findViewById(R.id.edtPostComment);
+        final TextView postView = convertView.findViewById(R.id.txtPostView);
+        final ImageView imglike = convertView.findViewById(R.id.imgPostLike);
+        ImageView imgComment = convertView.findViewById(R.id.imgPostComment);
+        ImageView imgPostSend = convertView.findViewById(R.id.imgPostSend);
+
+
         // getting Food data for the row
         Post m = postList.get(position);
 //        detector = new GestureDetector(context, new GestureListener(convertView));
         soid=String.valueOf(m.getId());
         final String usr=m.getUserName();
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.loading)
-                .showImageForEmptyUri(R.drawable.noimage)
-                .showImageOnFail(R.drawable.noimage)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
+
         // thumbnail image
 //        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
+        Glide.with(activity).load(m.getPostImageUrl())
+                .thumbnail(0.5f)
+                .crossFade()
+                .placeholder(R.drawable.nopic)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(thumbNail);
+        Glide.with(activity).load(m.getUserImg())
+                .thumbnail(0.5f)
+                .crossFade()
+                .override(50, 50)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(userImg);
 
-        ImageLoader.getInstance().displayImage(m.getPostImageUrl(), thumbNail,options);
-        ImageLoader.getInstance().displayImage(m.getUserImg(),userImg,options);
         editPostComment.setText("پاسخ:"+m.getPostAnswer());
         // title
         userName.setText(m.getUserName());
@@ -135,7 +135,7 @@ public class PostAdapter extends BaseAdapter {
             imglike.setImageResource(R.drawable.liked);
             imglike.setTag("1");
         }else {
-            imglike.setImageResource(R.drawable.like);
+            imglike.setImageResource(R.drawable.likei);
             imglike.setTag("0");
         }
 
@@ -147,7 +147,7 @@ public class PostAdapter extends BaseAdapter {
                 soid=String.valueOf(postList.get(position).getId());
                 String lik=postList.get(position).getPostLK();
                 if(lik.equals("1")) {
-                    imglike.setImageResource(R.drawable.like);
+                    imglike.setImageResource(R.drawable.likei);
                     imglike.setTag("0");
                     lk="0";
                     postList.get(position).setPostLK("0");
@@ -199,7 +199,7 @@ public class PostAdapter extends BaseAdapter {
             }
         });
 
-        imgComment.setImageResource(R.drawable.comment);
+        imgComment.setImageResource(R.drawable.commenti);
         imgComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

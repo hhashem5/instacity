@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/appback"
     android:orientation="vertical"
+    android:background="@drawable/bbb"
     tools:context="com.idpz.instacity.Like.AddArtActivity">
 
+
     <LinearLayout
+        android:id="@+id/ln1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -30,7 +32,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:background="@drawable/white_gray_border_bottom"
+                android:background="@drawable/backblueround"
+                android:textColor="@color/white"
                 android:text="انتخاب عکس"
                 />
             <TextView
@@ -40,6 +43,13 @@
                 android:layout_gravity="center"
                 android:text=""
                 />
+            <TextView
+                android:id="@+id/txtHoshdar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/hoshdar"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
@@ -58,6 +68,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"
                     android:text=""
+                    android:textColor="@color/white"
                     android:hint=""
                     android:ems="8"
                     android:id="@+id/txtArtName"
@@ -68,6 +79,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob1"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -83,6 +95,7 @@
                     android:text=""
                     android:hint="مثال: خانگی"
                     android:ems="10"
+                    android:textColor="@color/white"
                     android:id="@+id/txtArtType"
                     android:layout_weight="1" />
 
@@ -90,6 +103,7 @@
                     android:text="نوع"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:id="@+id/tvJob22"
                     android:layout_weight="1" />
 
@@ -104,6 +118,7 @@
                     android:inputType="text"
                     android:text=""
                     android:hint=""
+                    android:textColor="@color/white"
                     android:ems="10"
                     android:id="@+id/txtArtWeight"
                     android:layout_weight="1" />
@@ -112,6 +127,7 @@
                     android:text="وزن"
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
                     android:id="@+id/tvJob21"
                     android:layout_weight="1" />
 
@@ -126,6 +142,7 @@
                     android:inputType="text"
                     android:text=""
                     android:hint=""
+                    android:textColor="@color/white"
                     android:ems="10"
                     android:id="@+id/txtArtAddress"
                     android:layout_weight="1" />
@@ -135,6 +152,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob2"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -148,6 +166,7 @@
                     android:inputType="text"
                     android:text=""
                     android:hint=""
+                    android:textColor="@color/white"
                     android:ems="10"
                     android:id="@+id/txtArtMat"
                     android:layout_weight="1" />
@@ -157,6 +176,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob27"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -171,6 +191,7 @@
                     android:text=""
                     android:hint=""
                     android:ems="10"
+                    android:textColor="@color/white"
                     android:id="@+id/txtArtColor"
                     android:layout_weight="1" />
 
@@ -179,6 +200,7 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob28"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -193,6 +215,7 @@
                     android:text=""
                     android:hint=""
                     android:ems="10"
+                    android:textColor="@color/white"
                     android:id="@+id/txtArtPrice"
                     android:layout_weight="1" />
 
@@ -201,41 +224,58 @@
                     android:layout_width="90dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/tvJob29"
+                    android:textColor="@color/white"
                     android:layout_weight="1" />
 
             </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <Button
-                    android:id="@+id/btnArtEdit"
-                    android:layout_gravity="center"
-                    android:background="@drawable/white_gray_border_bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:text="ویرایش"
-                    android:enabled="false"
-                    />
 
-                <Button
-                    android:id="@+id/btnArtSend"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="5dp"
-                    android:background="@drawable/white_gray_border_bottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:text=" ثبت جدید"
-                    />
 
-            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ln2"
+        android:layout_below="@id/ln1"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnArtEdit"
+            android:layout_gravity="center"
+            android:background="@drawable/backblueround"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="ویرایش"
+            android:textColor="@color/white"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnArtSend"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/backblueround"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text=" ثبت جدید"
+            />
+
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_below="@id/ln2"
+        android:layout_centerHorizontal="true"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_marginTop="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/ln2"
         android:id="@+id/addArtsRefresh"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
@@ -247,4 +287,4 @@
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-</LinearLayout>
+</RelativeLayout>

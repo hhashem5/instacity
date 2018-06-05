@@ -1,23 +1,25 @@
 package com.idpz.instacity.Profile;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.idpz.instacity.AlarmService;
 import com.idpz.instacity.Area;
 import com.idpz.instacity.Home.HomeActivity;
 import com.idpz.instacity.R;
@@ -37,6 +40,7 @@ import com.idpz.instacity.utils.GPSTracker;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -54,23 +58,27 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
     ArrayList<Area> areaArrayList=new ArrayList<>();
     String AREA_URL="http://idpz.ir/i/getarea.php";
     Button btnChangeCT;
-    TextView txtMyNearCT;
+//    TextView txtMyNearCT;
     Float homelat,homelng;
-
+    ArrayList<String> villages=new ArrayList<>();
+    ArrayList<String> searchModels=new ArrayList<>();
+    ArrayList<String> ctNames;
 //    ListView lvCities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_city);
+
         myLocation = new Location("myloc");
         mycity = new Location("city");
 
+        Typeface yekan = Typeface.createFromAsset(ChangeCityActivity.this.getAssets(), "fonts/YEKAN.TTF");
 
 //        lvCities=(ListView)findViewById(R.id.lvChangeCTCities);
-        btnChangeCT=(Button)findViewById(R.id.btnChangeCityChange);
-        txtMyNearCT=(TextView)findViewById(R.id.txtNearestCity);
-
+        btnChangeCT= findViewById(R.id.btnChangeCityChange);
+//        txtMyNearCT=(TextView)findViewById(R.id.txtNearestCity);
+        btnChangeCT.setTypeface(yekan);
 
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -81,23 +89,6 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         if (!lat.equals("0.0")){
             myLocation.setLatitude(Float.valueOf(lat));
             myLocation.setLongitude(Float.valueOf(lng));
-        }else {
-            final CharSequence[] items = {"روشن کردن جی پی اس", "انتخاب دستی شهر"};
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getBaseContext());
-            builder.setTitle("امکان موقعیت یابی شما نیست!");
-            builder.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int item) {
-
-                    if (items[item].equals("روشن کردن جی پی اس")) {
-                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
-                        dialog.dismiss();
-                    } else if (items[item].equals("انتخاب دستی شهر")) {
-
-                    }
-                }
-            });
-            builder.show();
         }
 //        Toast.makeText(this, "lat="+myLocation.getLatitude()+" lng="+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
         btnChangeCT.setOnClickListener(new View.OnClickListener() {
@@ -105,41 +96,60 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
             public void onClick(View v) {
                 if (server.equals(myArea.getServer())){
                     Toast.makeText(ChangeCityActivity.this, "شهر تغییر نکرده است", Toast.LENGTH_SHORT).show();
-                    return;
                 }else {
+//                    stopService(new Intent(ChangeCityActivity.this, AlarmService.class));
                     server=myArea.getServer();
                     homelat=myArea.getAlat();
                     homelng=myArea.getAlng();
                     SharedPreferences.Editor SP2 = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                     SP2.putString("server", server);
+                    SP2.putString("aename", myArea.getAename());
                     SP2.putString("ctname", myArea.getAfname());
                     SP2.putString("homelat",String.valueOf(homelat));
                     SP2.putString("homelng",String.valueOf(homelng));
                     SP2.putString("ctpic",myArea.getPic());
                     SP2.putString("ctdesc",myArea.getDescription());
+                    SP2.putBoolean("splash",false);
+                    SP2.putString("notification","1");
+                    AlarmService.msgid="1";
                     SP2.apply();
                     finishAffinity();
                     Intent intent=new Intent(ChangeCityActivity.this,HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+
                 }
             }
         });
-        ArrayList<String> ctNames=new ArrayList<>();
+         ctNames=new ArrayList<>();
         DBAreaHandler dbAreaHandler=new DBAreaHandler(this);
         for (Area myArea:dbAreaHandler.getAllAreas()){
             float myDistance=0;
-            areaArrayList.add(myArea);
+
             mycity.setLatitude(myArea.getAlat());
             mycity.setLongitude(myArea.getAlng());
-            myDistance=Math.round(myLocation.distanceTo(mycity));
-            ctNames.add(myArea.getAfname()+" (فاصله  "+myDistance+"متر)");
+            myDistance=Math.round((myLocation.distanceTo(mycity)/1000));
+            String h=myDistance+"";
+            h=h.substring(0,h.length()-2);
+            myArea.setDistance(Integer.valueOf(h));
+            areaArrayList.add(myArea);
+            villages.add(myArea.getAfname());
+//            ctNames.add(myArea.getAfname()+" (فاصله  "+myDistance+"متر)");
         }
+        Collections.sort(areaArrayList, new AgeComparator());
+
+        for (Area myArea :areaArrayList){
+            ctNames.add(myArea.getAfname()+" (فاصله  "+myArea.getDistance()+"km)");
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, villages);
+
+
         Log.d(TAG, "onCreate: "+ctNames.size());
 
 
 
-        spnCity=(Spinner)findViewById(R.id.spnLoginSelCity);
+        spnCity= findViewById(R.id.spnLoginSelCity);
 
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
                 (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
@@ -173,10 +183,94 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
 
+        Intent intent = getIntent();
+        if(intent.hasExtra("aename")) {
+            String findName = intent.getStringExtra("aename");
+            int i=0;
+            Log.d(TAG, "onCreate: my findloc"+findName);
+            for (Area area:areaArrayList){
+                i++;
+                mycity.setLatitude(area.getAlat());
+                mycity.setLongitude(area.getAlng());
+                float myDistance=Math.round(myLocation.distanceTo(mycity));
+                distances.add(myDistance);
+                if (findName.equals(area.getAename())){
+                    spnCity.setSelection(i-1);
+                }
+            }
+        }
+
+
+        AutoCompleteTextView textView = findViewById(R.id.acTxtView);
+        textView.setAdapter(adapter);
+        textView.setTypeface(yekan);
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()>0){
+                    int i=0;
+                    for (Area area:areaArrayList){
+                        i++;
+                        mycity.setLatitude(area.getAlat());
+                        mycity.setLongitude(area.getAlng());
+                        float myDistance=Math.round(myLocation.distanceTo(mycity));
+                        distances.add(myDistance);
+                        if (s.toString().contains(area.getAfname())){
+                            spnCity.setSelection(i-1);
+                        }
+                    }
+
+
+//                    searchModels.clear();
+//                    for (Area area:areaArrayList){
+//                        if (area.getAfname().contains(s)){
+//                            searchModels.add(area.getAfname());
+//                        }
+//                    }
+//                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>
+//                            (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
+//                                    searchModels); //selected item will look like a spinner set from XML
+                }else if (s.length()==0){
+                    searchModels.clear();
+//                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
+//                            (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
+//                                    ctNames);
+                }
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+//                if(s.length() != 0)
+//                    field2.setText("");
+            }
+        });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
     }
 
+    class AgeComparator implements Comparator<Area> {
+        @Override
+        public int compare(Area employee1, Area employee2) {
+            int employee1Age = employee1.getDistance();
+            int employee2Age = employee2.getDistance();
 
+            if (employee1Age > employee2Age) {
+                return 1;
+            } else if (employee1Age < employee2Age) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 
 
 
@@ -197,8 +291,8 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
 
         int minIndex = distances.indexOf(Collections.min(distances));
         myNearCity=areaArrayList.get(minIndex);
-        txtMyNearCT.setText(" نزدیکترین شهر: "+myNearCity.getAfname()+" فاصله از مرکز "+distances.get(minIndex)+"متر");
-        txtMyNearCT.setTextColor(Color.GREEN);
+//        txtMyNearCT.setText(" نزدیکترین شهر: "+myNearCity.getAfname()+" فاصله از مرکز "+distances.get(minIndex)+"متر");
+//        txtMyNearCT.setTextColor(Color.GREEN);
         spnCity.setSelection(minIndex);
     }
 
@@ -282,4 +376,45 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        if(intent.hasExtra("aename")) {
+            String findName = intent.getStringExtra("aename");
+            int i=0;
+            Log.d(TAG, "onCreate: my findloc"+findName);
+            for (Area area:areaArrayList){
+                i++;
+                mycity.setLatitude(area.getAlat());
+                mycity.setLongitude(area.getAlng());
+                float myDistance=Math.round(myLocation.distanceTo(mycity));
+                distances.add(myDistance);
+                if (findName.equals(area.getAename())){
+                    spnCity.setSelection(i-1);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        Intent intent = getIntent();
+        if(intent.hasExtra("aename")) {
+            String findName = intent.getStringExtra("aename");
+            int i=0;
+            Log.d(TAG, "onCreate: my findloc"+findName);
+            for (Area area:areaArrayList){
+                i++;
+                mycity.setLatitude(area.getAlat());
+                mycity.setLongitude(area.getAlng());
+                float myDistance=Math.round(myLocation.distanceTo(mycity));
+                distances.add(myDistance);
+                if (findName.equals(area.getAename())){
+                    spnCity.setSelection(i-1);
+                }
+            }
+        }
+    }
 }

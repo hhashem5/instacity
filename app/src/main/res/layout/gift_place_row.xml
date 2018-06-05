@@ -15,7 +15,7 @@
         android:gravity="left"
         android:layout_weight="70"
         android:layout_height="wrap_content">
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/imgGiftPLace"
         android:src="@drawable/ic_house"
         android:layout_gravity="left"

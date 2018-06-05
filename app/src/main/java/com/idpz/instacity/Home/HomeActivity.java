@@ -1,7 +1,6 @@
 package com.idpz.instacity.Home;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
@@ -23,32 +23,35 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.idpz.instacity.AlarmService;
 import com.idpz.instacity.Area;
 import com.idpz.instacity.R;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.DBAreaHandler;
 import com.idpz.instacity.utils.GPSTracker;
-import com.idpz.instacity.utils.MainfeedListAdapter;
+
 import com.idpz.instacity.utils.SectionsPagerAdapter;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.onesignal.OSNotification;
+import com.onesignal.OSNotificationAction;
+import com.onesignal.OSNotificationOpenResult;
+import com.onesignal.OneSignal;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,14 +66,11 @@ import java.util.Map;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class HomeActivity extends AppCompatActivity implements
-        MainfeedListAdapter.OnLoadMoreItemsListener{
+//import com.onesignal.OneSignal;
 
-    @Override
-    public void onLoadMoreItems() {
-        Log.d(TAG, "onLoadMoreItems: displaying more photos");
+public class HomeActivity extends AppCompatActivity {
 
-    }
+
     private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
     private static final String TAG = "HomeActivity";
     private static final int ACTIVITY_NUM = 0;
@@ -82,17 +82,19 @@ public class HomeActivity extends AppCompatActivity implements
     Location myLocation, mycity, myHome;
     List<String> cities=new ArrayList<>();
     List<Float> distances=new ArrayList<Float>();
-    String lat="",lng="",server="";
+    String lat="",lng="",server="",aename="";
     String REG_USER_URL="",REGISTER_PROFILE="";
     String myname="0",melliid="0",pas="", mobile="0", birth="0",pic="", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
     String upStatus="start",ctname="";
-    Boolean userRegFlag=false,areaFlag=false,connected=false,userProfileFlag=false,gpsCheck=false;
-    int failCount=0;
+    Boolean userRegFlag=false,areaFlag=false,connected=false,userProfileFlag=false,gpsCheck=false,remain=true;
+    boolean doubleBackToExitPressedOnce = false;
+
+    public static volatile boolean showSplashFlag=true;
+    int failCount=0,netState=3;
     // declare for popup window
-    Button showPopupBtn, closePopupBtn;
-    PopupWindow popupWindow;
+
     RelativeLayout relLayout1;
-    TextView tvPopup;
+
     ListView lv;
     //
     TabLayout tabLayout;
@@ -105,12 +107,14 @@ public class HomeActivity extends AppCompatActivity implements
     SharedPreferences SP1;
     DBAreaHandler dbAreaHandler;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Log.d(TAG, "onCreate: starting.");
-        lv=(ListView)findViewById(R.id.lvHomeContent);
+
+        lv= findViewById(R.id.lvHomeContent);
 
         dbAreaHandler=new DBAreaHandler(this);
 
@@ -137,6 +141,30 @@ public class HomeActivity extends AppCompatActivity implements
         pic=SP1.getString("pic", "0");
         ctname=SP1.getString("ctname", "");
 
+        boolean firstTime=!(SP1.getBoolean("firsttime", true));
+        boolean splash=SP1.getBoolean("splash", false);
+        Log.d(TAG, "onCreate: mobile="+mobile+" myname="+SP1.getString("myname", "0"));
+        if (mobile.length() <10)
+        {
+            Intent intent=new Intent(HomeActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        OneSignal.startInit(this)
+                .setNotificationReceivedHandler(new ExampleNotificationReceivedHandler())
+                .setNotificationOpenedHandler(new ExampleNotificationOpenedHandler())
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+        Log.d(TAG, "onCreate: oneSignal Started");
+        if(firstTime&&splash) {
+            Intent intent = new Intent(HomeActivity.this,SplashScreenActivity.class);
+            startActivity(intent);
+        }
+        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+        SP.putInt("net_status", 3); // set net status to waiting
+        SP.putBoolean("splash",true); // show splash Screen next time
+        SP.apply();
         if(server.equals("0"))server=getString(R.string.server);
 
         if (!lat.equals("0.0")){
@@ -150,22 +178,27 @@ public class HomeActivity extends AppCompatActivity implements
         REG_USER_URL=server+"/i/usereg.php";
         REGISTER_PROFILE=server+"/i/profile.php";
 
-        if (mobile.equals("0"))
-        {
-            Intent intent=new Intent(HomeActivity.this,LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        Intent in1 = new Intent(HomeActivity.this, AlarmService.class);
-        startService(in1);
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
-        mFrameLayout = (FrameLayout) findViewById(R.id.container);
-        mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
+
+//        Intent in1 = new Intent(HomeActivity.this, AlarmService.class);
+//        startService(in1);
+
+        mViewPager = findViewById(R.id.viewpager_container);
+        mFrameLayout = findViewById(R.id.container);
+        mRelativeLayout = findViewById(R.id.relLayoutParent);
 
 //        Toast.makeText(HomeActivity.this, "درحال موقعیت یابی و یافتن منطقه شما", Toast.LENGTH_LONG).show();
+        aename=SP1.getString("aename", "zibadasht");
 
-        initImageLoader();
+        JSONObject tags = new JSONObject();
+        try {
+            tags.put("area", aename);
+            tags.put("user_mobile", mobile);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OneSignal.sendTags(tags);
+
         setupBottomNavigationView();
         setupViewPager();
 //        hideLayout();
@@ -175,43 +208,33 @@ public class HomeActivity extends AppCompatActivity implements
         new Thread() {
             @Override
             public void run() {
-                while (!userRegFlag||!userProfileFlag) {
+                while (remain&(!userRegFlag||!userRegFlag)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                             if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-                                SP.putBoolean("connected", true);
-                                SP.apply();
+
                                 connected = true;
+
+                                if (netState==0)remain=false;
+                                Log.d(TAG, "Home Act run: net State="+netState);
                             } else {
-                                SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-                                SP.putBoolean("connected", false);
-                                SP.apply();
+//                                SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+//                                SP.putBoolean("connected", false);
+//                                SP.apply();
                                 connected = false;
 
-//                                txtNews.setText("اینترنت وصل نیست");
                             }
 
-                            if (failCount>6){
-
-                                AlertDialog alertDialog = new AlertDialog.Builder(HomeActivity.this).create();
-                                alertDialog.setTitle("اینترنت وصل نیست!");
-                                alertDialog.setMessage("لطفا از اتصال اینترنت مطمئن شوید!");
-                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "خروج",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                finishAffinity();
-                                                System.exit(0);
-                                                dialog.dismiss();
-                                            }
-                                        });
-                                alertDialog.show();
-
-
+                            if (failCount>3){
+                                MessagesFragment.netState=0;
+                                HomeFragment.netState=0;
+                                MainFragment.netState=0;
+                                Toast.makeText(getApplicationContext(), "اتصال اینترنت را بررسی کنید و دوباره امتحان کنید", Toast.LENGTH_SHORT).show();
+                                remain=false;
+                                Log.d(TAG, "run: fail count succeed  exit");
                             }
 
                             if (connected && !areaFlag) {
@@ -221,8 +244,7 @@ public class HomeActivity extends AppCompatActivity implements
                                 reqUser();  //register user on server
                                 showLayout();
                             }
-                            if (!userProfileFlag&&connected)
-                                regUserProfile();  // save user info on server
+
                         }
                     });
                     try {
@@ -236,13 +258,10 @@ public class HomeActivity extends AppCompatActivity implements
 
 
 //        showPopupBtn = (Button) findViewById(R.id.showPopupBtn);
-        relLayout1 = (RelativeLayout) findViewById(R.id.relLayout1);
+        relLayout1 = findViewById(R.id.relLayout1);
 
 
                 //instantiate the popup.xml layout file
-
-
-
 
 
         //end oncreate
@@ -267,21 +286,33 @@ public class HomeActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finishAffinity();
-        System.exit(0);
+
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            finishAffinity();
+            System.exit(0);
+        }
+//        if (!SP1.getString("tabpos","1").equals("1")) {
+            SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+            SP.putString("tabpos", "1");
+            SP.apply();
+            tabLayout.getTabAt(1).select();
+//        }
+        doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "برای خروج دوباره دکمه بازگشت را بزنید", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
 
     }
 
 
-    private void initImageLoader(){
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-
-			.build();
-        ImageLoader.getInstance().init(config);
-
-    }
 
     /**
      * Responsible for adding the 3 tabs: Camera, Home, Messages
@@ -294,27 +325,34 @@ public class HomeActivity extends AppCompatActivity implements
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(2);
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
 //        tabLayout.getTabAt(0).setIcon(R.drawable.ic_video);
-        tabLayout.getTabAt(0).setText("گزارش مردمی");
+        tabLayout.getTabAt(0).setText("پیام شهروندی");
 //        tabLayout.getTabAt(1).setIcon(R.drawable.ic_instagram_black);
         tabLayout.getTabAt(1).setText(ctname);
 //        tabLayout.getTabAt(2).setIcon(R.drawable.ic_news);
         tabLayout.getTabAt(2).setText("اخبارمحلی");
-        tabLayout.getTabAt(1).select();
+        String tabpos= SP1.getString("tabpos","1");
+        tabLayout.getTabAt(Integer.valueOf(tabpos)).select();
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (getIntent().hasExtra("position")){
-            tabLayout.getTabAt(getIntent().getIntExtra("position", 1)).select();
-        }else {
-            tabLayout.getTabAt(1).select();
-        }
+        String tabpos= SP1.getString("tabpos","1");
+        tabLayout.getTabAt(Integer.valueOf(tabpos)).select();
 
+
+    }
+
+
+
+    public void tabselect(){
+        String tabpos= SP1.getString("tabpos","1");
+        tabLayout.getTabAt(Integer.valueOf(tabpos)).select();
     }
 
     /**
@@ -322,7 +360,7 @@ public class HomeActivity extends AppCompatActivity implements
      */
     private void setupBottomNavigationView(){
         Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
-        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext,bottomNavigationViewEx);
 
@@ -368,7 +406,7 @@ public class HomeActivity extends AppCompatActivity implements
             return true;
         }
         if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
-            Snackbar.make(mViewPager, "لطفا دسترسی به جی پی اس را فعال کنید.", Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(R.id.viewpager_container), "لطفا دسترسی به جی پی اس را فعال کنید.", Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
@@ -420,55 +458,7 @@ public class HomeActivity extends AppCompatActivity implements
 
     }
 
-    public void regUserProfile() {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url =server+"/i/profile.php";
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>()
-                {
-                    @Override
-                    public void onResponse(String response) {
-                            userProfileFlag=true;
-                            failCount=0;
-//                        txtczstatus.setText(response.toString());
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        failCount++;
-                        Log.d("ERROR","error => "+error.toString());
-//                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
-                    }
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String>params = new HashMap<String,String>();
 
-                params.put("name", myname);
-                params.put("mob", mobile);
-                params.put("pas", pas);
-                params.put("birth", birth);
-                params.put("gen", gender);
-                params.put("edu", edu);
-                params.put("eb", edub);
-                params.put("job", job);
-                params.put("jb", jobb);
-                params.put("pic", pic);
-                params.put("fav", fav);
-                params.put("meli",melliid);
-                params.put("mny", money);
-                params.put("lat", lat);
-                params.put("lng", lng);
-                return params;
-            }
-        };
-        queue.add(postRequest);
-
-
-    }
 
 
     public void findArea(){
@@ -580,7 +570,7 @@ public class HomeActivity extends AppCompatActivity implements
                                 area.setAfname(jsonObject.getString("afname"));
                                 area.setAlat(Float.valueOf(jsonObject.getString("alat")));
                                 area.setAlng(Float.valueOf(jsonObject.getString("alng")));
-                                area.setAdiameter(jsonObject.getInt("adiameter"));
+//                                area.setAdiameter(jsonObject.getInt("adiameter"));
                                 area.setServer(jsonObject.getString("server"));
                                 area.setZoom(jsonObject.getInt("azoom"));
                                 area.setPic(jsonObject.getString("pic"));
@@ -589,10 +579,14 @@ public class HomeActivity extends AppCompatActivity implements
                                 dbAreaHandler.addJob(area);
                             }
 
+                            netState=1;
+                            MessagesFragment.netState=1;
+                            HomeFragment.netState=1;
+                            MainFragment.netState=1;
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failCount++;
                         }
 
                     }
@@ -601,9 +595,33 @@ public class HomeActivity extends AppCompatActivity implements
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                       failCount++;
-                        Log.d("ERROR","error => "+error.toString());
-//                        txtczstatus.setText(error.toString()+"مشکلی در ارسال داده پیش آمده دوباره تلاش کنید");
+                        failCount++;
+
+                        String message = null;
+                        if (error instanceof NetworkError) {
+                            remain=false;
+                            message = "Cannot connect to Internet...Please check your connection!";
+                        } else if (error instanceof ServerError) {
+                            remain = SP1.getBoolean("connected", false);
+                            message = "The server could not be found. Please try again after some time!!";
+                        } else if (error instanceof AuthFailureError) {
+                            remain=false;
+                            message = "Cannot connect to Internet...Please check your connection!";
+                        } else if (error instanceof ParseError) {
+                            message = "Parsing error! Please try again after some time!!";
+                        } else if (error instanceof NoConnectionError) {
+                            remain=false;
+                            message = "Cannot connect to Internet...Please check your connection!";
+                        } else if (error instanceof TimeoutError) {
+                            remain=false;
+                            message = "Connection TimeOut! Please check your internet connection.";
+                        }
+                        failCount++;
+                        netState=0;
+                        MessagesFragment.netState=0;
+                        HomeFragment.netState=0;
+                        MainFragment.netState=0;
+                        Log.d("ERROR","Home Activity area error => "+error.toString()+" fail="+failCount+" net_state"+netState);
                     }
                 }
         ) {
@@ -618,5 +636,92 @@ public class HomeActivity extends AppCompatActivity implements
         };
         queue.add(postRequest);
     }
+
+
+    private class ExampleNotificationReceivedHandler implements OneSignal.NotificationReceivedHandler {
+        @Override
+        public void notificationReceived(OSNotification notification) {
+            JSONObject data = notification.payload.additionalData;
+            String notificationID = notification.payload.notificationID;
+            String title = notification.payload.title;
+            String body = notification.payload.body;
+            String smallIcon = notification.payload.smallIcon;
+            String largeIcon = notification.payload.largeIcon;
+            String bigPicture = notification.payload.bigPicture;
+            String smallIconAccentColor = notification.payload.smallIconAccentColor;
+            String sound = notification.payload.sound;
+            String ledColor = notification.payload.ledColor;
+            int lockScreenVisibility = notification.payload.lockScreenVisibility;
+            String groupKey = notification.payload.groupKey;
+            String groupMessage = notification.payload.groupMessage;
+            String fromProjectNumber = notification.payload.fromProjectNumber;
+            String rawPayload = notification.payload.rawPayload;
+
+            String customKey;
+
+            Log.i("OneSignalExample", "NotificationID received: " + notificationID);
+
+            if (data != null) {
+                customKey = data.optString("customkey", null);
+                if (customKey != null)
+                    Log.i("OneSignalExample", "customkey set with value: " + customKey);
+            }
+        }
+    }
+
+
+    private class ExampleNotificationOpenedHandler implements OneSignal.NotificationOpenedHandler {
+        // This fires when a notification is opened by tapping on it.
+        @Override
+        public void notificationOpened(OSNotificationOpenResult result) {
+            OSNotificationAction.ActionType actionType = result.action.type;
+            JSONObject data = result.notification.payload.additionalData;
+            String launchUrl = result.notification.payload.launchURL; // update docs launchUrl
+
+            String customKey;
+            String openURL = null;
+            Object activityToLaunch = HomeActivity.class;
+
+            if (data != null) {
+                customKey = data.optString("customkey", null);
+                openURL = data.optString("openURL", null);
+
+                if (customKey != null)
+                    Log.i("OneSignalExample", "customkey set with value: " + customKey);
+
+                if (openURL != null)
+                    Log.i("OneSignalExample", "openURL to webview with URL value: " + openURL);
+            }
+
+            if (actionType == OSNotificationAction.ActionType.ActionTaken) {
+                Log.i("OneSignalExample", "Button pressed with id: " + result.action.actionID);
+
+                if (result.action.actionID.equals("id1")) {
+                    Log.i("OneSignalExample", "button id called: " + result.action.actionID);
+                    activityToLaunch = GreenActivity.class;
+                } else
+                    Log.i("OneSignalExample", "button id called: " + result.action.actionID);
+            }
+            // The following can be used to open an Activity of your choice.
+            // Replace - getApplicationContext() - with any Android Context.
+            // Intent intent = new Intent(getApplicationContext(), YourActivity.class);
+            Intent intent = new Intent(getApplicationContext(), (Class<?>) activityToLaunch);
+            // intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("openURL", openURL);
+            Log.i("OneSignalExample", "openURL = " + openURL);
+            // startActivity(intent);
+            startActivity(intent);
+
+            // Add the following to your AndroidManifest.xml to prevent the launching of your main Activity
+            //   if you are calling startActivity above.
+        /*
+           <application ...>
+             <meta-data android:name="com.onesignal.NotificationOpened.DEFAULT" android:value="DISABLE" />
+           </application>
+        */
+        }
+    }
+
 
 }

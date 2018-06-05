@@ -1,7 +1,6 @@
 package com.idpz.instacity.Home;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -57,8 +56,8 @@ public class CommentActivity extends AppCompatActivity {
         server=SP1.getString("server", "0");
         fullServer = server+"/i/comment.php";
         SocialSend_URL=server+"/i/regcmnt.php";
-        imgSend=(ImageView)findViewById(R.id.ivCommentPostSend);
-        txtcommentSend=(EditText)findViewById(R.id.txtCommentSend);
+        imgSend= findViewById(R.id.ivCommentPostSend);
+        txtcommentSend= findViewById(R.id.txtCommentSend);
         Bundle b = getIntent().getExtras();
         soid = "1"; // or other values
         if(b != null) {
@@ -67,7 +66,7 @@ public class CommentActivity extends AppCompatActivity {
         SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname = sp1.getString("myname", "");
         phone=sp1.getString("mobile", "");
-        lvComments = (ListView) findViewById(R.id.lvComments);
+        lvComments = findViewById(R.id.lvComments);
         pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
@@ -92,7 +91,9 @@ public class CommentActivity extends AppCompatActivity {
 //        server = dbLastData.getLastData(1).getValue();
 
         lvComments.setAdapter(commentAdapter);
-
+        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SP.putString("tabpos", "0");
+        SP.apply();
         reqPosts();
 
     }
@@ -212,14 +213,14 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent intent0 = new Intent(CommentActivity.this, HomeActivity.class);
-//                            intent0.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
-        intent0.putExtra("position", 0); //          137
-        startActivity(intent0);
-
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent intent0 = new Intent(CommentActivity.this, HomeActivity.class);
+//        intent0.addFlags(FLAG_ACTIVITY_REORDER_TO_FRONT);
+//        intent0.putExtra("position", 0); //          137
+//        startActivity(intent0);
+//
+//    }
 
 }

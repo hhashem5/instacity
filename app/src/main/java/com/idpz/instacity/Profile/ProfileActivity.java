@@ -3,7 +3,6 @@ package com.idpz.instacity.Profile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -30,6 +28,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.Area;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Post;
@@ -37,9 +37,6 @@ import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.CalendarTool;
 import com.idpz.instacity.utils.galleryAdapter;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,12 +72,12 @@ public class ProfileActivity extends AppCompatActivity {
     TextView txtNumPosts,txtbonus,txtDisplayName,txtDescription,txtMobile,txtEditPrifile,txtTabUserName,txtMosharekat,txtCurCt;
     ImageView imgPostMenu;
     String mob="0",profileImgUrl="", REG_USER_LAT ="";
-    private DisplayImageOptions options;
     CircleImageView imgProfile;
     String server="";
     Button btnChangeCT,btnUseGift;
-
-
+    boolean remain=true;
+    int failcount=0,netState=3;
+    SharedPreferences SP1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,29 +86,37 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: strating");
 //        progressBar=(ProgressBar)findViewById(R.id.profileProgressBar);
 //        progressBar.setVisibility(View.GONE);
-        SharedPreferences SP1;
+
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
         ctName=SP1.getString("ctname", "0");
+        String numposts=SP1.getString("numPosts", "0");
+        String spends=SP1.getString("spend", "0");
+        String moneys=SP1.getString("money", "100");
+        String myname=SP1.getString("myname", "0");
+        String melliid=SP1.getString("melliid", "0");
+        mob=SP1.getString("mobile", "0");
         fullServer = server+"/i/socialgal.php";
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager_container);
-        mFrameLayout = (FrameLayout) findViewById(R.id.container);
-        mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
+        if (myname.toLowerCase().equals("null"))myname="بی نام";
+
+        mViewPager = findViewById(R.id.viewpager_container);
+        mFrameLayout = findViewById(R.id.container);
+        mRelativeLayout = findViewById(R.id.relLayoutParent);
         dataModels = new ArrayList<>();
         galAdapter = new galleryAdapter(ProfileActivity.this, dataModels);
-        txtbonus=(TextView)findViewById(R.id.txtBonus);
-        txtNumPosts=(TextView)findViewById(R.id.tvPosts);
-        txtDisplayName=(TextView)findViewById(R.id.txtDisplay_name);
-        txtDescription=(TextView)findViewById(R.id.txtDescription);
-        txtMosharekat=(TextView)findViewById(R.id.txtMosharekat);
-        txtMobile=(TextView)findViewById(R.id.website);
-        txtCurCt=(TextView)findViewById(R.id.txtCurrentCTProfile);
-        txtEditPrifile=(TextView)findViewById(R.id.textEditProfile);
-        txtTabUserName=(TextView)findViewById(R.id.txtTabUsername);
-        imgPostMenu=(ImageView)findViewById(R.id.imgProfileMenu);
-        btnChangeCT=(Button) findViewById(R.id.btnChangeCTPofile);
-        btnUseGift=(Button) findViewById(R.id.btnUseGift);
+        txtbonus= findViewById(R.id.txtBonus);
+        txtNumPosts= findViewById(R.id.tvPosts);
+        txtDisplayName= findViewById(R.id.txtDisplay_name);
+        txtDescription= findViewById(R.id.txtDescription);
+        txtMosharekat= findViewById(R.id.txtMosharekat);
+        txtMobile= findViewById(R.id.website);
+        txtCurCt= findViewById(R.id.txtCurrentCTProfile);
+        txtEditPrifile= findViewById(R.id.textEditProfile);
+        txtTabUserName= findViewById(R.id.txtTabUsername);
+        imgPostMenu= findViewById(R.id.imgProfileMenu);
+        btnChangeCT= findViewById(R.id.btnChangeCTPofile);
+        btnUseGift= findViewById(R.id.btnUseGift);
         txtCurCt.setText(ctName);
 
         btnChangeCT.setOnClickListener(new View.OnClickListener() {
@@ -131,35 +136,37 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         profileImgUrl = SP1.getString("pic", "0");
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.ic_stub)
-                .showImageForEmptyUri(R.drawable.ic_empty)
-                .showImageOnFail(R.drawable.ic_error)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        imgProfile=(CircleImageView)findViewById(R.id.profile_photoProfile);
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getBaseContext()));
-        ImageLoader.getInstance().displayImage(server+"/assets/images/users/"+profileImgUrl,imgProfile,options);
 
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        txtNumPosts.setText(SP.getString("numPosts", "0"));
-        txtMosharekat.setText(SP.getString("spend", "0"));
-        int bonus=Integer.valueOf(SP.getString("money", "100"));
+
+
+
+        txtNumPosts.setText(numposts);
+        txtMosharekat.setText(spends);
+        int bonus=Integer.valueOf(moneys);
         txtbonus.setText(String.valueOf(bonus));
-        txtDisplayName.setText(SP.getString("myname", "0"));
-        txtTabUserName.setText(SP.getString("myname", ""));
-        txtDescription.setText(SP.getString("melliid", "0"));
-        mob=SP.getString("mobile", "0");
+        txtDisplayName.setText(myname);
+        txtTabUserName.setText(myname);
+        txtDescription.setText(melliid);
+
         txtMobile.setText(mob);
+
+        imgProfile= findViewById(R.id.profile_photoProfile);
+
+        Glide.with(this).load(getString(R.string.server)+"/assets/images/users/"+profileImgUrl)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(imgProfile);
+
+
 
         txtEditPrifile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(ProfileActivity.this,MyProfileActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -176,14 +183,14 @@ public class ProfileActivity extends AppCompatActivity {
         setupBottomNavigationView();
         setupToolbar();
 
-        grid = (GridView) findViewById(R.id.gridView);
+        grid = findViewById(R.id.gridView);
         grid.setAdapter(galAdapter);
 
 
         new Thread() {
             @Override
             public void run() {
-                while (!areaFlag||!moneyFlag) {
+                while (remain&(!areaFlag||!moneyFlag)) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -192,9 +199,14 @@ public class ProfileActivity extends AppCompatActivity {
                                     connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
                                 //we are connected to a network
                                 connected = true;
+                                netState=SP1.getInt("net_status",3);
+                                if (netState==0)remain=false;
                             } else {
                                 connected = false;
-                                Toast.makeText(ProfileActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(ProfileActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
+                                if (failcount>4) remain=false;
+                                failcount++;
+
                             }
 
 
@@ -222,9 +234,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.profileToolBar);
+        Toolbar toolbar = findViewById(R.id.profileToolBar);
         setSupportActionBar(toolbar);
-        ImageView profileimageView = (ImageView) findViewById(R.id.profile_photoProfile);
+        ImageView profileimageView = findViewById(R.id.profile_photoProfile);
         profileimageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -238,7 +250,7 @@ public class ProfileActivity extends AppCompatActivity {
     // تنظیم نوار پایین برنامه
     private void setupBottomNavigationView() {
         Log.d(TAG, "seting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
         bottomNavigationViewEx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

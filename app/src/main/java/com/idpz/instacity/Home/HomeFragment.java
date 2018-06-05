@@ -1,23 +1,30 @@
 package com.idpz.instacity.Home;
 
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -25,6 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.R;
+import com.idpz.instacity.Share.GalleryActivity;
 import com.idpz.instacity.models.Post;
 import com.idpz.instacity.utils.CalendarTool;
 import com.idpz.instacity.utils.PostAdapter;
@@ -47,77 +55,81 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private static final String TAG = "HomeFragment";
 
     ListView lvContentPost;
-    ProgressDialog pd;
+//    ProgressDialog pd;
     ArrayList<Post> dataModels;
     //    DBLastData dbLastData;
     PostAdapter postAdapter;
     String server="",fullServer="",mob="0";
-    int lim1=0,lim2=20;
-    Boolean reqFlag=true,connected=false;
+    int lim1=0,lim2=5;
+    Boolean reqFlag=true,connected=false,remain=true;
     Context context;
     Boolean postRcvFlag=false,videoRcvFlag=false,refreshFlag=false;
-
+    int failCount=0;
+    public static volatile int netState=3;
+    ImageView imgRetry;
+    ProgressBar progressBar;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_home,container,false);
+
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getContext());
         mob=SP.getString("mobile", "0");
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+        swipeRefreshLayout = view.findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
+        imgRetry= view.findViewById(R.id.imgPostRetry);
+        progressBar= view.findViewById(R.id.progressPost);
 
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setAlpha(0.65f);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(),GalleryActivity.class);
+                startActivity(intent);
+            }
+        });
 
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        Log.d(TAG, "onCreateView: height:"+height+" width:"+width+" density:"+metrics.density);
 
-        lvContentPost = (ListView) view.findViewById(R.id.lvHomeContent);
-        pd = new ProgressDialog(view.getContext());
+        lvContentPost = view.findViewById(R.id.lvHomeContent);
+
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
         postAdapter = new PostAdapter(getActivity(), dataModels);
 
-        SharedPreferences SP1;
+        final SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
         server=SP1.getString("server", "0");
-//        server = dbLastData.getLastData(1).getValue();
         fullServer = server+"/i/social2.php";
+
+//        remain = SP1.getBoolean("connected", false);
         lvContentPost.setAdapter(postAdapter);
 
-        new Thread() {
-            @Override
-            public void run() {
-                while (!postRcvFlag) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
 
-                            }
-
-                            if (connected && !postRcvFlag) {
-                                pd.setMessage("دریافت اطلاعات...");
-                                pd.setCancelable(true);
-                                pd.show();
-                                reqPosts();
-                            }
-
-                        }
-                    });
-                    try {
-                        sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            if (isConnected()) {
+                reqPosts();
             }
-        }.start();
 
+        imgRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                netState=3;
+                if (isConnected()) {
+                    imgRetry.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    reqPosts();
+                }
 
+            }
+        });
 
 
 
@@ -159,6 +171,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        imgRetry.setVisibility(View.GONE);
                         reqFlag=true;
                         if (!postRcvFlag)dataModels.clear();
                         postRcvFlag=true;
@@ -167,7 +181,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             refreshFlag=false;
                             dataModels.clear();
                         }
-                        pd.dismiss();
+
                         swipeRefreshLayout.setRefreshing(false);
 
                         JSONArray jsonArray = null;
@@ -199,7 +213,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                 post.setPostImageUrl(server+"/assets/images/137/"+pic);
                                 pic=jsonObject.getString("usrimg");
                                 if(pic.equals("null")|| pic.isEmpty())pic="0.jpg";
-                                post.setUserImg(server+"/assets/images/users/"+pic);
+                                post.setUserImg(getString(R.string.server)+"/assets/images/users/"+pic);
                                 post.setPostLike(jsonObject.getString("seen"));
                                 String dtl = jsonObject.getString("sotime");
                                 Calendar mydate = Calendar.getInstance();
@@ -220,7 +234,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failCount++;
                         }
 
 
@@ -232,7 +246,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
-                        Log.d("ERROR","error => "+error.toString());
+                        failCount++;
+                        progressBar.setVisibility(View.GONE);
+                        imgRetry.setVisibility(View.VISIBLE);
+                        if (error instanceof NetworkError) {
+                            remain = false;
+                        }
+                        Log.d("ERROR","error => "+error.toString()+failCount);
                     }
                 }
         ) {
@@ -253,10 +273,37 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        lim1=0;lim2=20;
+        lim1=0;lim2=5;
         refreshFlag=true;
         swipeRefreshLayout.setRefreshing(true);
         reqPosts();
     }
+
+    public boolean isConnected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+
+            Log.d(TAG, "Main run: net State="+netState+" connected="+connected);
+            if (netState==0){
+                Log.d(TAG, "Main run: net State="+netState);
+                progressBar.setVisibility(View.GONE);
+                imgRetry.setVisibility(View.VISIBLE);
+                connected=false;
+                remain=false;
+                return false;
+            }
+            return true;
+
+        } else {
+            progressBar.setVisibility(View.GONE);
+            imgRetry.setVisibility(View.VISIBLE);
+            return false;
+        }
+    }
+
+
 }
 

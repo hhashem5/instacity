@@ -1,17 +1,19 @@
 package com.idpz.instacity.Home;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.VideoView;
 
 import com.android.volley.AuthFailureError;
@@ -36,29 +38,41 @@ import java.util.Map;
 public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLayout.OnRefreshListener{
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "VideoFragment";
+
+
     ListView lvVideoPost;
-    ProgressDialog pd;
+
     ArrayList<Video> dataModels;
     //    DBLastData dbLastData;
     VideoPostAdapter videoPostAdapter;
     String server="",fullServer="";
     int lim1=0,lim2=20;
-    Boolean reqVideoFlag =false,connected=false;
+    Boolean reqVideoFlag =false,connected=false,refreshFlag=false;
     Context context;
     VideoView videoView;
+    int netState=3;
+    boolean remain=true;
+    ImageView imgRetry;
+    ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.videorefresh);
-        swipeRefreshLayout.setOnRefreshListener(this);
 
-        lvVideoPost = (ListView) findViewById(R.id.lvVideoContent);
-        pd = new ProgressDialog(this);
+
+        swipeRefreshLayout = findViewById(R.id.videorefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        imgRetry= findViewById(R.id.imgVideoRetry);
+        progressBar= findViewById(R.id.progressVideo);
+
+
+
+        lvVideoPost = findViewById(R.id.lvVideoContent);
+//        pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
         videoPostAdapter = new VideoPostAdapter(this, dataModels);
-        videoView = (VideoView)findViewById(R.id.vidPostVideo);
+        videoView = findViewById(R.id.vidPostVideo);
 //        pd.show();
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(this);
@@ -67,40 +81,23 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
         lvVideoPost.setAdapter(videoPostAdapter);
 
 
-        new Thread() {
-            @Override
-            public void run() {
-                while (!reqVideoFlag) {
-                    VideoActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                            } else {
-                                connected = false;
 
-                            }
-
-                            if (connected && !reqVideoFlag) {
-                                pd.setMessage("دریافت اطلاعات...");
-                                pd.setCancelable(true);
-                                reqVideos();
-                            }
-
-                        }
-                    });
-                    try {
-                        sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+            if (isConnected()) {
+                reqVideos();
             }
-        }.start();
 
+        imgRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                netState=3;
+                if (isConnected()) {
+                    imgRetry.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    reqVideos();
+                }
+
+            }
+        });
 
 
         lvVideoPost.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -117,13 +114,16 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
                 {
                     if (reqVideoFlag) {
                         reqVideoFlag =false;
-                        lim1 += 20;
+                        lim1 += 5;
 
                         reqVideos();
                     }
                 }
             }
         });
+
+
+
 
     }
 
@@ -138,8 +138,12 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
                     @Override
                     public void onResponse(String response) {
                         reqVideoFlag =true;
-                        pd.dismiss();
-                        swipeRefreshLayout.setRefreshing(false);
+                        progressBar.setVisibility(View.GONE);
+                        if (refreshFlag) {
+                            dataModels.clear();
+                            refreshFlag=false;
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                         Log.d(TAG, "onResponse: videos recived");
 
                         JSONArray jsonArray = null;
@@ -185,7 +189,8 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
                 {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        swipeRefreshLayout.setRefreshing(false);
+                        imgRetry.setVisibility(View.VISIBLE);
                         Log.d("ERROR","error => "+error.toString());
                     }
                 }
@@ -206,10 +211,38 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
 
     @Override
     public void onRefresh() {
-        lim1=0;lim2=20;
-        dataModels.clear();
-        swipeRefreshLayout.setRefreshing(true);
-        reqVideos();
+
+            lim1 = 0;
+            lim2 = 5;
+            refreshFlag=true;
+            swipeRefreshLayout.setRefreshing(true);
+            reqVideos();
+
     }
+
+    public boolean isConnected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) VideoActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+
+            Log.d(TAG, "Main run: net State="+netState+" connected="+connected);
+            if (netState==0){
+                Log.d(TAG, "Main run: net State="+netState);
+                progressBar.setVisibility(View.GONE);
+                imgRetry.setVisibility(View.VISIBLE);
+                connected=false;
+                remain=false;
+                return false;
+            }
+            return true;
+
+        } else {
+            remain=false;
+            return false;
+        }
+    }
+
 
 }

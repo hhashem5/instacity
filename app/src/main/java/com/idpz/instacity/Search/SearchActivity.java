@@ -8,11 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -78,8 +81,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     Float lat=35.711f,lng=50.912f,myDist;
     int speed=20,alarmDist=100;
     Location myLocation,carLocation;
-    String SHOP_URL="",dbLastData="mscity.ir";
-    Boolean mapFlag=false,placesFlag=false,connected=false;
+    String SHOP_URL="",dbLastData="mscity.ir",mySnipet="موقیت",myTitle="خانه";
+    Boolean mapFlag=false,placesFlag=false,reqPlaces=false,connected=false;
     GPSTracker gps;
     private Context context;
     private static final int REQUEST_ACCESS_LOCATION = 0;
@@ -98,7 +101,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     Car mycar;
     SharedPreferences SP1;
     ArrayAdapter<String> spinnerArrayAdapter;
-    int failCount=0;
+    int failCount=0,mapCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +110,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
         myLocation=new Location("");
         carLocation=new Location("");
+        Typeface yekan = Typeface.createFromAsset(SearchActivity.this.getAssets(), "fonts/YEKAN.TTF");
 
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
@@ -115,14 +119,18 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         homelat=Double.valueOf(SP1.getString("homelat", "0"));
         homelng=Double.valueOf(SP1.getString("homelng", "0"));
         alarmDist=Integer.valueOf(SP1.getString("alarm_len","300"));
-
+        mapCount=SP1.getInt("map_count",0);
+        mapCount++;
+        mapOpenCount();
             myLocation.setLatitude(lat);
             myLocation.setLongitude(lng);
         if (myLocation.getLatitude()==0){
             myLocation.setLatitude(homelat);
             myLocation.setLongitude(homelng);
         }
-        Log.d(TAG, "onCreate: locations lat&lat:"+lat+","+lng+" homlat:"+homelat+","+homelng+"mylocation="+myLocation.getLatitude());
+
+
+
         SHOP_URL=server+"/i/shoprec.php";
         REGISTER_URL=server+"/i/rcv.php";
         CarDrv_url = server+"/i/d.php";
@@ -132,31 +140,48 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         showShops=new ArrayList<>();
         setupBottomNavigationView();
 
-        seekBar=(SeekBar)findViewById(R.id.sbarCarDistance);
-        chkCarAlarm=(CheckBox)findViewById(R.id.chkCarAlarm);
+
+        if (mapCount<5) {
+            final ImageView imgRoute= findViewById(R.id.imgRoute);
+            imgRoute.setVisibility(View.VISIBLE);
+//            tvNotice.setTypeface(yekan);
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+//                    tvNotice.setVisibility(View.GONE);
+                    imgRoute.setVisibility(View.GONE);
+                }
+            }, 5000);
+
+
+
+        }
+        seekBar= findViewById(R.id.sbarCarDistance);
+        chkCarAlarm= findViewById(R.id.chkCarAlarm);
         chkCarAlarm.setChecked(SP1.getBoolean("alarm",false));
-        spnCarSelect=(Spinner)findViewById(R.id.spnCars);
-        chkSat=(CheckBox)findViewById(R.id.chkShowSat);
-        chkPlaces=(CheckBox)findViewById(R.id.chkShowPlaces);
-        chkTrafic=(CheckBox)findViewById(R.id.chkShowTraffic);
-        chkIEdu=(CheckBox)findViewById(R.id.chkIEdu);
-        chkIShop=(CheckBox)findViewById(R.id.chkIShop);
-        chkISport=(CheckBox)findViewById(R.id.chkISport);
-        chkIService=(CheckBox)findViewById(R.id.chkIService);
+        spnCarSelect= findViewById(R.id.spnCars);
+        chkSat= findViewById(R.id.chkShowSat);
+        chkPlaces= findViewById(R.id.chkShowPlaces);
+        chkTrafic= findViewById(R.id.chkShowTraffic);
+        chkIEdu= findViewById(R.id.chkIEdu);
+        chkIShop= findViewById(R.id.chkIShop);
+        chkISport= findViewById(R.id.chkISport);
+        chkIService= findViewById(R.id.chkIService);
 //        chkIRepaire=(CheckBox)findViewById(R.id.chkIRepair);
-        chkIHealth=(CheckBox)findViewById(R.id.chkIHealth);
-        chkIReligion=(CheckBox)findViewById(R.id.chkIReligion);
-        chkIFood=(CheckBox)findViewById(R.id.chkIfood);
-        chkCars=(CheckBox)findViewById(R.id.chkShowCar);
-        txtcat=(TextView) findViewById(R.id.txtCat);
-        txtDistance=(TextView) findViewById(R.id.txtCarDistance);
-        txtMydist=(TextView) findViewById(R.id.txtMyDistance);
-        btnRegStore=(Button)findViewById(R.id.btnMapStoreReg);
+        chkIHealth= findViewById(R.id.chkIHealth);
+        chkIReligion= findViewById(R.id.chkIReligion);
+        chkIFood= findViewById(R.id.chkIfood);
+        chkCars= findViewById(R.id.chkShowCar);
+        txtcat= findViewById(R.id.txtCat);
+        txtDistance= findViewById(R.id.txtCarDistance);
+        txtMydist= findViewById(R.id.txtMyDistance);
+        btnRegStore= findViewById(R.id.btnMapStoreReg);
 
         seekBar.setProgress(alarmDist);
         txtDistance.setText(SP1.getString("alarm_len","0")+"متر");
-        chkPlaces.setText("دریافت اماکن");
-        chkCars.setText("دریافت خودروها");
+//        chkPlaces.setText("دریافت اماکن");
+//        chkCars.setText("دریافت خودروها");
         chkIEdu.setVisibility(View.GONE);
         chkIShop.setVisibility(View.GONE);
         chkISport.setVisibility(View.GONE);
@@ -202,7 +227,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                 SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
 
                 SP.putString("alarm_len",String.valueOf(progress));
-                SP.commit();
+                SP.apply();
             }
 
             @Override
@@ -222,6 +247,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
+                    if (remain)rcvRequest();
+                    Toast.makeText(SearchActivity.this, "دریافت اطلاعات خودرو. کمی صبر کنید", Toast.LENGTH_SHORT).show();
                     chkPlaces.setChecked(false);
                     seekBar.setVisibility(View.VISIBLE);
                     spnCarSelect.setVisibility(View.VISIBLE);
@@ -254,15 +281,19 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (!isChecked){
+//                    stopService(new Intent(SearchActivity.this, AlarmService.class));
                     SharedPreferences.Editor SP;
                     SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                     SP.putBoolean("alarm",false);
-                    SP.commit();
+                    SP.apply();
+//                    startService(new Intent(SearchActivity.this, AlarmService.class));
                 }else {
+//                    stopService(new Intent(SearchActivity.this, AlarmService.class));
                     SharedPreferences.Editor SP;
                     SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                     SP.putBoolean("alarm",true);
-                    SP.commit();
+                    SP.apply();
+//                    startService(new Intent(SearchActivity.this, AlarmService.class));
                 }
                 drawMap();
 
@@ -280,7 +311,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     SharedPreferences.Editor SP;
                     SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
                     SP.putString("carcode",String.valueOf(mycar.getCode()));
-                    SP.commit();
+                    SP.apply();
 
                 }
 
@@ -291,6 +322,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
             }
         });
+
+
 
         new Thread() {
             @Override
@@ -307,17 +340,20 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                 connected = true;
                             } else {
                                 connected = false;
+                                if (failCount>4)remain=false;
+                                failCount++;
                             }
                             if (connected ){
                                 if (driverFlag&&Icar){
                                     rcvRequest();
+                                    drawMap();
                                 }
                                 if(!driverFlag){
                                     reqcdrv();
                                     chkTrafic.setEnabled(true);
                                     chkSat.setEnabled(true);
                                 }
-                                if(connected&&failCount>3){
+                                if(connected&&failCount>4){
                                     AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
                                     alertDialog.setTitle("اینترنت وصل نیست!");
                                     alertDialog.setMessage("لطفا از اتصال اینترنت مطمئن شوید!");
@@ -332,7 +368,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                     alertDialog.show();
                                 }
 
-                                if (!placesFlag) reqShop();
+                                if (!reqPlaces) reqShop();
 
 
                             }
@@ -351,8 +387,28 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         if (connected){
             chkTrafic.setEnabled(true);
             chkSat.setEnabled(true);
+
+        }
+        Intent intent = getIntent();
+        if(intent.hasExtra("lat")) {
+            remain=false;
+            btnRegStore.setVisibility(View.GONE);
+            chkTrafic.setEnabled(true);
+            chkSat.setEnabled(true);
+            homelat = Double.valueOf(intent.getStringExtra("lat"));
+            homelng = Double.valueOf(intent.getStringExtra("lng"));
+            myTitle = intent.getStringExtra("name");
+            mySnipet = intent.getStringExtra("memo");
+            Log.d(TAG, "onCreate: lat:"+homelat+" lng:"+homelng+" incoming  lat:"+intent.getStringExtra("lat"));
         }
 
+        try {
+            // Loading map
+            initilizeMap();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         btnRegStore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,11 +421,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkISport.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                    Isport=false;
-                }else {
-                    Isport=true;
-                }
+                Isport = isChecked;
                 drawMap();
 
             }
@@ -377,11 +429,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIService.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                   Iservice=false;
-                }else {
-                   Iservice=true;
-                }
+                Iservice = isChecked;
                 drawMap();
 
             }
@@ -390,11 +438,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIShop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                    Ishop=false;
-                }else {
-                    Ishop=true;
-                }
+                Ishop = isChecked;
 
                 drawMap();
             }
@@ -414,11 +458,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIReligion.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                    Ireligion=false;
-                }else {
-                    Ireligion=true;
-                }
+                Ireligion = isChecked;
                 drawMap();
 
             }
@@ -426,11 +466,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIHealth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                    Ihealth=false;
-                }else {
-                    Ihealth=true;
-                }
+                Ihealth = isChecked;
                 drawMap();
 
             }
@@ -438,11 +474,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIEdu.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                    Iedu=false;
-                }else {
-                    Iedu=true;
-                }
+                Iedu = isChecked;
                 drawMap();
 
             }
@@ -450,11 +482,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         chkIFood.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!isChecked){
-                    Ifood=false;
-                }else {
-                    Ifood=true;
-                }
+                Ifood = isChecked;
                 drawMap();
 
                 }
@@ -535,13 +563,8 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         }else if(lat==0){
             populateGPS();
         }
-        try {
-            // Loading map
-            initilizeMap();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
 
 
 
@@ -558,7 +581,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     // تنظیم نوار پایین برنامه
     private void setupBottomNavigationView(){
         Log.d(TAG,"seting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx=(BottomNavigationViewEx)findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx= findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(SearchActivity.this,bottomNavigationViewEx);
         Menu menu=bottomNavigationViewEx.getMenu();
@@ -569,12 +592,25 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        Intent intent = getIntent();
+        if(intent.hasExtra("lat")) {
+            remain=false;
+            btnRegStore.setVisibility(View.GONE);
+            chkTrafic.setEnabled(true);
+            chkSat.setEnabled(true);
+            homelat = Double.valueOf(intent.getStringExtra("lat"));
+            homelng = Double.valueOf(intent.getStringExtra("lng"));
+            myTitle = intent.getStringExtra("name");
+            mySnipet = intent.getStringExtra("memo");
+            Log.d(TAG, "onCreate: lat:"+homelat+" lng:"+homelng+" incoming  lat:"+intent.getStringExtra("lat"));
+        }
+
         mMap = googleMap;
 
         // Add a marker in Sydney, Australia, and move the camera.
             cityLatLng = new LatLng(homelat, homelng);
 
-        mMap.addMarker(new MarkerOptions().position(cityLatLng).title("موقعیت شما"));
+        mMap.addMarker(new MarkerOptions().position(cityLatLng).title(myTitle).snippet(mySnipet));
 
         mMap.setTrafficEnabled(false);
 
@@ -610,7 +646,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     @Override
                     public void onResponse(String response) {
                         JSONArray jsonArray= null;
-                        placesFlag=true;
+                        reqPlaces=true;
                         failCount=0;
                         try {
                             Shop shop=new Shop();
@@ -624,7 +660,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                 shop=new Shop();
                                 shop.setId(jsonObject.getInt("id"));
                                 shop.setName(jsonObject.getString("name"));
-                                shop.setOwner(jsonObject.getString("owner")) ;
+                                shop.setOwner(jsonObject.getString("ownername")) ;
                                 shop.setTel (jsonObject.getString("tel"));
                                 shop.setMobile (jsonObject.getString("mobile")) ;
                                 shop.setAddress ( jsonObject.getString("address"));
@@ -663,7 +699,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // TODO Auto-generated method stub
-
+                        failCount++;
                     }
                 }
         ) {
@@ -686,7 +722,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
         SP.putString("lat", String.valueOf(gps.getLatitude()));
         SP.putString("lng",String.valueOf(gps.getLongitude()));
-        SP.commit();
+        SP.apply();
         myLocation.setLatitude(gps.getLatitude());
         myLocation.setLongitude(gps.getLongitude());
 //        Toast.makeText(MainActivity.this, "location ="+myLocation.getLatitude()+","+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
@@ -719,7 +755,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
     private void drawMap() {
         mMap.clear();
         MarkerOptions markerOp = new MarkerOptions();
-
+        if (placesFlag){
         for (final Shop mshop : shops) {
 
             LatLng node = new LatLng(Double.valueOf(mshop.getJlat()), Double.valueOf(mshop.getJlng()));
@@ -806,6 +842,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                     break;
             }
 
+        }
         }
             if (Icar){
 
@@ -898,11 +935,11 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
                                 nodes.add(rcvsrv);
                             }
 
-                            drawMap();
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failCount++;
                         }
 //                    Toast.makeText(MapActivity.this, "فاصله:"+myDist+" تعداد:"+db.getnumofcol(), Toast.LENGTH_LONG).show();
 
@@ -970,7 +1007,7 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failCount++;
                         }
 
 
@@ -1005,4 +1042,14 @@ public class SearchActivity extends AppCompatActivity implements OnMapReadyCallb
         driverFlag=false;
         nodes.clear();
     }
+
+    public void mapOpenCount() {
+
+        if (mapCount<7) {
+            SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this).edit();
+            SP.putInt("map_count", mapCount);
+            SP.apply();
+        }
+    }
+
 }

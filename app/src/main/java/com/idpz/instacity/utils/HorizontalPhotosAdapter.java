@@ -1,16 +1,15 @@
 package com.idpz.instacity.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 
@@ -30,7 +29,7 @@ public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhot
         public MyViewHolder(View view) {
             super(view);
 
-            riv = (ImageView) view.findViewById(R.id.horizontal_item_view_image);
+            riv = view.findViewById(R.id.horizontal_item_view_image);
 
         }
     }
@@ -54,19 +53,12 @@ public class HorizontalPhotosAdapter extends RecyclerView.Adapter<HorizontalPhot
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
 
-//        holder.riv.setImageBitmap(bitmapList.get(position));
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.vilhome)
-                .showImageForEmptyUri(R.drawable.vilhome)
-                .showImageOnFail(R.drawable.vilhome)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        ImageLoader.getInstance().displayImage(bitmapList.get(position),holder.riv,options);
-
+        Glide.with(context).load(bitmapList.get(position))
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.nopic)
+                .into(holder.riv);
     }
 
 

@@ -73,7 +73,7 @@ android:background="@color/lightblue"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
                     android:onClick="onResetMap"
-                    android:text="ثبت مکان" />
+                    android:text="ثبت مشاغل" />
             </LinearLayout>
     </LinearLayout>
 
@@ -176,6 +176,33 @@ android:background="@color/lightblue"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
+
+        <LinearLayout
+            android:background="@color/lightblue"
+            android:layout_gravity="center_horizontal|center"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:layout_height="wrap_content">
+
+            <!--<TextView-->
+                <!--android:id="@+id/txtNotice"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:text="با کلیک روی نشانگر مکان، مسیر یابی در پایین نمایش داده میشود"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content" />-->
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgRoute"
+            android:src="@drawable/route"
+            android:layout_gravity="bottom|right"
+            android:visibility="gone"
+            android:layout_width="210dp"
+            android:layout_height="280dp" />
+
         <TextView
             android:id="@+id/txtMyDistance"
             android:text=""

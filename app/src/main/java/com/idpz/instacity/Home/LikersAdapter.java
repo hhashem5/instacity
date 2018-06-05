@@ -2,18 +2,16 @@ package com.idpz.instacity.Home;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Comment;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.List;
 
@@ -56,29 +54,24 @@ public class LikersAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.content_likers, null);
 
 
-        CircleImageView thumbNail = (CircleImageView) convertView
+        CircleImageView thumbNail = convertView
                 .findViewById(R.id.imgLikersUserImg);
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(activity));
-        TextView userName = (TextView) convertView.findViewById(R.id.txtCommentUserName);
+
+        TextView userName = convertView.findViewById(R.id.txtCommentUserName);
         Comment m = postList.get(position);
-        DisplayImageOptions options;
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.blur)
-                .showImageForEmptyUri(R.drawable.blur)
-                .showImageOnFail(R.drawable.blur)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true)
-                .bitmapConfig(Bitmap.Config.RGB_565)
-                .build();
-        ImageLoader.getInstance().displayImage(m.getMycomment(),thumbNail,options);
+        Glide.with(activity).load(m.getMycomment())
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(thumbNail);
+
+
         // getting Food data for the row
 
 
        //  thumbnail image
 //        thumbNail.setImageURI("http://mscity.ir/assets/images/users/1.jpg", imageLoader);
-//        ImageLoader imageLoader = ImageLoader.getInstance();
-//        imageLoader.displayImage(m.getMycomment(),thumbNail,options);
+
 
         userName.setText(m.getUsrName());
 
