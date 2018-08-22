@@ -22,13 +22,14 @@ public class DBAreaHandler extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
-    private static final String DATABASE_NAME = "area.db";
+    private static final String DATABASE_NAME = "myarea.db";
     // Contacts table name
-    private static final String MY_TABLE = "areas";
+    private static final String MY_TABLE = "area";
     // Shops Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_AENAME = "aename";
     private static final String KEY_AFNAME = "afname";
+    private static final String KEY_STATE = "state";
     private static final String KEY_ALAT = "alat";
     private static final String KEY_ALNG = "alng";
     private static final String KEY_DIAMETER = "adiameter";
@@ -46,10 +47,17 @@ public class DBAreaHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_MY_TABLE = "CREATE TABLE " + MY_TABLE + " ("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_AENAME + " TEXT,"
-                + KEY_AFNAME + " TEXT,"+ KEY_ALAT + " TEXT,"+ KEY_ALNG + " TEXT,"
-                + KEY_DIAMETER + " TEXT,"+ KEY_SERVER + " TEXT,"
-                + KEY_ZOOM + " TEXT,"+ KEY_DESCRIPTION + " TEXT,"+ KEY_PIC + " TEXT)";
+                + KEY_ID + " INTEGER PRIMARY KEY,"
+                + KEY_AENAME + " TEXT,"
+                + KEY_AFNAME + " TEXT,"
+                + KEY_ALAT + " TEXT,"
+                + KEY_ALNG + " TEXT,"
+                + KEY_DIAMETER + " TEXT,"
+                + KEY_SERVER + " TEXT,"
+                + KEY_ZOOM + " TEXT,"
+                + KEY_DESCRIPTION + " TEXT,"
+                + KEY_PIC + " TEXT,"
+                + KEY_STATE + " TEXT)";
         db.execSQL(CREATE_MY_TABLE);
     }
 
@@ -104,7 +112,7 @@ public class DBAreaHandler extends SQLiteOpenHelper {
         values.put(KEY_ZOOM, String.valueOf(jobs.getZoom()));
         values.put(KEY_DESCRIPTION, jobs.getDescription());
         values.put(KEY_PIC, jobs.getPic());
-
+        values.put(KEY_STATE, jobs.getState()); // area state code
 // Inserting Row
         db.insert(MY_TABLE, null, values);
         db.close(); // Closing database connection
@@ -114,14 +122,22 @@ public class DBAreaHandler extends SQLiteOpenHelper {
     public Area getJob(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(MY_TABLE, new String[] { KEY_ID,
-                        KEY_AENAME, KEY_AFNAME, KEY_ALAT,KEY_ALNG,KEY_DIAMETER,KEY_SERVER,KEY_ZOOM,KEY_DESCRIPTION,KEY_PIC }, KEY_ID + "=?",
+                        KEY_AENAME, KEY_AFNAME, KEY_ALAT,KEY_ALNG,KEY_DIAMETER,KEY_SERVER,KEY_ZOOM,KEY_DESCRIPTION,KEY_PIC,KEY_STATE }, KEY_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-        Area contact = new Area(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), cursor.getString(2),Float.valueOf(cursor.getString(3)),
-                Float.valueOf(cursor.getString(4)),Float.valueOf(cursor.getString(5)),cursor.getString(6),
-                Integer.valueOf(cursor.getString(7)),0,cursor.getString(8),cursor.getString(9));
+        Area contact = new Area(
+                Integer.parseInt(cursor.getString(0)),
+                cursor.getString(1),
+                cursor.getString(2),
+                Float.valueOf(cursor.getString(3)),
+                Float.valueOf(cursor.getString(4)),
+                Float.valueOf(cursor.getString(5)),
+                cursor.getString(6),
+                Integer.valueOf(cursor.getString(7)),
+                0,cursor.getString(8),
+                cursor.getString(9),
+                cursor.getString(10));
 // return shop
         return contact;
     }
@@ -149,11 +165,12 @@ public class DBAreaHandler extends SQLiteOpenHelper {
                 events_Service.setZoom(Integer.valueOf(cursor.getString(7)));
                 events_Service.setDescription(cursor.getString(8));
                 events_Service.setPic(cursor.getString(9));
-
+                events_Service.setState(cursor.getString(10));
 // Adding contact to list
                 areaList.add(events_Service);
             } while (cursor.moveToNext());
         }
+
         return areaList;
     }
 

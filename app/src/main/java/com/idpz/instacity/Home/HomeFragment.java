@@ -1,5 +1,6 @@
 package com.idpz.instacity.Home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,16 +9,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -32,7 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.idpz.instacity.R;
-import com.idpz.instacity.Share.GalleryActivity;
+import com.idpz.instacity.Share.SendSocialActivity;
 import com.idpz.instacity.models.Post;
 import com.idpz.instacity.utils.CalendarTool;
 import com.idpz.instacity.utils.PostAdapter;
@@ -50,7 +48,7 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class HomeFragment extends Activity implements SwipeRefreshLayout.OnRefreshListener{
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "HomeFragment";
 
@@ -59,7 +57,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     ArrayList<Post> dataModels;
     //    DBLastData dbLastData;
     PostAdapter postAdapter;
-    String server="",fullServer="",mob="0";
+    String state="",fullServer="",mob="0",server="";
     int lim1=0,lim2=5;
     Boolean reqFlag=true,connected=false,remain=true;
     Context context;
@@ -69,29 +67,31 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     ImageView imgRetry;
     ProgressBar progressBar;
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_home,container,false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_home);
 
-        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(this);
         mob=SP.getString("mobile", "0");
-        swipeRefreshLayout = view.findViewById(R.id.refresh);
+        server=SP.getString("server", "0");
+        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
-        imgRetry= view.findViewById(R.id.imgPostRetry);
-        progressBar= view.findViewById(R.id.progressPost);
+        imgRetry=(ImageView) findViewById(R.id.imgPostRetry);
+        progressBar= (ProgressBar)findViewById(R.id.progressPost);
 
-        FloatingActionButton fab = view.findViewById(R.id.fab);
+        FloatingActionButton fab =(FloatingActionButton) findViewById(R.id.fab);
         fab.setAlpha(0.65f);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getActivity(),GalleryActivity.class);
+                Intent intent=new Intent(HomeFragment.this,SendSocialActivity.class);
                 startActivity(intent);
             }
         });
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = this.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
@@ -99,22 +99,23 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         Log.d(TAG, "onCreateView: height:"+height+" width:"+width+" density:"+metrics.density);
 
-        lvContentPost = view.findViewById(R.id.lvHomeContent);
+        lvContentPost =(ListView) findViewById(R.id.lvHomeContent);
 
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
-        postAdapter = new PostAdapter(getActivity(), dataModels);
+        postAdapter = new PostAdapter(this, dataModels);
 
         final SharedPreferences SP1;
-        SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
-        server=SP1.getString("server", "0");
-        fullServer = server+"/i/social2.php";
+        SP1 = PreferenceManager.getDefaultSharedPreferences(this);
+        state=SP1.getString("state", "0");
+        fullServer = getString(R.string.server)+"/j/social2.php";
 
 //        remain = SP1.getBoolean("connected", false);
         lvContentPost.setAdapter(postAdapter);
 
 
             if (isConnected()) {
+                dataModels.clear();
                 reqPosts();
             }
 
@@ -157,14 +158,14 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         });
 
-        return view;
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
 
 
 
     public void reqPosts() {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        RequestQueue queue = Volley.newRequestQueue(HomeFragment.this);
         String url = fullServer;
         final StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
@@ -259,7 +260,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
-                params.put("table", "socials");
+                params.put("state", state);
                 params.put("usr", mob);
                 params.put("lim1", String.valueOf(lim1));
                 params.put("lim2", String.valueOf(lim2));
@@ -280,7 +281,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     public boolean isConnected(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) HomeFragment.this.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network

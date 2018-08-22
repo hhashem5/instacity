@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +32,10 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.Area;
+import com.idpz.instacity.Home.HomeActivity;
+import com.idpz.instacity.Home.VisitSearchActivity;
 import com.idpz.instacity.R;
+import com.idpz.instacity.Share.PopupActivity;
 import com.idpz.instacity.models.Post;
 import com.idpz.instacity.utils.BottomNavigationViewHelper;
 import com.idpz.instacity.utils.CalendarTool;
@@ -61,20 +65,20 @@ public class ProfileActivity extends AppCompatActivity {
     Boolean areaFlag=false,connected=false;
     Boolean reqFlag = false,moneyFlag=false;
     ArrayList<Area> areaArrayList=new ArrayList<>();
-    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
+    String AREA_URL = "";
 //    ProgressBar progressBar;
-
+    ProgressBar progressBar;
     //widgets
     private ViewPager mViewPager;
     private FrameLayout mFrameLayout;
     private RelativeLayout mRelativeLayout;
     GridView grid;
-    TextView txtNumPosts,txtbonus,txtDisplayName,txtDescription,txtMobile,txtEditPrifile,txtTabUserName,txtMosharekat,txtCurCt;
-    ImageView imgPostMenu;
+    TextView txtNumPosts,txtbonus,txtEditPrifile,txtTabUserName,txtMosharekat;
+    ImageView imgPostMenu,imgRetry;
     String mob="0",profileImgUrl="", REG_USER_LAT ="";
     CircleImageView imgProfile;
     String server="";
-    Button btnChangeCT,btnUseGift;
+    Button btnUseGift;
     boolean remain=true;
     int failcount=0,netState=3;
     SharedPreferences SP1;
@@ -86,7 +90,7 @@ public class ProfileActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: strating");
 //        progressBar=(ProgressBar)findViewById(R.id.profileProgressBar);
 //        progressBar.setVisibility(View.GONE);
-
+        AREA_URL = getString(R.string.server)+"/i/getarea.php";
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
         ctName=SP1.getString("ctname", "0");
@@ -96,36 +100,53 @@ public class ProfileActivity extends AppCompatActivity {
         String myname=SP1.getString("myname", "0");
         String melliid=SP1.getString("melliid", "0");
         mob=SP1.getString("mobile", "0");
-        fullServer = server+"/i/socialgal.php";
+
+        fullServer = getString(R.string.server)+"/j/socialgal.php";
 
         if (myname.toLowerCase().equals("null"))myname="بی نام";
 
-        mViewPager = findViewById(R.id.viewpager_container);
-        mFrameLayout = findViewById(R.id.container);
-        mRelativeLayout = findViewById(R.id.relLayoutParent);
+        mViewPager =(ViewPager) findViewById(R.id.viewpager_container);
+        mFrameLayout = (FrameLayout)findViewById(R.id.container);
+        mRelativeLayout =(RelativeLayout) findViewById(R.id.relLayoutParent);
         dataModels = new ArrayList<>();
         galAdapter = new galleryAdapter(ProfileActivity.this, dataModels);
-        txtbonus= findViewById(R.id.txtBonus);
-        txtNumPosts= findViewById(R.id.tvPosts);
-        txtDisplayName= findViewById(R.id.txtDisplay_name);
-        txtDescription= findViewById(R.id.txtDescription);
-        txtMosharekat= findViewById(R.id.txtMosharekat);
-        txtMobile= findViewById(R.id.website);
-        txtCurCt= findViewById(R.id.txtCurrentCTProfile);
-        txtEditPrifile= findViewById(R.id.textEditProfile);
-        txtTabUserName= findViewById(R.id.txtTabUsername);
-        imgPostMenu= findViewById(R.id.imgProfileMenu);
-        btnChangeCT= findViewById(R.id.btnChangeCTPofile);
-        btnUseGift= findViewById(R.id.btnUseGift);
-        txtCurCt.setText(ctName);
+        txtbonus=(TextView) findViewById(R.id.txtBonus);
+        txtNumPosts=(TextView) findViewById(R.id.tvPosts);
 
-        btnChangeCT.setOnClickListener(new View.OnClickListener() {
+        txtMosharekat=(TextView) findViewById(R.id.txtMosharekat);
+//        txtMobile=(TextView) findViewById(R.id.website);
+//        txtCurCt=(TextView) findViewById(R.id.txtCurrentCTProfile);
+        txtEditPrifile=(TextView) findViewById(R.id.textEditProfile);
+        txtTabUserName=(TextView) findViewById(R.id.txtTabUsername);
+        imgPostMenu=(ImageView) findViewById(R.id.imgProfileMenu);
+//        btnChangeCT=(Button) findViewById(R.id.btnChangeCTPofile);
+        Button btnComlpain=(Button) findViewById(R.id.btnComplain);
+        Button btnContactUs=(Button) findViewById(R.id.btnContactUs);
+        btnUseGift=(Button) findViewById(R.id.btnUseGift);
+        progressBar=(ProgressBar) findViewById(R.id.progressBar);
+//        txtCurCt.setText(ctName);
+
+
+        btnComlpain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(ProfileActivity.this,ChangeCityActivity.class);
+                Intent intent=new Intent(ProfileActivity.this,ContactUsActivity.class);
+                intent.putExtra("title", "ارسال شکایت به دهکده هوشمند");
+                intent.putExtra("type", "0");
+
                 startActivity(intent);
             }
         });
+        btnContactUs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ProfileActivity.this,ContactUsActivity.class);
+                intent.putExtra("title", "ارتباط با دهکده هوشمند");
+                intent.putExtra("type", "1");
+                startActivity(intent);
+            }
+        });
+
 
         btnUseGift.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +157,18 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         profileImgUrl = SP1.getString("pic", "0");
-
+        imgRetry=(ImageView)findViewById(R.id.imgRetry);
+        imgRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: ");
+                if (isConnected()) {
+                    imgRetry.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.VISIBLE);
+                    reqPosts();
+                }
+            }
+        });
 
 
 
@@ -144,19 +176,14 @@ public class ProfileActivity extends AppCompatActivity {
         txtMosharekat.setText(spends);
         int bonus=Integer.valueOf(moneys);
         txtbonus.setText(String.valueOf(bonus));
-        txtDisplayName.setText(myname);
+
         txtTabUserName.setText(myname);
-        txtDescription.setText(melliid);
 
-        txtMobile.setText(mob);
 
-        imgProfile= findViewById(R.id.profile_photoProfile);
-
+        imgProfile=(CircleImageView) findViewById(R.id.profile_photoProfile);
+        Log.d(TAG, "onCreate: profile_pic"+profileImgUrl);
         Glide.with(this).load(getString(R.string.server)+"/assets/images/users/"+profileImgUrl)
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(imgProfile);
 
 
@@ -183,60 +210,33 @@ public class ProfileActivity extends AppCompatActivity {
         setupBottomNavigationView();
         setupToolbar();
 
-        grid = findViewById(R.id.gridView);
+        grid =(GridView) findViewById(R.id.gridView);
         grid.setAdapter(galAdapter);
-
-
-        new Thread() {
-            @Override
-            public void run() {
-                while (remain&(!areaFlag||!moneyFlag)) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                            if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-                                //we are connected to a network
-                                connected = true;
-                                netState=SP1.getInt("net_status",3);
-                                if (netState==0)remain=false;
-                            } else {
-                                connected = false;
-//                                Toast.makeText(ProfileActivity.this, "اینترنت وصل نیست", Toast.LENGTH_SHORT).show();
-                                if (failcount>4) remain=false;
-                                failcount++;
-
-                            }
-
-
-                            if (connected &&!reqFlag){
-                                reqPosts();
-                            }
-                            if (connected &&!moneyFlag){
-                                reqScore();
-                            }
+        failcount=0;
 
 
 
-                        }
-                    });
-                    try {
-                        sleep(7000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
+                reqPosts();
+                reqScore();
 
+
+        Intent intentex = getIntent();
+        if(intentex.hasExtra("body")) {
+            String body = intentex.getStringExtra("body");
+
+            Intent popup=new Intent(ProfileActivity.this,PopupActivity.class);
+            popup.putExtra("title", "پیام های شهروندی شما");
+            popup.putExtra("body", body);
+            popup.putExtra("score", "تشکر");
+            startActivity(popup);
+        }
 
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.profileToolBar);
+        Toolbar toolbar =(Toolbar) findViewById(R.id.profileToolBar);
         setSupportActionBar(toolbar);
-        ImageView profileimageView = findViewById(R.id.profile_photoProfile);
+        ImageView profileimageView =(ImageView) findViewById(R.id.profile_photoProfile);
         profileimageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,7 +250,7 @@ public class ProfileActivity extends AppCompatActivity {
     // تنظیم نوار پایین برنامه
     private void setupBottomNavigationView() {
         Log.d(TAG, "seting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx =(BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         bottomNavigationViewEx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -279,11 +279,16 @@ public class ProfileActivity extends AppCompatActivity {
     public void reqPosts() {
         RequestQueue queue = Volley.newRequestQueue(ProfileActivity.this);
         String url = fullServer;
+        progressBar.setVisibility(View.VISIBLE);
+        Log.d(TAG, "reqPosts: start");
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         reqFlag = true;
+                        progressBar.setVisibility(View.GONE);
+                        imgRetry.setVisibility(View.GONE);
+                        Log.d(TAG, "onResponse: posts received");
                         int count = 0;
 
 
@@ -291,6 +296,7 @@ public class ProfileActivity extends AppCompatActivity {
                         try {
                             jsonArray = new JSONArray(response);
                             Post post;
+                            dataModels.clear();
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
                             count = 0;
 
@@ -304,11 +310,12 @@ public class ProfileActivity extends AppCompatActivity {
                                 post.setPostAnswer(anss);
                                 post.setUserPhone(jsonObject.getString("sophone"));
                                 post.setPostComment(jsonObject.getString("sotext"));
+                                String myUrl=jsonObject.getString("server");
                                 if (jsonObject.getString("pic").equals("null")||jsonObject.getString("pic").equals(" ")
                                         ||jsonObject.getString("pic").equals("")){
-                                    post.setPostImageUrl(server+"/assets/images/137/blur.jpg");
+                                    post.setPostImageUrl(myUrl+"/assets/images/137/blur.jpg");
                                 }else {
-                                    post.setPostImageUrl(server+"/assets/images/137/" + jsonObject.getString("pic"));
+                                    post.setPostImageUrl(myUrl+"/assets/images/137/" + jsonObject.getString("pic"));
                                 }
                                 post.setPostLike(jsonObject.getString("seen"));
 
@@ -340,7 +347,7 @@ public class ProfileActivity extends AppCompatActivity {
                             galAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failcount++;
                         }
 
 
@@ -349,7 +356,9 @@ public class ProfileActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        failcount++;
+                        progressBar.setVisibility(View.GONE);
+                        imgRetry.setVisibility(View.VISIBLE);
                         Log.d("ERROR", "error => " + error.toString());
                     }
                 }
@@ -368,12 +377,14 @@ public class ProfileActivity extends AppCompatActivity {
     public void reqScore() {
         RequestQueue queue = Volley.newRequestQueue(ProfileActivity.this);
         String url = server+"/i/score.php";
+        Log.d(TAG, "reqScore: start");
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         moneyFlag = true;
 
+                        Log.d(TAG, "onResponse: score received");
 
                         JSONArray jsonArray = null;
                         try {
@@ -398,7 +409,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-
+                            failcount++;
                         }
 
 
@@ -407,7 +418,7 @@ public class ProfileActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+                        failcount++;
                         Log.d("ERROR", "error => " + error.toString());
                     }
                 }
@@ -423,6 +434,28 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    public boolean isConnected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) ProfileActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+
+            Log.d(TAG, "visit search : connected="+connected);
+
+            return true;
+
+        } else {
+
+            return false;
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        reqPosts();
+    }
 }
 
 

@@ -12,10 +12,16 @@ public class Ads {
     private String address;
     private String pic;
     private String owner;
+    private String alat;
+    private String alng;
+    private String aename;
+    private String afname;
+    private String state;
+
     public Ads() {
     }
 
-    public Ads(int id,String owner, String title, String memo, String tel, String address,String pic) {
+    public Ads(int id, String owner, String title, String memo, String tel, String address, String pic, String alat, String alng, String aename, String afname, String state) {
         this.id = id;
         this.title = title;
         this.memo = memo;
@@ -23,6 +29,11 @@ public class Ads {
         this.address = address;
         this.pic = pic;
         this.owner = owner;
+        this.alat = alat;
+        this.alng = alng;
+        this.aename = aename;
+        this.afname = afname;
+        this.state = state;
     }
 
     public int getId() {
@@ -79,5 +90,45 @@ public class Ads {
 
     public void setPic(String pic) {
         this.pic = pic;
+    }
+
+    public String getAlat() {
+        return alat;
+    }
+
+    public void setAlat(String alat) {
+        this.alat = alat;
+    }
+
+    public String getAlng() {
+        return alng;
+    }
+
+    public void setAlng(String alng) {
+        this.alng = alng;
+    }
+
+    public String getAename() {
+        return aename;
+    }
+
+    public void setAename(String aename) {
+        this.aename = aename;
+    }
+
+    public String getAfname() {
+        return afname;
+    }
+
+    public void setAfname(String afname) {
+        this.afname = afname;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

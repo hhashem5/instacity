@@ -22,7 +22,7 @@ public class DBJobHandler extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
-    private static final String DATABASE_NAME = "scp3.db";
+    private static final String DATABASE_NAME = "job.db";
     // Contacts table name
     private static final String MY_TABLE = "jobs";
     // Shops Table Columns names

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@drawable/white_trans_border_bottom"
+    android:background="@drawable/back_list"
+    android:layout_margin="5dp"
+    android:padding="5dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
         >
@@ -12,29 +14,36 @@
         <LinearLayout
             android:layout_width="40dp"
             android:orientation="vertical"
+            android:weightSum="100"
             android:layout_height="80dp">
             <ImageView
                 android:id="@+id/imgDelShop"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_weight="50"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:src="@drawable/ic_edit"
                 />
             <ImageView
                 android:id="@+id/imgEditShop"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_weight="50"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_del"
-                /></LinearLayout>
+                />
+        </LinearLayout>
     <ImageView
         android:id="@+id/imgShop"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_margin="5dp"
+        android:background="@drawable/back_list"
         android:src="@drawable/ishop"
         />
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="2dp"
         android:gravity="right"
         >
 
@@ -42,14 +51,14 @@
             android:id="@+id/textShopName"
             android:text="نام فروشگاه: نیک نام"
             android:layout_gravity="center"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/textShopOwner"
             android:text="نام مالک: محمدی علی زاده"
             android:layout_marginLeft="10dp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -57,7 +66,7 @@
             android:id="@+id/textShopTell"
             android:text="تماس : شماره ثابت و همراه"
             android:layout_width="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black"
             android:layout_height="wrap_content"
             />
 
@@ -65,7 +74,7 @@
             android:id="@+id/textShopKey"
             android:text="کلید واژه های فروشگاه"
             android:layout_width="wrap_content"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black"
             android:layout_height="wrap_content" />
     </LinearLayout>
     </LinearLayout>
@@ -80,7 +89,7 @@
                 android:id="@+id/textShopAddress"
                 android:text="آدرس: آدرس فروشگاه"
                 android:layout_width="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/black"
                 android:layout_height="wrap_content" />
     </LinearLayout>
 

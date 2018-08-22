@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white_trans_border_bottom"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imgPlaceRow"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/noimage"
+            />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="right"
+            >
+
+            <TextView
+                android:id="@+id/textPlaceNameRow"
+                android:text="نام مکان"
+                android:layout_gravity="center"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textPlaceOwnerRow"
+                android:text="مالک فروشگاه"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/textPlaceNameRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceTicket"
+                android:src="@drawable/ic_ticket"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/textPlaceOwnerRow"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TextView
+                android:id="@+id/textPlaceTypeRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textPlaceOwnerRow"
+                android:layout_marginLeft="10dp"
+                android:layout_toLeftOf="@id/imgPlaceTicket"
+                android:text="خدمات"
+                android:textColor="@color/white" />
+            <ImageView
+                android:id="@+id/imgPlaceDays"
+                android:src="@drawable/ic_cal"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceTypeRow"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceDays"
+                android:text="بازدید همه روزه"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceDays"
+                android:layout_below="@id/textPlaceTypeRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceHours"
+                android:src="@drawable/ic_clock"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceDays"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceHours"
+                android:text="ساعت 7 الی 22"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceHours"
+                android:layout_below="@id/textPlaceDays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceTel"
+                android:src="@drawable/ic_tel"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceHours"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceTel"
+                android:text="02636889990"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceTel"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/textPlaceHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:id="@+id/imgPlaceAddress"
+                android:src="@drawable/ic_address"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/textPlaceTel"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+            <TextView
+                android:id="@+id/textPlaceAddress"
+                android:text="آدرس: خیابان امام جنب آموزشگاه"
+                android:layout_width="wrap_content"
+                android:textColor="@color/white"
+                android:layout_toLeftOf="@id/imgPlaceAddress"
+                android:layout_below="@id/textPlaceTel"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/textPlaceMemo"
+            android:text="سفارشات انواع لباس های آذری ، نیشابوری و دوخت از روی مدل های آماده با پارچه های با کیفیت ارسال به تمام نقاط ایران پذیرفته میشود"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="5dp"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

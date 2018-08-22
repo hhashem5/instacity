@@ -64,16 +64,13 @@ public class GiftPlacesAdapter extends BaseAdapter {
 
         Glide.with(activity).load(m.getPic())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(thumbNail);
 
         // title
-        name.setText(m.getName());
+        name.setText(m.getName()+"\n "+m.getAddress()+" تلفن:"+ m.getTel());
 
         // rating
-        txtDiscount.setText( m.getDiscount());
+        txtDiscount.setText(" تخفیف "+ m.getScore()+" با " +m.getDiscount() +" امتیاز");
 
 
 

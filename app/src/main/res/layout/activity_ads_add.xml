@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.idpz.instacity.Like.AdsAddActivity">
+    tools:context="com.idpz.instacity.Travel.AdsAddActivity">
 
     <ImageView
         android:src="@drawable/bbb"

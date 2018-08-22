@@ -9,10 +9,10 @@ import android.view.MenuItem;
 
 import com.idpz.instacity.Home.HomeActivity;
 import com.idpz.instacity.Home.VisitSearchActivity;
-import com.idpz.instacity.Like.TourismActivity;
+import com.idpz.instacity.Travel.TourismActivity;
 import com.idpz.instacity.Profile.ProfileActivity;
 import com.idpz.instacity.R;
-import com.idpz.instacity.Search.SearchActivity;
+import com.idpz.instacity.MapCity.SearchActivity;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import static android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT;
@@ -29,7 +29,7 @@ public class BottomNavigationViewHelper {
         bottomNavigationViewEx.enableAnimation(false);
         bottomNavigationViewEx.enableItemShiftingMode(false);
         bottomNavigationViewEx.enableShiftingMode(false);
-        bottomNavigationViewEx.setTextVisibility(false);
+        bottomNavigationViewEx.setTextVisibility(true);
 
     }
 

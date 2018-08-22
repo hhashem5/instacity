@@ -1,40 +1,47 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="@drawable/bkg2"
     tools:context="com.idpz.instacity.Home.LoginActivity">
 
     <!-- Login progress -->
+    <ImageView
+        android:id="@+id/imgTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/title" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/imgTitle"
+    android:layout_marginTop="-25dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+    >
 
-
-
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_marginTop="80dp"
-                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/txtLoginMobile"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
+                    android:padding="5dp"
                     android:hint="@string/prompt_email"
                     android:inputType="number"
-                    android:maxLines="1"
+                    android:background="@drawable/back_text"
                     android:singleLine="true" />
 
-            </android.support.design.widget.TextInputLayout>
     <TextView
+        android:id="@+id/txtSelectCity"
         android:text="@string/select_city"
         android:textColor="@color/black"
         android:layout_margin="15dp"
+        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <LinearLayout
@@ -64,7 +71,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/back_btn"
                 android:text="@string/action_sign_in"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 <TextView
     android:id="@+id/txtLoginInfo"
@@ -73,14 +83,34 @@
     android:text="@string/mobile_start_with09"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
-
+</LinearLayout>
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         android:visibility="gone" />
+<com.idpz.instacity.utils.CustomTextView
+    android:text="اگر منطقه شما در لیست وجود ندارد آنرا ثبت کنید"
+    android:textColor="@color/black"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginBottom="75dp"
+    android:textSize="16sp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/btnCityReg"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:background="@drawable/back_btn"
+        android:text="@string/add_city"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-</LinearLayout>
+</RelativeLayout>

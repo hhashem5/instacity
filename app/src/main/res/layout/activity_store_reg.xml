@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_job_reg"
     android:layout_width="match_parent"
@@ -8,47 +9,46 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MapCity.StoreRegActivity">
 
-    android:background="@drawable/bbb"
-    tools:context=".Search.StoreRegActivity">
-
-
+    <com.idpz.instacity.utils.CustomTextView
+        android:text="کسب و کار خود را در کشور معرفی کنید (هزینه 5000 تومان)"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <LinearLayout
         android:id="@+id/line1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="right"
+        android:layout_marginTop="20dp"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@id/imgShop"
+        android:layout_alignParentRight="true"
         android:orientation="horizontal">
+
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="5dp"
             android:inputType="textPersonName"
             android:text=""
-            android:textColor="@color/white"
+            android:ems="10"
+            android:textColor="@color/black"
             android:textColorHint="@color/grey"
-            android:hint="مثال: فروشگاه ثامن"
+            android:hint="نام واحد صنفی "
             android:layout_gravity="right"
             android:gravity="right"
+            android:layout_weight="1"
             android:id="@+id/txtShopName"
             />
 
-        <TextView
-            android:text="نام وحد صنفی"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob1"
-            android:textColor="@color/white"
-            android:layout_weight="1" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/line2"
         android:layout_below="@id/line1"
-        android:layout_toEndOf="@id/imgShop"
-
+        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -57,26 +57,18 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text=""
-            android:hint="نام و نام خانوادگی"
+            android:hint="نام و نام خانوادگی مالک"
             android:ems="10"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorHint="@color/grey"
-            android:id="@+id/txtShopOwner"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="مالک"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob2"
-            android:textColor="@color/white"
+            android:id="@+id/txtShopOwnerName"
             android:layout_weight="1" />
 
     </LinearLayout>
     <LinearLayout
         android:id="@+id/line3"
         android:layout_below="@id/line2"
-        android:layout_toEndOf="@id/btnShopPic"
+        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -85,25 +77,21 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text=""
+            android:hint="تلفن ثابت"
             android:ems="10"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorHint="@color/grey"
             android:id="@+id/txtShopTel"
             android:layout_weight="1" />
 
-        <TextView
-            android:text="تلفن ثابت"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob4"
-            android:textColor="@color/white"
-            android:layout_weight="1" />
+
 
     </LinearLayout>
     <LinearLayout
         android:id="@+id/line4"
         android:layout_below="@id/line3"
-        android:layout_width="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <EditText
@@ -111,18 +99,12 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text="09"
+            android:hint="@string/field_phone_number"
+            android:gravity="left"
             android:ems="10"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorHint="@color/grey"
             android:id="@+id/txtShopMobile"
-            android:layout_weight="1" />
-
-        <TextView
-            android:text="شماره همراه"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob5"
-            android:textColor="@color/white"
             android:layout_weight="1" />
 
     </LinearLayout>
@@ -137,20 +119,13 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text=""
-            android:hint="خیابان امام کوچه "
+            android:hint="آدرس"
             android:ems="10"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorHint="@color/grey"
             android:id="@+id/txtShopAddress"
             android:layout_weight="1" />
 
-        <TextView
-            android:text="آدرس"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob6"
-            android:textColor="@color/white"
-            android:layout_weight="1" />
 
     </LinearLayout>
     <LinearLayout
@@ -164,20 +139,13 @@
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text=""
-            android:hint="مثال: ابزار یراق لوازم_بهداشتی ساختمانی"
+            android:hint="نام کالا: کلمات راهنمای جستجو"
             android:ems="10"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorHint="@color/grey"
             android:id="@+id/txtShopKey"
             android:layout_weight="1" />
 
-        <TextView
-            android:text="کلیدواژه"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvJob7"
-            android:textColor="@color/white"
-            android:layout_weight="1" />
 
     </LinearLayout>
     <LinearLayout
@@ -185,7 +153,8 @@
         android:background="@drawable/white_trans_light_bottom"
         android:layout_below="@id/line6"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="40dp"
+        android:padding="5dp"
         android:orientation="horizontal">
         <Spinner
             android:layout_width="wrap_content"
@@ -193,9 +162,10 @@
             android:inputType="textPersonName"
             android:entries="@array/Store_tag"
             android:id="@+id/spnShopTag"
+
             android:layout_weight="1" />
 
-        <TextView
+        <com.idpz.instacity.utils.CustomTextView
             android:text="نوع مکان"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
@@ -231,12 +201,12 @@
 
     <Button
         android:text="تایید"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/txtJobStatus"
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"
-        android:background="@drawable/backblueround"
+        android:background="@drawable/back_btn"
 
         android:id="@+id/btnShopReg" />
 
@@ -245,10 +215,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/btnShopReg"
-
         android:gravity="center"
         android:text="@string/hoshdar"
-        android:textColor="@color/white" />
+        android:textColor="@color/black" />
 
     <TextView
         android:id="@+id/txtJobStatus"
@@ -260,10 +229,13 @@
 
     <ImageView
         android:id="@+id/imgShop"
+        android:layout_marginTop="35dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/noimage"
         android:layout_width="100dp"
         android:layout_height="100dp" />
+
     <TextView
         android:id="@+id/storeCode"
         android:layout_width="wrap_content"
@@ -275,7 +247,7 @@
         android:id="@+id/btnShopPic"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_below="@id/imgShop"
         android:textColor="@color/white"
         android:background="@drawable/backblueround"
@@ -285,8 +257,9 @@
         android:id="@+id/progressBar"
         android:layout_below="@id/btnShopReg"
         android:layout_centerHorizontal="true"
-        android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_marginTop="40dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
     <ListView
         android:id="@+id/lvMyShops"
         android:layout_below="@id/txtHoshdar"
@@ -299,14 +272,26 @@
         android:id="@+id/shop_fragment"
         android:layout_width="match_parent"
         android:layout_height="400dp"
+        android:visibility="gone"
         android:layout_alignParentTop="true" />
     <Button
         android:id="@+id/btnFinalShop"
-        android:text="تایید مکان فروشگاه"
+        android:text="تایید مکان فروشگاه و پرداخت"
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"
+        android:visibility="gone"
+        android:padding="5dp"
         android:layout_below="@id/shop_fragment"
         android:background="@drawable/backblueround"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/imgRetry"
+        android:src="@drawable/ic_refresh"
+        android:layout_below="@id/btnShopReg"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:layout_marginTop="40dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
 </RelativeLayout>

@@ -52,8 +52,8 @@ public class LikesActivity extends AppCompatActivity {
     TextView txtDisplayName,txtDescription, txtScore,txtTabUserName,txtMyMobile;
     CircleImageView imgProfile;
 
-    Boolean giftFlag=false,connected=false,moneyFlag=false;
-    String server="";
+    Boolean giftFlag=false,connected=false,moneyFlag=false,remain=true;
+    String state="";
 
 
     @Override
@@ -62,22 +62,20 @@ public class LikesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_like);
         Log.d(TAG, "onCreate: strating");
 
-
-
 //        setupBottomNavigationView();
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        server=SP1.getString("server", "0");
-        fullServer=server+"/i/gift.php";
+        state=SP1.getString("state", "0");
+        fullServer=getString(R.string.server)+"/j/gift.php";
 
         profileImgUrl = SP1.getString("pic", "0");
 
-        txtDisplayName= findViewById(R.id.txtDisplay_name);
-        txtDescription= findViewById(R.id.txtDescription);
-        txtScore = findViewById(R.id.txtMyScore);
-        txtMyMobile = findViewById(R.id.txtMyMobile);
-        txtTabUserName= findViewById(R.id.txtTabUsername);
-        imgProfile= findViewById(R.id.profile_photoLikes);
+        txtDisplayName=(TextView) findViewById(R.id.txtDisplay_name);
+        txtDescription=(TextView) findViewById(R.id.txtDescription);
+        txtScore =(TextView) findViewById(R.id.txtMyScore);
+        txtMyMobile =(TextView) findViewById(R.id.txtMyMobile);
+        txtTabUserName=(TextView) findViewById(R.id.txtTabUsername);
+        imgProfile=(CircleImageView) findViewById(R.id.profile_photoLikes);
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,23 +86,21 @@ public class LikesActivity extends AppCompatActivity {
         });
 
 
-        Glide.with(this).load(server+"/assets/images/users/"+profileImgUrl)
+        Glide.with(this).load(getString(R.string.server)+"/assets/images/users/"+profileImgUrl)
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(imgProfile);
 
         dataModels = new ArrayList<>();
-        lvGiftPlaces= findViewById(R.id.listPlaces);
+        dataModels.add(new GiftPlace(0,"مرکزی موجود نیست"," "," "," "," "," "));
+        lvGiftPlaces=(ListView) findViewById(R.id.listPlaces);
         giftPlacesAdapter=new GiftPlacesAdapter(this,dataModels);
         lvGiftPlaces.setAdapter(giftPlacesAdapter);
 
 
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String melli=SP.getString("melliid", "0");
-        if (melli.equals("0"))melli="بدون شماره ملی امکان دریافت جایزه نیست";
-        txtDescription.setText("شماره ملی:"+melli);
+        String melli=SP.getString("pass", "0");
+        if (melli.equals("0"))melli="کد دریافت جایزه:"+melli;
+        txtDescription.setText("کد دریافت جایزه:"+melli);
 
         int bonus=Integer.valueOf(SP.getString("money", "100"));
         txtScore.setText("امتیاز="+String.valueOf(bonus));
@@ -113,34 +109,8 @@ public class LikesActivity extends AppCompatActivity {
         mob=SP.getString("mobile", "");
         txtMyMobile.setText("شماره موبایل:"+mob);
 
-        new Thread() {
-            @Override
-            public void run() {
-                while (!giftFlag||!moneyFlag) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                            //we are connected to a network
-                            connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                                    connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
 
-                            if (connected && !giftFlag) {
-                                reqGifts();
-                            }
-
-
-                        }
-                    });
-                    try {
-                        sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
-
+            reqGifts();
 
 
 
@@ -148,7 +118,7 @@ public class LikesActivity extends AppCompatActivity {
     // تنظیم نوار پایین برنامه
     private void setupBottomNavigationView(){
         Log.d(TAG,"seting up bottom navigation view");
-        BottomNavigationViewEx bottomNavigationViewEx= findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx=(BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(LikesActivity.this,bottomNavigationViewEx);
         Menu menu=bottomNavigationViewEx.getMenu();
@@ -166,13 +136,14 @@ public class LikesActivity extends AppCompatActivity {
                     public void onResponse(String response) {
 
                         giftFlag=true;
-
-
+                        dataModels.clear();
+                        Log.d(TAG, "onResponse: Gifts="+response);
 
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = new JSONArray(response);
                             GiftPlace giftPlace;
+
                             JSONObject jsonObject = jsonArray.getJSONObject(0);
 
 
@@ -180,8 +151,11 @@ public class LikesActivity extends AppCompatActivity {
                                 jsonObject = jsonArray.getJSONObject(i - 1);
                                 giftPlace=new GiftPlace();
                                 giftPlace.setName(jsonObject.getString("name"));
-                                giftPlace.setDiscount(jsonObject.getString("discount"));
-                                giftPlace.setPic(server+"/img/places/"+jsonObject.getString("pic"));
+                                giftPlace.setTel(jsonObject.getString("tel"));
+                                giftPlace.setAddress(jsonObject.getString("address"));
+                                giftPlace.setScore(jsonObject.getString("discount"));
+                                giftPlace.setDiscount(jsonObject.getString("score"));
+                                giftPlace.setPic(getString(R.string.server)+"/assets/images/places/"+jsonObject.getString("pic"));
                                 giftPlace.setId(jsonObject.getInt("id"));
 
 
@@ -213,7 +187,7 @@ public class LikesActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
-//                params.put("table", "govs");
+                params.put("state", state);
 //                params.put("limit", "20");
                 return params;
             }
@@ -223,7 +197,7 @@ public class LikesActivity extends AppCompatActivity {
     }
     public void reqScore() {
         RequestQueue queue = Volley.newRequestQueue(LikesActivity.this);
-        String url = server+"/i/score.php";
+        String url = getString(R.string.server)+"/j/score.php";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -271,6 +245,7 @@ public class LikesActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("ph", mob);
+                params.put("state", state);
                 return params;
             }
         };

@@ -3,8 +3,6 @@ package com.idpz.instacity.Home;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,13 +17,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -38,22 +34,18 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
-import com.idpz.instacity.Like.TourismActivity;
+import com.idpz.instacity.Travel.TourismActivity;
 import com.idpz.instacity.Profile.ChangeCityActivity;
 import com.idpz.instacity.Profile.LikesActivity;
 import com.idpz.instacity.Profile.MyProfileActivity;
 import com.idpz.instacity.R;
-import com.idpz.instacity.Search.SearchActivity;
+import com.idpz.instacity.MapCity.SearchActivity;
 import com.idpz.instacity.Share.GalleryActivity;
 import com.idpz.instacity.models.MyWeather;
 import com.idpz.instacity.models.VisitPlace;
-import com.idpz.instacity.models.Weather;
 import com.idpz.instacity.utils.BuilderManager;
-import com.idpz.instacity.utils.JSONWeatherParser;
-import com.idpz.instacity.utils.VideoPostAdapter;
 import com.idpz.instacity.utils.VisitPlacesAdapter;
 import com.idpz.instacity.utils.WeatherAdapter;
-import com.idpz.instacity.utils.WeatherHttpClient;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomMenuButton;
@@ -69,7 +61,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,8 +76,7 @@ public class MainFragment extends Fragment {
 
     ArrayList<MyWeather> weatherModels;
     ArrayList<VisitPlace> dataModels;
-    //    DBLastData dbLastData;
-    VideoPostAdapter videoPostAdapter;
+
     private static final String API = "https://api.darksky.net/forecast/674956b88e8f6ab8cf03d9533490ff87/";
     String coords = "",darkCoords = "", extra = "?lang=en&units=si&exclude=hourly,flags";
 
@@ -99,7 +89,7 @@ public class MainFragment extends Fragment {
     int failCount=0;
     TextView cityField, detailsField, currentTemperatureField, humidity_field, pressure_field, weatherIcon, updatedField;
     TextView txtWind, txtMax;
-    ImageView imgWeather,imgError;
+    ImageView imgError;
     Typeface weatherFont;
     ListView lvVisitPlaces, lvForecast;
     VisitPlacesAdapter visitPlacesAdapter;
@@ -118,7 +108,7 @@ public class MainFragment extends Fragment {
         final SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
         server = SP1.getString("server", "0");
-        fullServer = server + "/i/getvisitplace.php";
+        fullServer = getString(R.string.server)+"/j/getvisitplace.php";
         homeLat = SP1.getString("homelat", "0");
         homeLng = SP1.getString("homelng", "0");
         ctpic = SP1.getString("ctpic", "0");
@@ -126,6 +116,7 @@ public class MainFragment extends Fragment {
         ctname = SP1.getString("ctname", "");
 //        remain = SP1.getBoolean("connected", false);
         firstTime = SP1.getBoolean("firsttime", true);
+
         btnCars = view.findViewById(R.id.btnCars);
         btntourism = view.findViewById(R.id.btnTourism);
         btnHandyCraft = view.findViewById(R.id.btnHandyCarft);
@@ -136,17 +127,19 @@ public class MainFragment extends Fragment {
         coords = "lat="+homeLat + "&lon=" + homeLng+"&appid=0b9a46a0c6f55b8795adcfd9d3e28d36&lang=fa&units=metric";
         darkCoords=homeLat+","+homeLng;
         txtMax = view.findViewById(R.id.max_field);
-//        txtMin=(TextView)view.findViewById(R.id.min_field);
         txtWind = view.findViewById(R.id.speed_field);
         weatherFont = Typeface.createFromAsset(getContext().getAssets(), "fonts/weathericons-regular-webfont.ttf");
-        imgWeather = view.findViewById(R.id.imgWeather);
+
         cityField = view.findViewById(R.id.city_field);
         updatedField = view.findViewById(R.id.updated_field);
-//        detailsField = (TextView)view.findViewById(R.id.details_field);
         currentTemperatureField = view.findViewById(R.id.current_temperature_field);
         humidity_field = view.findViewById(R.id.humidity_field);
+
+        cityField.setText(ctname);
+
+//        txtMin=(TextView)view.findViewById(R.id.min_field);
+//        detailsField = (TextView)view.findViewById(R.id.details_field);
 //        pressure_field = (TextView)view.findViewById(R.id.pressure_field);
-        weatherIcon = view.findViewById(R.id.weather_icon);
 //        weatherIcon.setTypeface(weatherFont);
 //        txtMax.setTypeface(yekan);
 //        txtWind.setTypeface(yekan);
@@ -157,7 +150,7 @@ public class MainFragment extends Fragment {
 //        weatherIcon.setTypeface(weatherFont);
 //        txtMax.setTypeface(yekan);
 //        txtMax.setTypeface(yekan);
-        cityField.setText(ctname);
+
 
         imgRetry.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,26 +207,24 @@ public class MainFragment extends Fragment {
         });
 
         // tourist visit places list view
-        dataModels = new ArrayList<>();
-        lvVisitPlaces = view.findViewById(R.id.lvVisitPlaces);
-        visitPlacesAdapter = new VisitPlacesAdapter(getActivity(), dataModels);
-        lvVisitPlaces.setAdapter(visitPlacesAdapter);
+//        dataModels = new ArrayList<>();
+//        lvVisitPlaces = view.findViewById(R.id.lvVisitPlaces);
+//        visitPlacesAdapter = new VisitPlacesAdapter(getActivity(), dataModels);
+//        lvVisitPlaces.setAdapter(visitPlacesAdapter);
 
         // weather forecast list view
-        weatherModels = new ArrayList<>();
-        lvForecast = view.findViewById(R.id.lvForecast);
-        weatherAdapter = new WeatherAdapter(getActivity(), weatherModels);
-        lvForecast.setAdapter(weatherAdapter);
+//        weatherModels = new ArrayList<>();
+//        lvForecast = view.findViewById(R.id.lvForecast);
+//        weatherAdapter = new WeatherAdapter(getActivity(), weatherModels);
+//        lvForecast.setAdapter(weatherAdapter);
 
-        lvForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getContext(), "وضعیت هوا:"+weatherModels.get(position).getSummary(), Toast.LENGTH_SHORT).show();
-            }
-        });
+//        lvForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getContext(), "وضعیت هوا:"+weatherModels.get(position).getSummary(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
-        TextView txtForecast = view.findViewById(R.id.txtForecast);
-        txtForecast.setText("↓ پیش بینی هوای روزهای آینده ↓");
 
         SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
         SP.putString("tabpos", "1");
@@ -309,7 +300,7 @@ public class MainFragment extends Fragment {
                             SP.apply();
 //                            intent0.putExtra("position", 0); //          137
 //                            startActivity(intent0);
-                            ((HomeActivity) getActivity()).tabselect();
+//                            ((HomeActivity) getActivity()).tabselect();
                             break;
 
                     }
@@ -324,11 +315,11 @@ public class MainFragment extends Fragment {
 
 
 
-                            if (isConnected()) {
-                                 reqVisitPlace();
+//                            if (isConnected()) {
+//                                 reqVisitPlace();
 //                                JSONWeatherTask task = new JSONWeatherTask();
 //                                task.execute(new String[]{coords});
-                            }
+//                            }
 
         imgError.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -424,54 +415,54 @@ public class MainFragment extends Fragment {
 
     }
 
-
-    private void renderWeather(JSONObject json) {
-        weatherFlag = true;
-
-        try {
-            //detailsField.setText("");
-            //cityField.setText("");
-            Calendar calendar = Calendar.getInstance();
-            int today = calendar.get(Calendar.DAY_OF_WEEK);
-            JSONObject today_array = json.getJSONObject("currently");
-//            txtMin.setText("↓ "+today_array.getString("summary")+" ");
-            findSky(today_array.getString("summary"));
-            txtMax.setText("UV:" + today_array.getString("uvIndex") + " ");
-            txtWind.setText(today_array.getString("windSpeed") + "km");
-            updatedField.setText(tarjomeh(today_array.getString("summary")));
-            currentTemperatureField.setText(today_array.getString("temperature"));
-            humidity_field.setText(today_array.getString("humidity").substring(2, 4) + "%");
-
-//            String[] pdays = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
-            String[] days = {"یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"};
-            JSONArray data_array = json.getJSONObject("daily").getJSONArray("data");
-
-            for (int i = 0; i < 7; i++) {
-
-                JSONObject item = data_array.getJSONObject(i);
-                MyWeather weather = new MyWeather();
-                weather.setDay(days[(today + i) % 7]);
-                weather.setSummary(tarjomeh(item.getString("summary")));
-                weather.setIcon(String.valueOf(findIco(item.getString("icon"))));
-                weather.setMaxTemp(item.getString("temperatureHigh").substring(0, 2));
-                weather.setMintemp(item.getString("temperatureLow").substring(0, 2));
-                weather.setWind(item.getString("windSpeed").substring(0, 3) + "km");
-                weather.setHumidity(item.getString("humidity"));
-
-                weatherModels.add(weather);
-                weatherAdapter.notifyDataSetChanged();
-//                Log.d(TAG, "renderWeather:0 "+weather.getSummary()+" icon= "+weather.getIcon()+" temp hi:"+weather.getMaxTemp()+" Lo:"+weather.getMintemp()+weather.getWind()+weather.getHumidity() );
-
-            }
-
-
-        } catch (Exception e) {
-            Log.e("SimpleWeather", "One or more fields not found in the JSON data \n" + API + darkCoords + extra + "\n" + e.toString());
-            failCount++;
-
-
-        }
-    }
+//
+//    private void renderWeather(JSONObject json) {
+//        weatherFlag = true;
+//
+//        try {
+//            //detailsField.setText("");
+//            //cityField.setText("");
+//            Calendar calendar = Calendar.getInstance();
+//            int today = calendar.get(Calendar.DAY_OF_WEEK);
+//            JSONObject today_array = json.getJSONObject("currently");
+////            txtMin.setText("↓ "+today_array.getString("summary")+" ");
+////            findSky(today_array.getString("summary"));
+////            txtMax.setText("UV:" + today_array.getString("uvIndex") + " ");
+////            txtWind.setText(today_array.getString("windSpeed") + "km");
+////            updatedField.setText(tarjomeh(today_array.getString("summary")));
+////            currentTemperatureField.setText(today_array.getString("temperature"));
+////            humidity_field.setText(today_array.getString("humidity").substring(2, 4) + "%");
+//
+////            String[] pdays = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+//            String[] days = {"یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"};
+//            JSONArray data_array = json.getJSONObject("daily").getJSONArray("data");
+//
+//            for (int i = 0; i < 7; i++) {
+//
+//                JSONObject item = data_array.getJSONObject(i);
+//                MyWeather weather = new MyWeather();
+//                weather.setDay(days[(today + i) % 7]);
+//                weather.setSummary(tarjomeh(item.getString("summary")));
+//                weather.setIcon(String.valueOf(findIco(item.getString("icon"))));
+//                weather.setMaxTemp(item.getString("temperatureHigh").substring(0, 2));
+//                weather.setMintemp(item.getString("temperatureLow").substring(0, 2));
+//                weather.setWind(item.getString("windSpeed").substring(0, 3) + "km");
+//                weather.setHumidity(item.getString("humidity"));
+//
+//                weatherModels.add(weather);
+//                weatherAdapter.notifyDataSetChanged();
+////                Log.d(TAG, "renderWeather:0 "+weather.getSummary()+" icon= "+weather.getIcon()+" temp hi:"+weather.getMaxTemp()+" Lo:"+weather.getMintemp()+weather.getWind()+weather.getHumidity() );
+//
+//            }
+//
+//
+//        } catch (Exception e) {
+//            Log.e("SimpleWeather", "One or more fields not found in the JSON data \n" + API + darkCoords + extra + "\n" + e.toString());
+//            failCount++;
+//
+//
+//        }
+//    }
 
 //    public JSONObject getJSON() {
 //
@@ -551,7 +542,7 @@ public class MainFragment extends Fragment {
                 protected void onPostExecute(JSONObject result) {
                     // execution of result of Long time consuming operation
 //                    progressDialog.dismiss();
-                    renderWeather(result);
+//                    renderWeather(result);
                 }
 
 
@@ -734,163 +725,7 @@ public class MainFragment extends Fragment {
     }
 
 
-    private int findIco(String trans) {
-        trans = trans.toLowerCase();
 
-
-        if (trans.contains("scattered"))
-            return R.drawable.iscloudy;
-
-        if (trans.contains("partly cloudy"))
-            return R.drawable.ipcloudy;
-
-        if (trans.contains("mostly cloudy"))
-            return R.drawable.imcloudy;
-
-        if (trans.contains("shower"))
-            return R.drawable.ishower;
-
-        if (trans.contains("light rain"))
-            return R.drawable.irain;
-
-        if (trans.contains("rain"))
-            return R.drawable.irain;
-
-        if (trans.contains("storm"))
-            return R.drawable.ithunder;
-
-        if (trans.contains("snow"))
-            return R.drawable.isnow;
-
-        if (trans.contains("clear"))
-            return R.drawable.isunny;
-
-        if (trans.contains("mist")) {
-            return R.drawable.imcloudy;
-        } else {
-
-            return R.drawable.imcloudy;
-
-        }
-
-
-    }
-
-    public String tarjomeh(String str1) {
-        str1 = str1.toLowerCase();
-        String[] find = {"mist", "snow", "thunderstorm", "fogy", "rain", "light", "shower", "broken", "cloudy", "clear", "sky", "today", "morning", "afternoon", "night", "evening",
-                "later", "tomorrow", "in the", "during", "heavy", "medium", "possible", "very", "sleet", "centimeters", "wind", "humidity", "fog", "less-than", "low", "high",
-                "starting", "throughout", "mostly", "the", "day", "partly", "mostly", "continuing", "until", "haze","drizzle","breezy","and"};
-        String[] replace = {"مه", "برف", "طوفان", "مه", "باران", "بارش آرام", "شدید", "تکه ای", "ابری", "صاف", "آسمان", "امروز", "صبح", "بعدظهر", "شب", "غروب",
-                "بعد", "فردا", "در", "طول", "سنگین", "متوسط", "احتمال", "زیاد", "بوران", "سانت", "باد", "رطوبت", "مه", "کمتراز", "کم",
-                "زیاد", "شروع", "تمام", "بیشتر", "", "روز", "قسمتی", "بیشتر", "ادامه دارد", "تا", "مه خفیف","باران خفیف","باد ملایم","و"};
-
-        for (int i = 0; i < find.length; i++) {
-            str1 = str1.replace(find[i], replace[i]);
-        }
-        return str1;
-    }
-
-public void findSky(String trans) {
-    trans = trans.toLowerCase();
-
-    if (trans.contains("scattered"))
-        imgWeather.setImageResource(R.drawable.partlycloudy);
-
-    if (trans.contains("partly cloudy"))
-        imgWeather.setImageResource(R.drawable.partlycloudy);
-
-    if (trans.contains("mostly cloudy"))
-        imgWeather.setImageResource(R.drawable.scatteredclouds);
-
-    if (trans.contains("shower"))
-        imgWeather.setImageResource(R.drawable.rainshower);
-
-    if (trans.contains("light rain"))
-        imgWeather.setImageResource(R.drawable.rainshower);
-
-    if (trans.contains("rain"))
-        imgWeather.setImageResource(R.drawable.rainshower);
-
-    if (trans.contains("storm"))
-        imgWeather.setImageResource(R.drawable.thunderstorm);
-
-    if (trans.contains("snow"))
-        imgWeather.setImageResource(R.drawable.snow);
-
-    if (trans.contains("clear"))
-        imgWeather.setImageResource(R.drawable.sunny);
-
-    if (trans.contains("mist")) {
-        imgWeather.setImageResource(R.drawable.mist);
-    } else {
-
-        imgWeather.setImageResource(R.drawable.partlycloudy);
-
-    }
-
-}
-
-//    public void reqWeather() {
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//            }
-//        }).start();
-//    }
-
-
-    private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
-
-        @Override
-        protected Weather doInBackground(String... params) {
-            Weather weather = new Weather();
-            String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
-
-            try {
-                weather = JSONWeatherParser.getWeather(data);
-
-                // Let's retrieve the icon
-                weather.iconData = ( (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return weather;
-
-        }
-
-
-
-
-        @Override
-        protected void onPostExecute(Weather weather) {
-            super.onPostExecute(weather);
-
-            if (weather.iconData != null && weather.iconData.length > 0) {
-                Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
-                imgWeather.setImageBitmap(img);
-            }
-
-//            cityField.setText(weather.location.getCity() + "," + weather.location.getCountry());
-                updatedField.setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
-            currentTemperatureField.setText("" + Math.round((weather.temperature.getTemp() - 273.15)) + "�C");
-            humidity_field.setText("" + weather.currentCondition.getHumidity() + "%");
-//            pressure_field.setText("" + weather.currentCondition.getPressure() + " hPa");
-            txtWind.setText("" + weather.wind.getSpeed() + " km");
-            txtMax.setText("" + weather.wind.getDeg() + "�");
-
-        }
-
-
-
-
-
-
-
-    }
 
 
 

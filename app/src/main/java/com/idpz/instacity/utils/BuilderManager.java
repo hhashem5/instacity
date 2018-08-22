@@ -17,24 +17,25 @@ import com.nightonke.boommenu.BoomButtons.TextOutsideCircleButton;
 public class BuilderManager {
 
     private static int[] imageResources = new int[]{
+            R.drawable.pottery,
+            R.drawable.smartcars,
+            R.drawable.localplaces,
+            R.drawable.vector_heart_red,
             R.drawable.sad,
-            R.drawable.msg,
-            R.drawable.myprofile,
-            R.drawable.giftl,
-            R.drawable.map,
-            R.drawable.video,
+            R.drawable.localads,
+            R.drawable.localnews,
+            R.drawable.media,
+            R.drawable.citychange,
+            R.drawable.pottery,
+            R.drawable.smartcars,
+            R.drawable.localplaces,
+            R.drawable.vector_heart_red,
             R.drawable.sad,
-            R.drawable.msg,
-            R.drawable.myprofile,
-            R.drawable.giftl,
-            R.drawable.map,
-            R.drawable.video,
-            R.drawable.sad,
-            R.drawable.msg,
-            R.drawable.myprofile,
-            R.drawable.giftl,
-            R.drawable.map,
-            R.drawable.video
+            R.drawable.localads,
+            R.drawable.localnews,
+            R.drawable.media,
+            R.drawable.localweather,
+
     };
     private static int[] textreses=new int[]{
             R.string.app_name,

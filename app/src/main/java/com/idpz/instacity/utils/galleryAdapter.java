@@ -69,9 +69,7 @@ public class galleryAdapter extends BaseAdapter {
         // thumbnail image
         Glide.with(activity).load(m.getPostImageUrl())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
+                .placeholder(R.drawable.iloading)
                 .into(image);
 
         image.setOnClickListener(new View.OnClickListener() {

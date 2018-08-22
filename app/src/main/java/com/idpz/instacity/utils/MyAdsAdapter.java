@@ -26,8 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.idpz.instacity.Like.AdsAddActivity;
+import com.idpz.instacity.Travel.AdsAddActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Ads;
 
@@ -41,7 +40,7 @@ public class MyAdsAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<Ads> adsList;
-    String server="",delArtPath="";
+    String state="",delArtPath="";
     private Context context;
 
     public MyAdsAdapter(Activity activity, List<Ads> adsList,Context context) {
@@ -69,8 +68,8 @@ public class MyAdsAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(activity);
-        server=SP1.getString("server", "0");
-        delArtPath=server+"/i/delart.php";
+        state=SP1.getString("state", "050001");
+        delArtPath=context.getString(R.string.server)+"/j/delart.php";
         if (inflater == null)
             inflater = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -90,9 +89,6 @@ public class MyAdsAdapter extends BaseAdapter {
 
         Glide.with(activity).load(m.getPic())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(thumbNail);
 
         // title
@@ -161,6 +157,7 @@ public class MyAdsAdapter extends BaseAdapter {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
 
+                params.put("state", state);
                 params.put("id", id);
                 params.put("owner", mobile);
                 params.put("table", "ads");

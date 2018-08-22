@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white_trans_border_bottom"
+    >
+
+        <ImageView
+            android:id="@+id/imgPlace"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/noimage"
+            />
+
+
+    <TextView
+        android:id="@+id/textPlaceTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#403c70e0"
+        android:layout_above="@+id/textPlaceYear"
+        android:layout_alignParentEnd="true"
+        android:text="نام مکان"
+        android:layout_marginEnd="5dp"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+    <TextView
+        android:id="@+id/textPlaceYear"
+        android:text="تاسیس یا قدمت"
+        android:background="#403c70e0"
+        android:textColor="@color/white"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/imgPlace"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
     <ScrollView
         android:layout_width="fill_parent"
         android:background="@drawable/bbb"
@@ -77,7 +78,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp" />
             <TextView
-                android:id="@+id/textPlaceTicket"
+                android:id="@+id/textPlaceTypeRow"
                 android:text="بلیط رایگان"
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/white"
@@ -88,7 +89,7 @@
                 android:id="@+id/imgPlaceDays"
                 android:src="@drawable/ic_cal"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/textPlaceTicket"
+                android:layout_below="@id/textPlaceTypeRow"
                 android:layout_width="20dp"
                 android:layout_height="20dp" />
             <TextView
@@ -97,7 +98,7 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/white"
                 android:layout_toLeftOf="@id/imgPlaceDays"
-                android:layout_below="@id/textPlaceTicket"
+                android:layout_below="@id/textPlaceTypeRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <ImageView
@@ -168,7 +169,8 @@
     android:text="برو به منطقه"
     android:layout_below="@id/textPlaceMemo"
     android:background="@drawable/white_trans_border_bottom"
-    android:layout_marginLeft="50dp"
+    android:layout_marginStart="50dp"
+    android:layout_alignParentStart="true"
     android:textColor="@color/white"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
@@ -178,8 +180,8 @@
         android:text="نمایش در نقشه"
         android:layout_below="@id/textPlaceMemo"
         android:background="@drawable/white_trans_border_bottom"
-        android:layout_marginRight="50dp"
-        android:layout_alignParentRight="true"
+        android:layout_marginEnd="50dp"
+        android:layout_alignParentEnd="true"
         android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -187,5 +189,11 @@
 
         </RelativeLayout>
     </ScrollView>
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:visibility="gone"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
 </RelativeLayout>

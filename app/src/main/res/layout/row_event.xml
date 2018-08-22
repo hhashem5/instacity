@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:weightSum="10"
+    android:gravity="right"
+    android:layout_height="wrap_content">
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtEventDate"
+        android:text=" 12 الی 20 بهمن"
+        android:textSize="14sp"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/white"
+        android:layout_weight="5"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_toRightOf="@id/txtEventDate"
+        android:src="@drawable/ic_cal"
+        android:layout_alignParentTop="true"
+
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+
+
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtEventName"
+        android:layout_margin="5dp"
+        android:text="مسابقه عکاسی"
+        android:textSize="14sp"
+        android:layout_weight="5"
+        android:textColor="@color/white"
+        android:layout_alignParentRight="true"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+
+
+</LinearLayout>

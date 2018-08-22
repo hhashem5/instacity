@@ -75,9 +75,7 @@ public class NewsAdapter extends BaseAdapter {
         // thumbnail image
         Glide.with(activity).load(m.getPostImageUrl())
                 .thumbnail(0.5f)
-                .crossFade()
-                .placeholder(R.drawable.nopic)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_empty)
                 .into(thumbNail);
 
 

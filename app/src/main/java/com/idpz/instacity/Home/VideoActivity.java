@@ -1,6 +1,7 @@
 package com.idpz.instacity.Home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -23,7 +25,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.idpz.instacity.Profile.ProfileActivity;
 import com.idpz.instacity.R;
+import com.idpz.instacity.Share.PopupActivity;
 import com.idpz.instacity.models.Video;
 import com.idpz.instacity.utils.VideoPostAdapter;
 
@@ -60,24 +64,24 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
         setContentView(R.layout.activity_video);
 
 
-        swipeRefreshLayout = findViewById(R.id.videorefresh);
+        swipeRefreshLayout =(SwipeRefreshLayout) findViewById(R.id.videorefresh);
         swipeRefreshLayout.setOnRefreshListener(this);
-        imgRetry= findViewById(R.id.imgVideoRetry);
-        progressBar= findViewById(R.id.progressVideo);
+        imgRetry=(ImageView) findViewById(R.id.imgVideoRetry);
+        progressBar=(ProgressBar) findViewById(R.id.progressVideo);
 
 
 
-        lvVideoPost = findViewById(R.id.lvVideoContent);
+        lvVideoPost =(ListView) findViewById(R.id.lvVideoContent);
 //        pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
         videoPostAdapter = new VideoPostAdapter(this, dataModels);
-        videoView = findViewById(R.id.vidPostVideo);
+        videoView =(VideoView) findViewById(R.id.vidPostVideo);
 //        pd.show();
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(this);
         server=SP1.getString("server", "0");
-        fullServer = server+"/i/videoread.php";
+        fullServer = getString(R.string.server)+"/j/videoread.php";
         lvVideoPost.setAdapter(videoPostAdapter);
 
 
@@ -122,7 +126,20 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
             }
         });
 
+lvVideoPost.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        Intent popup=new Intent(VideoActivity.this,SingleVideoActivity.class);
+        popup.putExtra("title", dataModels.get(position).getTitle());
+        popup.putExtra("pic", dataModels.get(position).getPic());
+        popup.putExtra("url", dataModels.get(position).getVideoUrl());
+        popup.putExtra("comment",dataModels.get(position).getComment() );
+        popup.putExtra("detail", dataModels.get(position).getDetail());
+        startActivity(popup);
+
+    }
+});
 
 
     }
@@ -157,6 +174,7 @@ public class VideoActivity extends AppCompatActivity  implements SwipeRefreshLay
                                 jsonObject = jsonArray.getJSONObject(i - 1);
                                 video=new Video();
                                 video.setId(jsonObject.getInt("id"));
+                                video.setPic(getString(R.string.server)+"/assets/images/videos/"+jsonObject.getString("pic"));
                                 video.setTitle(jsonObject.getString("title"));
                                 video.setVideoUrl(jsonObject.getString("url"));
                                 video.setComment(jsonObject.getString("comment"));

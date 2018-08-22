@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="@drawable/white_gray_border_top"
+    android:layout_margin="5dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 <LinearLayout
     android:layout_width="match_parent"
     android:orientation="horizontal"
     android:weightSum="100"
+    android:padding="5dp"
     android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,9 +32,9 @@
         android:gravity="right"
         android:layout_weight="30"
         android:layout_height="wrap_content">
-        <TextView
+        <com.idpz.instacity.utils.CustomTextView
             android:id="@+id/txtGiftPlaceName"
-            android:textSize="22sp"
+            android:textSize="18sp"
             android:text="فروشگاه"
             android:layout_gravity="right"
             android:textColor="@color/black"
@@ -43,7 +44,7 @@
         <TextView
             android:id="@+id/txtGiftDiscount"
             android:text="تخفیف 10% امتیاز 500"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

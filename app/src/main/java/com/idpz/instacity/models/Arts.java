@@ -18,11 +18,17 @@ public class Arts {
     private String memo;
     private String pic;
     private String stamp;
+    private String alat;
+    private String alng;
+    private String aename;
+    private String afname;
+    private String state;
 
     public Arts() {
     }
 
-    public Arts(int id, String owner, String code, String name, String type, String weight, String material, String color, String price, String memo, String pic, String stamp) {
+    public Arts(int id, String owner, String code, String name, String type, String weight, String material,
+                String color, String price, String memo, String pic, String stamp,String alat,String alng,String aename,String afname,String state) {
         this.id = id;
         this.owner = owner;
         this.code = code;
@@ -35,6 +41,11 @@ public class Arts {
         this.memo = memo;
         this.pic = pic;
         this.stamp = stamp;
+        this.alat = alat;
+        this.alng = alng;
+        this.aename = aename;
+        this.afname = afname;
+        this.state = state;
     }
 
     public int getId() {
@@ -131,5 +142,45 @@ public class Arts {
 
     public void setStamp(String stamp) {
         this.stamp = stamp;
+    }
+
+    public String getAlat() {
+        return alat;
+    }
+
+    public void setAlat(String alat) {
+        this.alat = alat;
+    }
+
+    public String getAlng() {
+        return alng;
+    }
+
+    public void setAlng(String alng) {
+        this.alng = alng;
+    }
+
+    public String getAename() {
+        return aename;
+    }
+
+    public void setAename(String aename) {
+        this.aename = aename;
+    }
+
+    public String getAfname() {
+        return afname;
+    }
+
+    public void setAfname(String afname) {
+        this.afname = afname;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

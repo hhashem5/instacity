@@ -60,7 +60,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp" />
             <TextView
-                android:id="@+id/textPlaceTicket"
+                android:id="@+id/textPlaceTypeRow"
                 android:text="هر شب تا 10 نفر 500000تومان"
                 android:layout_marginLeft="10dp"
                 android:layout_below="@id/textPlaceYear"
@@ -72,7 +72,7 @@
                 android:id="@+id/imgPlaceDays"
                 android:src="@drawable/ic_cal"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/textPlaceTicket"
+                android:layout_below="@id/textPlaceTypeRow"
                 android:layout_width="20dp"
                 android:layout_height="20dp" />
             <TextView
@@ -81,7 +81,7 @@
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/white"
                 android:layout_toLeftOf="@id/imgPlaceDays"
-                android:layout_below="@id/textPlaceTicket"
+                android:layout_below="@id/textPlaceTypeRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <ImageView

@@ -8,6 +8,31 @@
     android:layout_height="match_parent"
     android:background="@drawable/bbb"
     tools:context="com.idpz.instacity.Profile.ChangeCityActivity">
+    <LinearLayout
+        android:id="@+id/lineCity"
+        android:background="@drawable/white_trans_light_bottom"
+        android:layout_below="@id/linForm"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/spnOstan"
+            android:layout_weight="1" />
+
+        <com.idpz.instacity.utils.CustomTextView
+            android:text="استان"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob8"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/black"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,20 +69,39 @@
         android:id="@+id/acTxtView"
         android:layout_weight="1"
         android:layout_width="150dp"
+        android:hint="@string/select_city"
         android:layout_height="wrap_content" />
 </LinearLayout>
 
 
 
     </LinearLayout>
-    <Button
-        android:id="@+id/btnChangeCityChange"
-        android:text="تغییر شهر"
-        android:layout_gravity="center"
-        android:textColor="@color/white"
-        android:background="@drawable/white_trans_border_bottom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnChangeCityChange"
+            android:text="تغییر شهر"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"
+            android:background="@drawable/back_btn"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnCityReg"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="3dp"
+            android:background="@drawable/back_btn"
+            android:text="@string/add_city"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </LinearLayout>
 
         <LinearLayout
             android:orientation="vertical"

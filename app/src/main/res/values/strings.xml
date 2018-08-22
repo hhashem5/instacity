@@ -1,27 +1,61 @@
 <resources>
     <string name="app_name">دهکده هوشمند</string>
     <string name="server">http://idpz.ir</string>
+
     <string name="title_activity_search">نقشه</string>
     <string name="edit_profile">ویرایش پروفایل</string>
     <string name="sign_out">خروج از حساب کاربری</string>
     <string name="upload_send_pic">ارسال عکس</string>
     <string name="upload_select_pic">انتخاب عکس</string>
     <string name="title_activity_login">ورود</string>
+    <string name="contact_us">تماس با ما</string>
+    <string name="complain">شکایت</string>
+
+    <string name="ok">تایید</string>
+    <string name="no_internet">به نظر میاد اینترنت دستگاه وصل نیست</string>
+    <string name="select_on_map">موقعیت را روی نقشه انتخاب کنید</string>
+    <string name="subscribe_successfully">با موفقیت به کانال وصل شدید</string>
+    <string name="subscribe_progress_dialog_message">درحال اتصال به کانال</string>
+
 
     <!-- Strings related to login -->
     <string name="prompt_email">شماره موبایل</string>
     <string name="prompt_password">کلمه عبور</string>
     <string name="action_sign_in">ورود</string>
+    <string name="add_city">شهر/روستای جدید</string>
     <string name="action_sign_up">ثبت نام</string>
     <string name="action_sign_in_short">ورود</string>
     <string name="city_search">جستجوی شهر</string>
     <string name="mobile_start_with09">شماره موبایل را با 09 شروع کنید</string>
-    <string name="select_city">لطفا شهر یا روستای خود را انتخاب کنید</string>
+    <string name="select_city">جستجوی منطقه</string>
+    <string name="select_pic">انتخاب عکس</string>
     <string name="action_sign_out_short">خروج</string>
     <string name="error_invalid_email">این موبایل معتبر نیست</string>
     <string name="error_invalid_password">کلمه عبور کوتاه است</string>
     <string name="error_incorrect_password">کلمه عبور کوتاه است</string>
     <string name="error_field_required">این قسمت اجباریست</string>
+
+
+    <string name="receiving_forecast">دریافت آب و هوا</string>
+    <string name="tempreture">دمای هوا</string>
+    <string name="humidity">رطوبت</string>
+    <string name="max_temp">حداکثر</string>
+    <string name="min_temp">حداقل </string>
+    <string name="wind_speed">سرعت باد</string>
+    <string name="next_day_forecast">پیش بینی هوای روزهای آینده</string>
+
+
+    <string name="text">Squid blog crucifix Marfa, consectetur vero placeat mixtape. Non seitan sriracha eu, do Banksy fashion axe cred qui vegan delectus consequat Helvetica mollit. XOXO gluten-free disrupt, gastropub officia cliche chillwave hella pop-up. Fixie swag raw denim, YOLO craft beer assumenda occupy veniam photo booth pug consectetur next level Portland tote bag +1. Mlkshk PBR aliquip placeat Wes Anderson.</string>
+    <string name="title">My Description</string>
+    <string name="context_menu">Context menu</string>
+
+
+    <string name="health">سلامت</string>
+    <string name="bank">پست بانک</string>
+    <string name="consult">مشاوره</string>
+    <string name="insurance">بیمه</string>
+
+
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -36,10 +70,14 @@
 
     <!-- dialog names -->
     <string name="confirm_password_dialog">تایید رمز ورود</string>
+    <string name="result">نتیجه</string>
+    <string name="search">جستجو</string>
+
 
     <!-- Firebase messages -->
     <string name="auth_failed">خطا در تایید اعتبار</string>
     <string name="auth_success">اعتبار تایید شد</string>
+
 
     <!-- Firebase database fields -->
     <string name="dbname_users">users</string>
@@ -53,7 +91,7 @@
     <string name="field_display_name">display_name</string>
     <string name="field_website">website</string>
     <string name="field_description">description</string>
-    <string name="field_phone_number">phone_number</string>
+    <string name="field_phone_number">شماره موبایل</string>
     <string name="field_user_id">user_id</string>
     <string name="field_likes">likes</string>
     <string name="field_caption">caption</string>
@@ -67,6 +105,22 @@
     <!-- photo types -->
     <string name="new_photo">new_photo</string>
     <string name="profile_photo">profile_photo</string>
+
+    <string name="social_send">ارسال پیام شهروندی</string>
+    <string name="social_message">متن  پیام </string>
+    <string name="social_receiver">گیرنده  پیام </string>
+    <string name="social_send_now">ارسال  پیام </string>
+    <string name="tanx_social"> از مشارکت شما متشکریم </string>
+    <string name="social_help"> برای پیگیری مطلب ارسالی از قسمت پروفایل اقدام کنید.
+        \n
+    بزودی مطلب شما بررسی می شود.
+        \n
+    درصورتیکه پیام شما برای سایرین نیز مناسب باشد به اشتراک گذاری خواهد شد.
+
+    </string>
+    <string name="social_help1">  بزودی مطلب شما بررسی می شود.   </string>
+    <string name="social_help2"> درصورتیکه پیام شما برای سایرین نیز مناسب باشد به اشتراک گذاشته خواهد شد.   </string>
+    <string name="social_score"> امتیاز کسب شده: 10 امتیاز   </string>
 
     <!-- Intent Extras -->
     <string name="calling_activity">calling_activity</string>
@@ -88,7 +142,7 @@
     <!-- strings -->
     <string name="gallery">گالری</string>
     <string name="photo">دوربین</string>
-    <string name="string_open_camera">عکس گرفتن</string>
+    <string name="string_open_camera">دوربین</string>
     <string name="string_next">بعدی</string>
     <string name="string_slogan">ما را با بیان مشکلات، ایده ها و نظرات خود یاری کنید</string>
     <string name="string_nopic">بدون عکس</string>
@@ -149,6 +203,13 @@
         <item>حمل زباله</item>
     </string-array>
 
+    <string-array name="visitCats">
+        <item>جاذبه گردشگری</item>
+        <item>صنایع دستی</item>
+        <item>اقامتگاه</item>
+        <item>نیازمندیها</item>
+    </string-array>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -162,18 +223,18 @@
     <string name="title_activity_food_tab">FoodTab</string>
     <string name="title_activity_salad_tab">SaladTabActivity</string>
 
-    <string name="text1">ارسال انتقاد پیشنهاد</string>
-    <string name="text2">تکمیل پروفایل</string>
-    <string name="text3">هدایا</string>
-    <string name="text4">نقشه امکانات</string>
-    <string name="text5">فیلم</string>
-    <string name="text6">کاریابی</string>
-    <string name="text7">رویداد محلی</string>
-    <string name="text8">مسئولین محلی</string>
-    <string name="text9">سامانه پیام مردمی 137</string>
+    <string name="text1">خودروهای هوشمند</string>
+    <string name="text2">مشاغل</string>
+    <string name="text3">گردشگری</string>
+    <string name="text4">پیام های مردمی 137</string>
+    <string name="text5">آگهی</string>
+    <string name="text6">اخبار</string>
+    <string name="text7">رسانه</string>
+    <string name="text8">تغیرشهر</string>
+    <string name="text9">صنایع دستی</string>
 
 
-    <string name="change_city">Change city</string>
+    <string name="change_city">تغییر شهر</string>
 
     <!-- Put your own APP ID here -->
     <string name="open_weather_maps_app_id">11111</string>
@@ -187,8 +248,10 @@
     <string name="weather_snowy">&#xf01b;</string>
     <string name="weather_thunder">&#xf01e;</string>
     <string name="weather_drizzle">&#xf01c;</string>
+    <string name="weather">آب و هوا</string>
 
     <string name="place_not_found">Sorry, no weather data found.</string>
+    <string name="title_activity_send_social">SendSocialActivity</string>
 
 
 </resources>

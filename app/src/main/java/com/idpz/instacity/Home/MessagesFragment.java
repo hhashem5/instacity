@@ -1,18 +1,16 @@
 package com.idpz.instacity.Home;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -44,7 +42,7 @@ import java.util.Map;
  * Created by h on 2017/12/31.
  */
 
-public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class MessagesFragment extends Activity implements SwipeRefreshLayout.OnRefreshListener{
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG = "MessagesFragment";
 
@@ -53,7 +51,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         ArrayList<Post> dataModels;
         //    DBLastData dbLastData;
         NewsAdapter newsAdapter;
-        String server="",fullServer="";
+        String state="",fullServer="",server="";
         int lim1=0,lim2=5;
         public static volatile int netState=3;
         Boolean reqFlag=false,connected=false,refreshFlag=false,remain=true;
@@ -62,25 +60,26 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
         ImageView imgRetry;
         ProgressBar progressBar;
         SharedPreferences SP1;
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-            View view=inflater.inflate(R.layout.fragment_messages,container,false);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_messages);
 
-            swipeRefreshLayout = view.findViewById(R.id.refresh);
+            swipeRefreshLayout =(SwipeRefreshLayout) findViewById(R.id.refresh);
             swipeRefreshLayout.setOnRefreshListener(this);
-            imgRetry= view.findViewById(R.id.imgMsgRetry);
-            progressBar= view.findViewById(R.id.progressMsg);
+                imgRetry=(ImageView) findViewById(R.id.imgMsgRetry);
+            progressBar=(ProgressBar) findViewById(R.id.progressMsg);
 
-            lvContentPost = view.findViewById(R.id.lvMsgContent);
+            lvContentPost =(ListView) findViewById(R.id.lvMsgContent);
 
             dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
-            newsAdapter = new NewsAdapter(getActivity(), dataModels);
+            newsAdapter = new NewsAdapter(this, dataModels);
 
-            SP1 = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SP1 = PreferenceManager.getDefaultSharedPreferences(this);
+            state=SP1.getString("state","0");
             server=SP1.getString("server","0");
-            fullServer = server+"/i/newsread.php";
+            fullServer = getString(R.string.server)+"/j/newsread.php";
 //            remain = SP1.getBoolean("connected", false);
             lvContentPost.setAdapter(newsAdapter);
 
@@ -125,12 +124,12 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                 }
             });
 
-            return view;
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
 
 
     public void reqPosts() {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        RequestQueue queue = Volley.newRequestQueue(MessagesFragment.this);
         String url = fullServer;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
@@ -211,6 +210,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
                 Map<String,String>params = new HashMap<String,String>();
                 params.put("lim1", String.valueOf(lim1));
                 params.put("lim2", String.valueOf(lim2));
+                params.put("state", state);
                 return params;
             }
         };
@@ -228,7 +228,7 @@ public class MessagesFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     public boolean isConnected(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) MessagesFragment.this.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
                 connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network

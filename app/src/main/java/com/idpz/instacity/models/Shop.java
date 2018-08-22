@@ -7,8 +7,10 @@ package com.idpz.instacity.models;
 public class Shop {
 
     private int id;
+    private String state;
     private String name;
     private String owner;
+    private String ownerName;
     private String tel;
     private String mobile;
     private String pic;
@@ -23,10 +25,12 @@ public class Shop {
     public Shop() {
     }
 
-    public Shop(int id, String name, String owner, String tel, String mobile, String pic, String address, String jlat, String jlng, String tag, String jkey, String memo, String pub) {
+    public Shop(int id,String state, String name, String owner, String ownerName, String tel, String mobile, String pic, String address, String jlat, String jlng, String tag, String jkey, String memo, String pub) {
         this.id = id;
+        this.state=state;
         this.name = name;
         this.owner = owner;
+        this.ownerName = ownerName;
         this.tel = tel;
         this.mobile = mobile;
         this.pic = pic;
@@ -47,6 +51,14 @@ public class Shop {
         this.id = id;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public String getName() {
         return name;
     }
@@ -61,6 +73,14 @@ public class Shop {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public String getTel() {

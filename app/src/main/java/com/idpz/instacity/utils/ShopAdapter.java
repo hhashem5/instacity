@@ -24,7 +24,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
-import com.idpz.instacity.Search.StoreRegActivity;
+import com.idpz.instacity.MapCity.StoreRegActivity;
 import com.idpz.instacity.models.Shop;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class ShopAdapter extends ArrayAdapter {
     private int resource;
     private Activity activity;
     private ArrayList<Shop> shopArrayList;
-    String server="",delArtPath="";
+    String state="",delArtPath="";
 
     public ShopAdapter(Activity activity, int resource, ArrayList object) {
         super(activity, resource, object);
@@ -53,8 +53,8 @@ public class ShopAdapter extends ArrayAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(activity);
-        server=SP1.getString("server", "0");
-        delArtPath=server+"/i/delart.php";
+        state=SP1.getString("state", "050001");
+        delArtPath=getContext().getString(R.string.server)+"/j/delart.php";
         View view=convertView;
         view=this.activity.getLayoutInflater().inflate(this.resource,null);
         ImageView img= view.findViewById(R.id.imgShop);
@@ -177,6 +177,7 @@ public class ShopAdapter extends ArrayAdapter {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
 
+                params.put("state", state);
                 params.put("id", id);
                 params.put("owner", mobile);
                 params.put("table", "shops");

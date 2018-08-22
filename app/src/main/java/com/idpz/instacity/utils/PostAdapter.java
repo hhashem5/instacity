@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ public class PostAdapter extends BaseAdapter {
     Context context;
     String mtext;
     String ph;
-    String server="";
+    String state="";
 
 //    GestureDetector detector;
 
@@ -69,7 +70,7 @@ public class PostAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(activity);
-        server = SP1.getString("server", "0");
+        state = SP1.getString("state", "0");
         ph=SP1.getString("mobile", "0");
         if (inflater == null)
             inflater = (LayoutInflater) activity
@@ -102,18 +103,14 @@ public class PostAdapter extends BaseAdapter {
 //        thumbNail.setImageUrl(m.getPostImageUrl(), imageLoader);
         Glide.with(activity).load(m.getPostImageUrl())
                 .thumbnail(0.5f)
-                .crossFade()
-                .placeholder(R.drawable.nopic)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+
                 .into(thumbNail);
         Glide.with(activity).load(m.getUserImg())
                 .thumbnail(0.5f)
-                .crossFade()
-                .override(50, 50)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+
                 .into(userImg);
 
-        editPostComment.setText("پاسخ:"+m.getPostAnswer());
+        editPostComment.setText(Html.fromHtml("پاسخ:"+m.getPostAnswer()));
         // title
         userName.setText(m.getUserName());
 
@@ -166,7 +163,7 @@ public class PostAdapter extends BaseAdapter {
 
                 }
                 RequestQueue queue = Volley.newRequestQueue(v.getContext());
-                String url = server+"/i/like.php";
+                String url = "http://idpz.ir/j/like.php";
                 StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                         new Response.Listener<String>()
                         {
@@ -187,6 +184,7 @@ public class PostAdapter extends BaseAdapter {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
                         Map<String,String>params = new HashMap<String,String>();
+                        params.put("state", state);
                         params.put("id",soid );
                         params.put("ph", ph);
                         params.put("lk", lk);

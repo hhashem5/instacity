@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:background="@drawable/white_trans_border_bottom"
+    android:background="@drawable/backwhiteround"
+    android:padding="4dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -11,7 +12,9 @@
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
             android:weightSum="6"
+
             android:gravity="center"
+
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -72,7 +75,12 @@
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:text="شنبه" />
-        </LinearLayout>
 
+        </LinearLayout>
+<com.idpz.instacity.utils.CustomTextView
+    android:id="@+id/txtDaySummary"
+    android:textColor="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.idpz.instacity.Home.EventActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:id="@+id/relLayoutEvent"
+        android:layout_below="@id/line6"
+        android:layout_weight="40"
+        android:layout_margin="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/rel8"
+            android:paddingRight="2dp"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:background="@drawable/title_half_top"
+            android:layout_height="wrap_content">
+
+            <com.idpz.instacity.utils.CustomTextView
+                android:id="@+id/txtEventPanel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:text="رویداد"
+                android:layout_margin="4dp"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_below="@id/rel8"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+           <com.idpz.instacity.utils.CustomTextView
+               android:id="@+id/txtEventName"
+               android:textSize="18sp"
+               android:text="نام رویداد"
+               android:textColor="@color/black"
+               android:gravity="center"
+               android:padding="5dp"
+               android:background="@drawable/backcyanround"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content" />
+            <com.idpz.instacity.utils.CustomTextView
+                android:id="@+id/txtEventInfo"
+                android:textSize="16sp"
+                android:text="اطلاعات رویداد"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:padding="5dp"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.idpz.instacity.utils.CustomTextView
+                    android:id="@+id/txtEventPlace"
+                    android:textSize="16sp"
+                    android:text="مکان رویداد"
+                    android:textColor="@color/black"
+                    android:gravity="right"
+                    android:padding="5dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <ImageView
+                    android:src="@drawable/ic_address"
+                    android:layout_alignParentTop="true"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp" />
+
+            </LinearLayout>
+
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtEventTime"
+        android:textSize="14sp"
+        android:text="ساعت رویداد"
+        android:textColor="@color/black"
+        android:gravity="right"
+        android:padding="5dp"
+        android:layout_weight="50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:src="@drawable/ic_clock"
+        android:layout_alignParentTop="true"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtEventDate"
+        android:textSize="14sp"
+        android:text="تاریخ رویداد"
+        android:textColor="@color/black"
+        android:gravity="right"
+        android:padding="5dp"
+        android:layout_weight="50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_toRightOf="@id/txtEventDate"
+        android:src="@drawable/ic_cal"
+        android:layout_alignParentTop="true"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+</LinearLayout>
+            <com.idpz.instacity.utils.CustomTextView
+                android:id="@+id/txtEventMemo"
+                android:textSize="14sp"
+                android:text="توضیحات رویداد"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:padding="5dp"
+                android:layout_weight="50"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+<LinearLayout
+    android:orientation="horizontal"
+    android:background="@drawable/white_trans_border_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtEventContact"
+        android:textSize="12sp"
+        android:text=" تماس:"
+        android:textColor="@color/black"
+        android:gravity="right"
+        android:padding="5dp"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <ImageView
+        android:layout_toRightOf="@id/txtEventDate"
+        android:src="@drawable/ic_tel"
+        android:layout_alignParentTop="true"
+        android:layout_width="25dp"
+        android:layout_height="25dp" />
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtEventOwner"
+        android:textSize="12sp"
+        android:text=" برگزارکننده:"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
+            <Button
+                android:id="@+id/btnEventOk"
+                android:text="@string/ok"
+                android:layout_margin="10dp"
+                android:background="@drawable/back_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

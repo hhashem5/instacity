@@ -79,7 +79,7 @@ public class MyProfileActivity extends AppCompatActivity {
     String ServerUploadPath ="";
     String eduTitle="0",jobTitle="0",serial="0.jpg",lat="0",lng="0",myname="0";
     String name="0",pas="", mobile="0", birth="0", gender="0", edu="0", edub="0", job="0", jobb="0", fav="0", money="0";
-    private static final String STATIC_SERVER = "http://idpz.ir";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,33 +87,33 @@ public class MyProfileActivity extends AppCompatActivity {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-         requrl =  STATIC_SERVER+   "/i/srchprofile.php";
-         REGISTER_URL=STATIC_SERVER+"/i/profile.php";
-        ServerUploadPath =STATIC_SERVER+"/i/imgprofile.php" ;
+         requrl =  getString(R.string.server)+"/i/srchprofile.php";
+         REGISTER_URL=getString(R.string.server)+"/i/profile.php";
+        ServerUploadPath =getString(R.string.server)+"/i/imgprofile.php" ;
 
-        txtCitizenName= findViewById(R.id.txtCitizenName);
-        txtCtNumber= findViewById(R.id.txtCtNumber);
+        txtCitizenName=(TextView) findViewById(R.id.txtCitizenName);
+        txtCtNumber=(TextView) findViewById(R.id.txtCtNumber);
         txtCtNumber.setEnabled(false);
-        txtEduB= findViewById(R.id.txtEduB);
-        txtJobB= findViewById(R.id.txtJobB);
-        txtCtBirth= findViewById(R.id.txtCtBirth);
+        txtEduB=(TextView) findViewById(R.id.txtEduB);
+        txtJobB=(TextView) findViewById(R.id.txtJobB);
+        txtCtBirth=(TextView) findViewById(R.id.txtCtBirth);
 //        txtCtMelliid=(TextView)findViewById(R.id.txtCtmelliid);
-        txtczstatus = findViewById(R.id.txtczStatus);
-        rbMard= findViewById(R.id.rbMard);
-        rbZan= findViewById(R.id.rbZan);
-        spEdu= findViewById(R.id.spEdu);
-        spJob= findViewById(R.id.spJob);
-        chkFav1 = findViewById(R.id.chkFav1);
-        chkFav2 = findViewById(R.id.chkFav2);
-        chkFav3 = findViewById(R.id.chkFav3);
-        chkFav4 = findViewById(R.id.chkFav4);
-        chkFav5 = findViewById(R.id.chkFav5);
-        chkFav6 = findViewById(R.id.chkFav6);
-        chkFav7 = findViewById(R.id.chkFav7);
-        chkFav8 = findViewById(R.id.chkFav8);
-        btnreg= findViewById(R.id.btnCzReg);
-        btnexit= findViewById(R.id.btnCzExit);
-        imgProfile= findViewById(R.id.myProfile_photoLikes);
+        txtczstatus =(TextView) findViewById(R.id.txtczStatus);
+        rbMard=(RadioButton) findViewById(R.id.rbMard);
+        rbZan=(RadioButton) findViewById(R.id.rbZan);
+        spEdu=(Spinner) findViewById(R.id.spEdu);
+        spJob=(Spinner) findViewById(R.id.spJob);
+        chkFav1 =(CheckBox) findViewById(R.id.chkFav1);
+        chkFav2 =(CheckBox) findViewById(R.id.chkFav2);
+        chkFav3 =(CheckBox) findViewById(R.id.chkFav3);
+        chkFav4 =(CheckBox) findViewById(R.id.chkFav4);
+        chkFav5 =(CheckBox) findViewById(R.id.chkFav5);
+        chkFav6 =(CheckBox) findViewById(R.id.chkFav6);
+        chkFav7 =(CheckBox) findViewById(R.id.chkFav7);
+        chkFav8 =(CheckBox) findViewById(R.id.chkFav8);
+        btnreg=(Button) findViewById(R.id.btnCzReg);
+        btnexit=(Button) findViewById(R.id.btnCzExit);
+        imgProfile=(CircleImageView) findViewById(R.id.myProfile_photoLikes);
 
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
@@ -152,11 +152,8 @@ public class MyProfileActivity extends AppCompatActivity {
         profileImgUrl = SP1.getString("pic", "0");
 //        Toast.makeText(this, "pic-url:"+profileImgUrl, Toast.LENGTH_LONG).show();
 
-        Glide.with(this).load(STATIC_SERVER+"/assets/images/users/"+profileImgUrl)
+        Glide.with(this).load(getString(R.string.server)+"/assets/images/users/"+profileImgUrl)
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(imgProfile);
 
         txtCitizenName.setText(myname);

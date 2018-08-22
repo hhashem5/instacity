@@ -73,7 +73,7 @@ public class ShareActivity extends AppCompatActivity {
 
     String ImagePath = "image_path",mstatus="0",gov="1",myname="",myphone="",mytext="" ;
 
-    String ServerUploadPath ="", REG_USER_LAT ="",server ;
+    String ServerUploadPath ="", REG_USER_LAT ="",state="" ;
     //widgets
     private EditText mCaption;
     boolean check = true,nopicFlag=true;
@@ -101,21 +101,21 @@ public class ShareActivity extends AppCompatActivity {
         SharedPreferences SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         mobile=SP.getString("mobile", "0");
         pas=SP.getString("pass", "0");
-        server=SP.getString("server", "0");
+        state=SP.getString("state", "050001");
 
-        REG_USER_LAT=server+"/i/latprofile.php";
+        REG_USER_LAT=getString(R.string.server)+"/j/latprofile.php";
 
 
-        ServerUploadPath =server+"/i/img1.php" ;
+        ServerUploadPath =getString(R.string.server)+"/j/img1.php" ;
 
-        mCaption = findViewById(R.id.textBody);
+        mCaption =(EditText) findViewById(R.id.textBody);
 
 //        spnMoavenat=(Spinner)findViewById(R.id.spnMoavenat);
-        image= findViewById(R.id.imgSharePic);
-        ivBackArrow= findViewById(R.id.ivBackArrow);
-        tvMessage= findViewById(R.id.shareTextMessage);
-        tvShare= findViewById(R.id.tvShare);
-        tvStatusSend= findViewById(R.id.tvStatusSend);
+        image=(ImageView) findViewById(R.id.imgSharePic);
+        ivBackArrow=(ImageView) findViewById(R.id.ivBackArrow);
+        tvMessage=(TextView) findViewById(R.id.shareTextMessage);
+        tvShare=(TextView) findViewById(R.id.tvShare);
+        tvStatusSend=(TextView) findViewById(R.id.tvStatusSend);
 
         mstatus="0";
 
@@ -271,7 +271,7 @@ public class ShareActivity extends AppCompatActivity {
      */
     private void setupBottomNavigationView(){
         Log.d(TAG, "setupBottomNavigationView: setting up BottomNavigationView");
-        BottomNavigationViewEx bottomNavigationViewEx = findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewEx bottomNavigationViewEx =(BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext, bottomNavigationViewEx);
         Menu menu = bottomNavigationViewEx.getMenu();
@@ -380,6 +380,7 @@ public class ShareActivity extends AppCompatActivity {
                 params.put(ImagePath, image);
                 params.put("status", mstatus);
                 params.put("gov", gov);
+                params.put("state", state);
                 params.put("lat", oldLat);
                 params.put("lng", oldLng);
                 params.put("name", myname);
@@ -497,6 +498,7 @@ public class ShareActivity extends AppCompatActivity {
                 Map<String,String>params = new HashMap<String,String>();
 
                 params.put("status", mstatus);
+                params.put("state", state);
                 params.put("gov", gov);
                 params.put("lat", lat);
                 params.put("lng", lng);

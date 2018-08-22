@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/bbb"
-    tools:context="com.idpz.instacity.Like.AddArtActivity">
+    tools:context="com.idpz.instacity.Travel.AddArtActivity">
 
 
     <LinearLayout

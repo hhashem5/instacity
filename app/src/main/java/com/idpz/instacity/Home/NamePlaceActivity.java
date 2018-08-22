@@ -1,6 +1,7 @@
 package com.idpz.instacity.Home;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,10 +46,10 @@ import java.util.Map;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class NamePlaceActivity extends AppCompatActivity {
+public class NamePlaceActivity extends Activity {
 
     private static final String TAG = "name PLace activity";
-    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
+    String AREA_URL = "http://idpz.ir/i/getarea.php";
     private static final int REQUEST_ACCESS_LOCATION = 1;
 
 
@@ -70,8 +70,9 @@ public class NamePlaceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_name_place);
 
-        edtMyName= findViewById(R.id.edtMyName);
-        btnLogin= findViewById(R.id.btnLogin);
+        AREA_URL = getString(R.string.server)+"/i/getarea.php";
+        edtMyName=(EditText) findViewById(R.id.edtMyName);
+        btnLogin=(Button) findViewById(R.id.btnLogin);
         mob=getIntent().getStringExtra("mob");
         pas=getIntent().getStringExtra("cod");
         SharedPreferences SP1;
@@ -82,7 +83,7 @@ public class NamePlaceActivity extends AppCompatActivity {
         myLocation.setLatitude(35.711);
         myLocation.setLongitude(50.912);
 
-        spCity= findViewById(R.id.spnLoginSelCity);
+        spCity=(Spinner) findViewById(R.id.spnLoginSelCity);
         spCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -102,7 +103,7 @@ public class NamePlaceActivity extends AppCompatActivity {
         });
 
 
-        btnRegister= findViewById(R.id.btnLogin);
+        btnRegister=(Button) findViewById(R.id.btnLogin);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,7 +129,7 @@ public class NamePlaceActivity extends AppCompatActivity {
             }
         });
 
-        spCity= findViewById(R.id.spnLoginSelCity);
+        spCity=(Spinner) findViewById(R.id.spnLoginSelCity);
         spCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -331,7 +332,7 @@ public class NamePlaceActivity extends AppCompatActivity {
 
     public void regUserProfile() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://idpz.ir/i/profile.php";
+        String url ="http://idpz.ir/j/profile.php";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
                 {

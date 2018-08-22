@@ -55,7 +55,7 @@ public class VisitPlacesAdapter extends BaseAdapter {
                 .findViewById(R.id.imgPlace);
         TextView title = convertView.findViewById(R.id.textPlaceTitle);
         TextView placeYear = convertView.findViewById(R.id.textPlaceYear);
-        TextView ticket = convertView.findViewById(R.id.textPlaceTicket);
+        TextView ticket = convertView.findViewById(R.id.textPlaceTypeRow);
         TextView placeDays = convertView.findViewById(R.id.textPlaceDays);
         TextView placeHours = convertView.findViewById(R.id.textPlaceHours);
         TextView tel = convertView.findViewById(R.id.textPlaceTel);
@@ -80,9 +80,7 @@ public class VisitPlacesAdapter extends BaseAdapter {
 
         Glide.with(activity).load(m.getPic())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
+                .placeholder(R.drawable.iloading)
                 .into(thumbNail);
         return convertView;
     }

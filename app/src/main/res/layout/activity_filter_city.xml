@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_job_reg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".Share.FilterCityActivity">
+
+
+
+    <LinearLayout
+        android:id="@+id/lineCity"
+        android:background="@drawable/white_trans_light_bottom"
+        android:layout_below="@id/linForm"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/spnOstan"
+            android:layout_weight="1" />
+
+        <com.idpz.instacity.utils.CustomTextView
+            android:text="استان"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvJob8"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/black"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lineVilage"
+        android:background="@drawable/white_trans_light_bottom"
+        android:layout_below="@id/lineCity"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/spnCity"
+            android:layout_weight="1" />
+
+        <com.idpz.instacity.utils.CustomTextView
+            android:text="شهر/روستا"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginRight="20dp"
+            android:textColor="@color/black"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtFilterStatus"
+        android:layout_below="@id/btnFilterApply"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content" />
+
+
+    <Button
+        android:text="تایید"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_below="@id/lineVilage"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:background="@drawable/back_btn"
+        android:id="@+id/btnFilterApply" />
+
+
+
+<ProgressBar
+    android:id="@+id/progressBar"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:layout_width="40dp"
+    android:layout_height="40dp" />
+
+</RelativeLayout>

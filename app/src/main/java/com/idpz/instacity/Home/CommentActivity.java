@@ -1,10 +1,10 @@
 package com.idpz.instacity.Home;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -32,7 +32,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommentActivity extends AppCompatActivity {
+public class CommentActivity extends Activity {
 
     ListView lvComments;
     ProgressDialog pd;
@@ -52,12 +52,12 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
 
         SharedPreferences SP1;
-        SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SP1 = PreferenceManager.getDefaultSharedPreferences(CommentActivity.this);
         server=SP1.getString("server", "0");
-        fullServer = server+"/i/comment.php";
-        SocialSend_URL=server+"/i/regcmnt.php";
-        imgSend= findViewById(R.id.ivCommentPostSend);
-        txtcommentSend= findViewById(R.id.txtCommentSend);
+        fullServer = getString(R.string.server)+"/j/comment.php";
+        SocialSend_URL=getString(R.string.server)+"/j/regcmnt.php";
+        imgSend= (ImageView) findViewById(R.id.ivCommentPostSend);
+        txtcommentSend=(EditText) findViewById(R.id.txtCommentSend);
         Bundle b = getIntent().getExtras();
         soid = "1"; // or other values
         if(b != null) {
@@ -66,7 +66,7 @@ public class CommentActivity extends AppCompatActivity {
         SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname = sp1.getString("myname", "");
         phone=sp1.getString("mobile", "");
-        lvComments = findViewById(R.id.lvComments);
+        lvComments =(ListView) findViewById(R.id.lvComments);
         pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
@@ -91,7 +91,7 @@ public class CommentActivity extends AppCompatActivity {
 //        server = dbLastData.getLastData(1).getValue();
 
         lvComments.setAdapter(commentAdapter);
-        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(CommentActivity.this).edit();
         SP.putString("tabpos", "0");
         SP.apply();
         reqPosts();
@@ -101,7 +101,7 @@ public class CommentActivity extends AppCompatActivity {
 
 
     public void reqPosts() {
-        RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(CommentActivity.this);
         String url = fullServer;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
@@ -179,7 +179,7 @@ public class CommentActivity extends AppCompatActivity {
 
     public void socialSend() {
 //        Toast.makeText(MainActivity.this, " reqcdrv", Toast.LENGTH_SHORT).show();
-        RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(CommentActivity.this);
         String url = SocialSend_URL;
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()

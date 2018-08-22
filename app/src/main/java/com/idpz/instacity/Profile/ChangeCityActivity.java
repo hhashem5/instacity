@@ -22,6 +22,13 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,34 +40,49 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.idpz.instacity.AlarmService;
 import com.idpz.instacity.Area;
+import com.idpz.instacity.Home.AddCityActivity;
 import com.idpz.instacity.Home.HomeActivity;
+import com.idpz.instacity.Home.LoginActivity;
 import com.idpz.instacity.R;
+import com.idpz.instacity.Share.FilterCityActivity;
 import com.idpz.instacity.utils.DBAreaHandler;
 import com.idpz.instacity.utils.GPSTracker;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String TAG ="change ct";
-    Spinner spnCity;
+    Spinner spnCity,spnOstan;
     Area myArea,myNearCity;
-
+    ArrayList<String> ostanNames =new ArrayList<>();
+    ArrayList<Area> ostanArrayList=new ArrayList<>();
     List<String> cities=new ArrayList<>();
     List<Float> distances=new ArrayList<Float>();
     private GoogleMap mMap;
-    String server="",lat,lng;
+    String server="",lat,lng,filterOstan="";
     Location myLocation, mycity;
     Boolean areaFlag=false,connected=false,mapFlag=false;
     ArrayList<Area> areaArrayList=new ArrayList<>();
-    String AREA_URL="http://idpz.ir/i/getarea.php";
-    Button btnChangeCT;
+    ArrayList<Area> areaAllList=new ArrayList<>();
+    ArrayList<Area> areaSelectList=new ArrayList<>();
+    String AREA_URL="",OSTAN_URL="";
+    Button btnChangeCT,btnCityReg;
 //    TextView txtMyNearCT;
     Float homelat,homelng;
+    ArrayAdapter<String> adapterOstan;
+    ArrayAdapter<String> spinnerArrayAdapter;
     ArrayList<String> villages=new ArrayList<>();
+    ArrayList<String> allVillages=new ArrayList<>();
     ArrayList<String> searchModels=new ArrayList<>();
     ArrayList<String> ctNames;
 //    ListView lvCities;
@@ -72,13 +94,24 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
 
         myLocation = new Location("myloc");
         mycity = new Location("city");
-
+        AREA_URL=getString(R.string.server)+"/i/getarea.php";
+        OSTAN_URL=getString(R.string.server)+"/j/getostan.php";
         Typeface yekan = Typeface.createFromAsset(ChangeCityActivity.this.getAssets(), "fonts/YEKAN.TTF");
 
 //        lvCities=(ListView)findViewById(R.id.lvChangeCTCities);
-        btnChangeCT= findViewById(R.id.btnChangeCityChange);
+        btnChangeCT=(Button) findViewById(R.id.btnChangeCityChange);
 //        txtMyNearCT=(TextView)findViewById(R.id.txtNearestCity);
         btnChangeCT.setTypeface(yekan);
+
+        btnCityReg=(Button) findViewById(R.id.btnCityReg);
+        btnCityReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in1=new Intent(ChangeCityActivity.this,AddCityActivity.class);
+                startActivity(in1);
+            }
+        });
+
 
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -107,6 +140,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                     SP2.putString("ctname", myArea.getAfname());
                     SP2.putString("homelat",String.valueOf(homelat));
                     SP2.putString("homelng",String.valueOf(homelng));
+                    SP2.putString("state",myArea.getState());
                     SP2.putString("ctpic",myArea.getPic());
                     SP2.putString("ctdesc",myArea.getDescription());
                     SP2.putBoolean("splash",false);
@@ -123,51 +157,110 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         });
          ctNames=new ArrayList<>();
         DBAreaHandler dbAreaHandler=new DBAreaHandler(this);
-        for (Area myArea:dbAreaHandler.getAllAreas()){
+        for (Area dArea:dbAreaHandler.getAllAreas()){
             float myDistance=0;
-
-            mycity.setLatitude(myArea.getAlat());
-            mycity.setLongitude(myArea.getAlng());
+            mycity.setLatitude(dArea.getAlat());
+            mycity.setLongitude(dArea.getAlng());
             myDistance=Math.round((myLocation.distanceTo(mycity)/1000));
             String h=myDistance+"";
             h=h.substring(0,h.length()-2);
-            myArea.setDistance(Integer.valueOf(h));
-            areaArrayList.add(myArea);
-            villages.add(myArea.getAfname());
-//            ctNames.add(myArea.getAfname()+" (فاصله  "+myDistance+"متر)");
+            dArea.setDistance(Integer.valueOf(h));
+            areaArrayList.add(dArea);
+            villages.add(dArea.getAfname());
+//            ctNames.add(dArea.getAfname()+" (فاصله  "+myDistance+"متر)");
         }
-        Collections.sort(areaArrayList, new AgeComparator());
 
-        for (Area myArea :areaArrayList){
-            ctNames.add(myArea.getAfname()+" (فاصله  "+myArea.getDistance()+"km)");
+
+        Collections.sort(areaArrayList, new AgeComparator());
+        areaAllList.addAll(areaArrayList);
+        for (Area pArea :areaArrayList){
+            ctNames.add(pArea.getAfname()+" (فاصله  "+pArea.getDistance()+"km)");
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        allVillages.addAll(villages);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, villages);
 
+        spnCity=(Spinner) findViewById(R.id.spnLoginSelCity);
+
+        spinnerArrayAdapter = new ArrayAdapter<String>
+                (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
+                        ctNames); //selected item will look like a spinner set from XML
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spnCity.setAdapter(spinnerArrayAdapter);
+
+        adapterOstan = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, ostanNames);
+
+        spnOstan=(Spinner) findViewById(R.id.spnOstan);
+        spnOstan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                    if (ostanArrayList.size()>0) {
+                        filterOstan = ostanArrayList.get(position).getAename();
+                        if (filterOstan.equals("0")){
+                            areaArrayList.clear();
+                            areaArrayList.addAll(areaAllList);
+                            villages.clear();
+                            villages.addAll(allVillages);
+                            ctNames.clear();
+                            for (Area pArea :areaArrayList){
+                                ctNames.add(pArea.getAfname()+" (فاصله  "+pArea.getDistance()+"km)");
+                            }
+                        }else {
+                            ctNames.clear();
+                            villages.clear();
+                            areaArrayList.clear();
+                            Log.i(TAG, "onItemSelected: Ostan Select"+filterOstan);
+                            for (Area uArea : areaAllList) {
+                                if (uArea.getState().startsWith(filterOstan)) {
+                                    float myDistance = 0;
+                                    mycity.setLatitude(uArea.getAlat());
+                                    mycity.setLongitude(uArea.getAlng());
+                                    myDistance = Math.round((myLocation.distanceTo(mycity) / 1000));
+                                    String h = myDistance + "";
+                                    h = h.substring(0, h.length() - 2);
+                                    uArea.setDistance(Integer.valueOf(h));
+                                    areaArrayList.add(uArea);
+                                    villages.add(uArea.getAfname());
+                                }
+                            }
+                            for (Area pArea :areaArrayList){
+                                ctNames.add(pArea.getAfname()+" (فاصله  "+pArea.getDistance()+"km)");
+                            }
+                        }
+                        spinnerArrayAdapter.notifyDataSetChanged();
+                        adapter.notifyDataSetChanged();
+
+                    Log.i(TAG, "onItemSelected: "+filterOstan+" cities="+villages.size());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        reqOstan();
 
         Log.d(TAG, "onCreate: "+ctNames.size());
 
 
 
-        spnCity= findViewById(R.id.spnLoginSelCity);
 
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-                (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
-                        ctNames); //selected item will look like a spinner set from XML
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spnCity.setAdapter(spinnerArrayAdapter);
         findArea();
         spnCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                myArea=areaArrayList.get(position);
-                if (mapFlag){
-                    initilizeMap();
-                    LatLng cityLatLng=new LatLng(myArea.getAlat(),myArea.getAlng());
-                    mMap.addMarker(new MarkerOptions().position(cityLatLng).title(myArea.getAfname()));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cityLatLng,15));
+                if (areaArrayList.size()>0) {
+                    myArea = areaArrayList.get(position);
+                    if (mapFlag) {
+                        initilizeMap();
+                        LatLng cityLatLng = new LatLng(myArea.getAlat(), myArea.getAlng());
+                        mMap.addMarker(new MarkerOptions().position(cityLatLng).title(myArea.getAfname()));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cityLatLng, 15));
+                    }
                 }
-
             }
 
             @Override
@@ -201,7 +294,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
         }
 
 
-        AutoCompleteTextView textView = findViewById(R.id.acTxtView);
+        AutoCompleteTextView textView =(AutoCompleteTextView) findViewById(R.id.acTxtView);
         textView.setAdapter(adapter);
         textView.setTypeface(yekan);
         textView.addTextChangedListener(new TextWatcher() {
@@ -220,21 +313,9 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
                         }
                     }
 
-
-//                    searchModels.clear();
-//                    for (Area area:areaArrayList){
-//                        if (area.getAfname().contains(s)){
-//                            searchModels.add(area.getAfname());
-//                        }
-//                    }
-//                    ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>
-//                            (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
-//                                    searchModels); //selected item will look like a spinner set from XML
                 }else if (s.length()==0){
                     searchModels.clear();
-//                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>
-//                            (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
-//                                    ctNames);
+
                 }
 
             }
@@ -341,7 +422,7 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
 
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(cityLatLng, 15));
             mapFlag = true;
-
+        Toast.makeText(ChangeCityActivity.this, "نقشه آماده شد", Toast.LENGTH_SHORT).show();
         }
 
     private void initilizeMap() {
@@ -417,4 +498,80 @@ public class ChangeCityActivity extends AppCompatActivity implements OnMapReadyC
             }
         }
     }
+
+
+    public void reqOstan() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = OSTAN_URL;
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    public static final String TAG = "change city";
+
+                    @Override
+                    public void onResponse(String response) {
+                        JSONArray jsonArray= null;
+                        Log.d(TAG, "onResponse: response from Ostan"+response);
+                        ostanNames.clear();
+                        ostanArrayList.clear();
+
+                        ostanNames.add("همه استان ها");
+                        ostanArrayList.add(new Area(1,"0","0",0,0,1,"",0,0,"","","همه شهر/روستاها"));
+                        areaFlag=true;
+
+                        try {
+                            jsonArray = new JSONArray(response);
+
+                            JSONObject jsonObject=jsonArray.getJSONObject(0);
+
+                            for (int i=jsonArray.length();i>0;i--) {
+                                jsonObject = jsonArray.getJSONObject(i-1);
+                                float myDistance=0;
+                                Area area=new Area();
+                                area.setId(jsonObject.getInt("id"));
+                                area.setAename(jsonObject.getString("code"));
+                                area.setAfname(jsonObject.getString("fname"));
+
+                                ostanArrayList.add(area);
+                                ostanNames.add(area.getAfname());
+
+                            }
+                            ArrayAdapter<String> OstanArrayAdapter = new ArrayAdapter<String>
+                                    (ChangeCityActivity.this, android.R.layout.simple_spinner_item,
+                                            ostanNames); //selected item will look like a spinner set from XML
+                            OstanArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spnOstan.setAdapter(OstanArrayAdapter);
+
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Log.d("ERROR","Login area error => "+error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String>params = new HashMap<String,String>();
+
+                params.put("db","states" );
+
+                return params;
+            }
+        };
+        queue.add(postRequest);
+    }
+
+
 }

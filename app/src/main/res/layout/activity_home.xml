@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/crdLayout"
     android:layout_width="match_parent"
@@ -16,41 +15,64 @@
     </FrameLayout>
 
     <RelativeLayout
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/relLayoutParent">
 
 
         <!-- top toolbar -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relLayout1">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/relLayout1">-->
 
-            <include layout="@layout/layout_top_tabs"/>
+            <!--<include layout="@layout/layout_top_tabs"/>-->
 
-        </RelativeLayout>
+        <!--</RelativeLayout>-->
 
         <!-- Middle section (body) -->
+
         <RelativeLayout
             android:id="@+id/relLayout2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/relLayout1"
             android:layout_marginBottom="50dp"
             android:alpha="50">
 
-            <include layout="@layout/layout_center_viewpager" />
-
+            <!--<include layout="@layout/layout_center_viewpager" />-->
+            <include layout="@layout/activity_first" />
+            <!-- bottom navigation -->
 
         </RelativeLayout>
 
 
-        <!-- bottom navigation -->
         <include layout="@layout/layout_bottom_navigation_view"/>
 
 
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/relNetError"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/imgErrorConnect"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="72dp"
+            android:src="@drawable/ic_connect_error"
+            android:layout_height="72dp"
+            android:contentDescription="@string/hoshdar" />
 
+        <com.idpz.instacity.utils.CustomTextView
+            android:text="@string/no_internet"
+            android:layout_below="@id/imgErrorConnect"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

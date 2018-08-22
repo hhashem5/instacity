@@ -59,6 +59,7 @@ public class WeatherAdapter extends BaseAdapter {
         TextView txtMyWind = convertView.findViewById(R.id.txtMyWind);
         TextView txtTempHi= convertView.findViewById(R.id.txtTempHi);
         TextView txtTempLo= convertView.findViewById(R.id.txtTempLo);
+        CustomTextView txtDaySum=convertView.findViewById(R.id.txtDaySummary);
         ImageView imgSun = convertView.findViewById(R.id.imgMyWeather);
 
 
@@ -73,6 +74,7 @@ public class WeatherAdapter extends BaseAdapter {
         txtTempLo.setText("↓ "+m.getMintemp()+"°");
         // name of day
         txtMyday.setText(m.getDay());
+        txtDaySum.setText(m.getSummary());
 
         // weather condition
 //        txtMySummary.setText( m.getSummary());

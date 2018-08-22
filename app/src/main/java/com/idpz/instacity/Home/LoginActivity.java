@@ -17,11 +17,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -73,10 +74,10 @@ import java.util.Map;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "Login activity";
-    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
+    String AREA_URL = "";
     TextView txtInfo;
     Spinner spnCity;
     Area myArea,myNearCity;
@@ -84,12 +85,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     String mob="",REGISTER_URL="";
     Boolean connected=false,smsFlag=true,gpsFlag=true,areaFlag=false,remain=true;
     Location myLocation, mycity;
-    Button btnMobileReg;
+    Button btnMobileReg,btnCityReg;
     // UI references.
     private EditText mEmailView;
     int failCount=0;
     private View mProgressView;
     SmsVerifyCatcher smsVerifyCatcher;
+
+    GPSTracker gps;
 
     ArrayList<String> ctNames=new ArrayList<>();
     ArrayList<Area> areaArrayList=new ArrayList<>();
@@ -104,7 +107,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         Typeface yekan = Typeface.createFromAsset(LoginActivity.this.getAssets(), "fonts/YEKAN.TTF");
         myLocation = new Location("myloc");
         mycity = new Location("city");
-
+        AREA_URL=getString(R.string.server)+"/i/getarea.php";
+        gps =new GPSTracker(this);
 
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -121,22 +125,27 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if(!hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }else {
-            EnableGPSAutoMatically();
+            if (gps.canGetLocation()){
+                populateGPS();
+            }else {
+                EnableGPSAutoMatically();
+            }
+
 
         }
 
+        REGISTER_URL=getString(R.string.server)+"/i/VerificationCode.php";
 
+        mEmailView = (EditText)findViewById(R.id.txtLoginMobile);
 
-        REGISTER_URL="http://idpz.ir/i/VerificationCode.php";
+        TextView txtSelect=(TextView) findViewById(R.id.txtSelectCity);
+        txtInfo=(TextView) findViewById(R.id.txtLoginInfo);
+        btnMobileReg=(Button) findViewById(R.id.btnMobileReg);
 
-        mEmailView = findViewById(R.id.txtLoginMobile);
-
-        txtInfo= findViewById(R.id.txtLoginInfo);
-        btnMobileReg= findViewById(R.id.btnMobileReg);
-
-
-
-
+        mEmailView.setTypeface(yekan);
+        btnMobileReg.setTypeface(yekan);
+        txtInfo.setTypeface(yekan);
+        txtSelect.setTypeface(yekan);
 
         btnMobileReg.setOnClickListener(new OnClickListener() {
             @Override
@@ -146,13 +155,19 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         });
 
         mProgressView = findViewById(R.id.login_progress);
+        btnCityReg=(Button) findViewById(R.id.btnCityReg);
+        btnCityReg.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent in1=new Intent(LoginActivity.this,AddCityActivity.class);
+                startActivity(in1);
+            }
+        });
 
 
 
 
-
-
-        spnCity= findViewById(R.id.spnLoginSelCity);
+        spnCity=(Spinner) findViewById(R.id.spnLoginSelCity);
 
 
 
@@ -208,7 +223,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
 
-        textView = findViewById(R.id.acTxtView);
+        textView =(AutoCompleteTextView) findViewById(R.id.acTxtView);
 
         textView.setTypeface(yekan);
         textView.addTextChangedListener(new TextWatcher() {
@@ -308,6 +323,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 //                Intent intent=new Intent(LoginActivity.this,SmsVerificationActivity.class);
 //                intent.putExtra("mob",mob);
 //                intent.putExtra("sms",smsFlag);
+//                intent.putExtra("gps",gpsFlag);
+//                intent.putExtra("ctname",myArea.getAfname());
+//                intent.putExtra("server",myArea.getServer());
+//                intent.putExtra("alat",myArea.getAlat());
+//                intent.putExtra("alng",myArea.getAlng());
+//                intent.putExtra("aename",myArea.getAename());
+
+                SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                SP.putString("state", myArea.getState());
+                SP.apply();
 //                startActivity(intent);
             }else {
                 txtInfo.setText( "اینترنت وصل نیست ارسال پیامک انجام نشد");
@@ -357,7 +382,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     @Override
                     public void onResponse(String response) {
                         Log.d(TAG, "onResponse: "+response);
-
+                        smsFlag=requestSmsPermission();
                         Intent intent=new Intent(LoginActivity.this,SmsVerificationActivity.class);
                         intent.putExtra("mob",mob);
                         intent.putExtra("sms",smsFlag);
@@ -367,6 +392,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         intent.putExtra("alat",myArea.getAlat());
                         intent.putExtra("alng",myArea.getAlng());
                         intent.putExtra("aename",myArea.getAename());
+
+                        SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+                        SP.putString("state", myArea.getState());
+                        SP.apply();
+
                          startActivity(intent);
 
                     }
@@ -405,12 +435,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "hasPermissions: "+permission);
+
                     return false;
                 }
+
             }
         }
         return true;
     }
+
+    private Boolean requestSmsPermission() {
+        String permission = Manifest.permission.RECEIVE_SMS;
+        int grant = ContextCompat.checkSelfPermission(this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }else return true;
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
@@ -420,7 +461,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     EnableGPSAutoMatically();
-
+                    Log.d(TAG, "onRequestPermissionsResult: gps ok");
                 } else {
 
                     // permission denied, boo! Disable the
@@ -428,7 +469,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     Toast.makeText(LoginActivity.this, "دسترسی جی پی اس تایید نشد شهر را جستجو کنید", Toast.LENGTH_SHORT).show();
                 }
                 if (grantResults.length > 0 && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-
+                    Log.d(TAG, "onRequestPermissionsResult: Storage ok");
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                 } else {
@@ -437,7 +478,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     // functionality that depends on this permission.
                     Toast.makeText(LoginActivity.this, "برای ارسال عکس نیاز به دسترسی حافظه است", Toast.LENGTH_SHORT).show();
                 }
+                if (grantResults.length > 0 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "onRequestPermissionsResult: Storage Sms");
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
 
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(LoginActivity.this, "برای ارسال عکس نیاز به دسترسی حافظه است", Toast.LENGTH_SHORT).show();
+                }
 
                 return;
             }
@@ -449,28 +499,37 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     private void populateGPS() {
-        GPSTracker gps =new GPSTracker(this);
+
 //        Log.d(TAG, "onCreate: GPS FROM populate gps_before Check:"+String.valueOf(gps.getLatitude())+" : "+String.valueOf(gps.getLongitude()));
         String upStatus="";
-        if (gps.getLatitude()!=0.0) {
+        GPSTracker gps2=new GPSTracker(this);
+        if (gps2.getLatitude()!=0.0) {
             SharedPreferences.Editor SP = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
-            SP.putString("lat", String.valueOf(gps.getLatitude()));
-            SP.putString("lng", String.valueOf(gps.getLongitude()));
+            SP.putString("lat", String.valueOf(gps2.getLatitude()));
+            SP.putString("lng", String.valueOf(gps2.getLongitude()));
             SP.apply();
 
 //            Log.d(TAG, "onCreate: GPS FROM populate gps_ok:"+String.valueOf(gps.getLatitude())+" : "+String.valueOf(gps.getLongitude()));
-            myLocation.setLatitude(gps.getLatitude());
-            myLocation.setLongitude(gps.getLongitude());
+            myLocation.setLatitude(gps2.getLatitude());
+            myLocation.setLongitude(gps2.getLongitude());
             upStatus="gps_ok";
         }else {
-            myLocation.setLatitude(myArea.getAlat());
-            myLocation.setLongitude(myArea.getAlng());
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    // Actions to do after 10 seconds
+
+                    if (areaFlag)populateGPS();
+                }
+            }, 1000);
+
         }
-        Log.d(TAG, "populateGPS: "+myLocation.getLatitude()+","+myLocation.getLongitude());
+
 //        Toast.makeText(LoginActivity.this, "location ="+myLocation.getLatitude()+","+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
         gpsFlag=true;
         if (areaFlag)
         findArea();
+        Log.d(TAG, "populateGPS: "+myLocation.getLatitude()+","+myLocation.getLongitude());
     }
 
     private void EnableGPSAutoMatically() {
@@ -502,7 +561,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     switch (status.getStatusCode()) {
                         case LocationSettingsStatusCodes.SUCCESS:
 //                            toast("جی پی اس روشن است");
-                            if (areaFlag)populateGPS();
+
                             // All location settings are satisfied. The client can
                             // initialize location
                             // requests here.
@@ -534,12 +593,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 1000) {
             if(resultCode == Activity.RESULT_OK){
                 String result=data.getStringExtra("result");
+                Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+                populateGPS();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
@@ -554,7 +617,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        if (areaFlag)populateGPS();
     }
 
     @Override
@@ -645,9 +708,9 @@ public Boolean isConnected(){
                                 area.setId(jsonObject.getInt("aid"));
                                 area.setAename(jsonObject.getString("aename"));
                                 area.setAfname(jsonObject.getString("afname"));
+                                area.setState(jsonObject.getString("state"));
                                 area.setAlat(Float.valueOf(jsonObject.getString("alat")));
                                 area.setAlng(Float.valueOf(jsonObject.getString("alng")));
-//                                area.setAdiameter(jsonObject.getInt("adiameter"));
                                 area.setServer(jsonObject.getString("server"));
                                 area.setZoom(jsonObject.getInt("azoom"));
                                 area.setPic(jsonObject.getString("pic"));

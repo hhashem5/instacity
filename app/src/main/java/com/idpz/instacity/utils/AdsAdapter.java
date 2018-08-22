@@ -75,9 +75,6 @@ public class AdsAdapter extends BaseAdapter {
         // thumbnail image
         Glide.with(activity).load(m.getPic())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(thumbNail);
         // title
         name.setText(m.getTitle());

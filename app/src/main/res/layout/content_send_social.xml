@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    >
+    <ProgressBar
+        android:id="@+id/progressSendSocial"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="150dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+    <ImageView
+        android:id="@+id/imgMsgRetry"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="150dp"
+        android:src="@drawable/ic_refresh"
+        android:visibility="gone"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtPageTitle"
+        android:layout_margin="5dp"
+        android:gravity="center|top"
+        android:text="@string/social_send"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/line1"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:background="@drawable/backwhitesocial"
+        android:weightSum="100"
+        android:gravity="right"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnCamera"
+            android:background="@drawable/backbbluround"
+            android:text="@string/string_open_camera"
+            android:layout_weight="33"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btnGallery"
+            android:background="@drawable/backbbluround"
+            android:text="@string/gallery"
+            android:layout_weight="33"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.idpz.instacity.utils.CustomTextView
+            android:text="@string/select_pic"
+            android:layout_weight="23"
+            android:layout_margin="5dp"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/line2"
+        android:layout_below="@id/line1"
+        android:orientation="vertical"
+        android:background="@drawable/backwhitesocial"
+        android:gravity="right"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+
+<com.idpz.instacity.utils.CustomTextView
+
+    android:layout_margin="10dp"
+    android:text="@string/social_message"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<EditText
+    android:id="@+id/edtSocialSend"
+    android:gravity="top|right"
+    android:layout_margin="10dp"
+    android:background="@drawable/backwhitesocial"
+    android:layout_width="match_parent"
+    android:layout_height="120dp" />
+
+</LinearLayout>
+    <ImageView
+        android:id="@+id/imgSocialImageSend"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/line2"
+        android:src="@drawable/noimage"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+    <LinearLayout
+        android:id="@+id/line3"
+        android:layout_below="@id/imgSocialImageSend"
+        android:gravity="right"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:background="@drawable/backwhitesocial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:id="@+id/spnSocialReceiver"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </Spinner>
+        <com.idpz.instacity.utils.CustomTextView
+            android:text="@string/social_receiver"
+            android:layout_margin="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/line4"
+        android:layout_below="@id/line3"
+        android:orientation="vertical"
+        android:background="@drawable/backwhitesocial"
+
+        android:gravity="center"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.idpz.instacity.utils.CustomTextView
+            android:id="@+id/txtSocialPre"
+            android:text=""
+            android:layout_margin="5dp"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnSocialSend"
+            android:background="@drawable/back_btn"
+            android:text="@string/social_send_now"
+
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+<LinearLayout
+    android:orientation="vertical"
+    android:id="@+id/mapSocial"
+    android:gravity="center"
+    android:visibility="gone"
+    android:background="#fff"
+    android:layout_alignParentTop="true"
+    android:layout_width="match_parent"
+    android:layout_margin="5dp"
+    android:layout_height="match_parent">
+    <fragment
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:id="@+id/social_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:visibility="visible"
+         />
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/txtMapHint"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:text="@string/select_on_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnFinalSocial"
+        android:text="@string/ok"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/backblueround"
+        android:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+
+</RelativeLayout>

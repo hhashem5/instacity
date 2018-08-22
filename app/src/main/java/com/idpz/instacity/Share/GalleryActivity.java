@@ -61,10 +61,10 @@ public class GalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
 
 
-        galleryImage = findViewById(R.id.galleryImageView);
-        gridView = findViewById(R.id.gridView);
+        galleryImage =(ImageView) findViewById(R.id.galleryImageView);
+        gridView =(GridView) findViewById(R.id.gridView);
 
-        mProgressBar = findViewById(R.id.progressBar);
+        mProgressBar =(ProgressBar) findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.GONE);
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started.");
@@ -111,7 +111,7 @@ public class GalleryActivity extends AppCompatActivity {
                 if (rd3.isChecked())mstatus="4";
             }
         });
-        ImageView shareClose = findViewById(R.id.ivCloseShare);
+        ImageView shareClose =(ImageView) findViewById(R.id.ivCloseShare);
         shareClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +126,7 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
-        TextView nextScreen = findViewById(R.id.tvNext);
+        TextView nextScreen =(TextView) findViewById(R.id.tvNext);
         nextScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,7 +141,7 @@ public class GalleryActivity extends AppCompatActivity {
             }
         });
 
-        TextView tvNopic = findViewById(R.id.tvNoPic);
+        TextView tvNopic =(TextView) findViewById(R.id.tvNoPic);
         tvNopic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

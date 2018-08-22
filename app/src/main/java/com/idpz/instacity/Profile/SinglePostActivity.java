@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +48,7 @@ public class SinglePostActivity extends AppCompatActivity {
     ImageView imgLike,imgComment,imgPostSend;
 
     EditText txtComment;
-    String lk,usrname,comment,likes,detail,imgurl,mob,ans,server,delSoUrl,profileImgUrl="";
+    String lk,usrname,comment,likes,detail,imgurl,mob,ans,state="",delSoUrl,profileImgUrl="";
 
 
     @Override
@@ -56,21 +57,21 @@ public class SinglePostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_single_post);
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        server=SP1.getString("server", "0");
+        state=SP1.getString("state", "0");
         profileImgUrl = SP1.getString("pic", "0");
-        urlEditPost=server+"/i/socialedit.php";
+        urlEditPost=getString(R.string.server)+"/j/socialedit.php";
 
-        cimgUser= findViewById(R.id.imgPostUserImage);
-        txtusername= findViewById(R.id.txtPostUser);
-        sImgPost= findViewById(R.id.imgPostImage);
-        imgLike= findViewById(R.id.imgPostLike);
-        imgDelPost= findViewById(R.id.imgDelSinglePost);
-        imgComment= findViewById(R.id.imgPostComment);
-        imgPostSend= findViewById(R.id.imgPostSend);
-        txtLikes= findViewById(R.id.txtPostView);
-        txtTime= findViewById(R.id.txtPostdetail);
-        txtComment= findViewById(R.id.txtPostComment);
-         TextView editPostComment= findViewById(R.id.edtPostComment);
+        cimgUser=(CircleImageView) findViewById(R.id.imgPostUserImage);
+        txtusername=(TextView) findViewById(R.id.txtPostUser);
+        sImgPost=(ImageView) findViewById(R.id.imgPostImage);
+        imgLike=(ImageView) findViewById(R.id.imgPostLike);
+        imgDelPost=(ImageView) findViewById(R.id.imgDelSinglePost);
+        imgComment=(ImageView) findViewById(R.id.imgPostComment);
+        imgPostSend=(ImageView) findViewById(R.id.imgPostSend);
+        txtLikes=(TextView) findViewById(R.id.txtPostView);
+        txtTime=(TextView) findViewById(R.id.txtPostdetail);
+        txtComment=(EditText) findViewById(R.id.txtPostComment);
+         TextView editPostComment=(TextView) findViewById(R.id.edtPostComment);
 
 
 
@@ -123,7 +124,7 @@ public class SinglePostActivity extends AppCompatActivity {
             mob=intent.getStringExtra("mob");
         ans=intent.getStringExtra("ans");
 
-        editPostComment.setText("پاسخ:"+ans);
+        editPostComment.setText(Html.fromHtml("پاسخ:"+ans));
         if(lk.equals("1")) {
             imgLike.setImageResource(R.drawable.liked);
 
@@ -134,14 +135,11 @@ public class SinglePostActivity extends AppCompatActivity {
             imgLike.setTag("0");
         }
 
-        fullServer =server+ "/i/socialpost.php";
-        delSoUrl =server+ "/i/socialdel.php";
+        fullServer =getString(R.string.server)+"/j/socialpost.php";
+        delSoUrl =getString(R.string.server)+"/j/socialdel.php";
 
         Glide.with(this).load(getString(R.string.server)+"/assets/images/users/"+profileImgUrl)
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(cimgUser);
 
         txtusername.setText(usrname);
@@ -153,9 +151,6 @@ public class SinglePostActivity extends AppCompatActivity {
 
         Glide.with(this).load(imgurl)
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(sImgPost);
 
         imgLike.setOnClickListener(new View.OnClickListener() {
@@ -177,7 +172,7 @@ public class SinglePostActivity extends AppCompatActivity {
 
                 }
                 RequestQueue queue = Volley.newRequestQueue(v.getContext());
-                String url = server+"/i/like.php";
+                String url = getString(R.string.server)+"/j/like.php";
                 StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                         new Response.Listener<String>()
                         {

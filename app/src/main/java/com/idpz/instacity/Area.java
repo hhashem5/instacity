@@ -17,12 +17,13 @@ public class Area {
     private int distance;
     private String description;
     private String pic;
+    private String state;
 
     public Area() {
     }
 
-    public Area(int id, String aename, String afname, float alat, float alng, float adiameter,
-                String server, int zoom,int distance,String description,String pic) {
+    public Area(int id, String aename, String state, float alat, float alng, float adiameter,
+                String server, int zoom,int distance,String description,String pic, String afname) {
         this.id = id;
         this.aename = aename;
         this.afname = afname;
@@ -34,6 +35,7 @@ public class Area {
         this.distance = distance;
         this.description=description;
         this.pic=pic;
+        this.state = state;
     }
 
     public String getServer() {
@@ -66,6 +68,14 @@ public class Area {
 
     public void setAfname(String afname) {
         this.afname = afname;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public float getAlat() {

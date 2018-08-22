@@ -21,12 +21,13 @@ public class VisitPlace {
     private String alng;
     private String aename;
     private String afname;
+    private String state;
     public VisitPlace() {
     }
 
     public VisitPlace(int id, String name, String year, String ticket, String days, String hours, String lat,
                       String lng, String tel, String address, String memo,
-                      String pic,String alat,String alng,String aename,String afname) {
+                      String pic,String alat,String alng,String aename,String afname,String state) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -43,6 +44,7 @@ public class VisitPlace {
         this.alng = alng;
         this.aename = aename;
         this.afname = afname;
+        this.state = state;
     }
 
     public int getId() {
@@ -171,5 +173,13 @@ public class VisitPlace {
 
     public void setAfname(String afname) {
         this.afname = afname;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

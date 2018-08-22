@@ -26,8 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.idpz.instacity.Like.VillaAddActivity;
+import com.idpz.instacity.Travel.VillaAddActivity;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Villa;
 
@@ -41,7 +40,7 @@ public class MyVillaAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<Villa> adsList;
-    String server="",delArtPath="";
+    String state="",delArtPath="";
     private Context context;
 
     public MyVillaAdapter(Activity activity, List<Villa> adsList,Context context) {
@@ -69,8 +68,8 @@ public class MyVillaAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(activity);
-        server=SP1.getString("server", "0");
-        delArtPath=server+"/i/delart.php";
+        state=SP1.getString("state", "050001");
+        delArtPath=context.getString(R.string.server)+"/j/delart.php";
         if (inflater == null)
             inflater = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -92,9 +91,6 @@ public class MyVillaAdapter extends BaseAdapter {
         // thumbnail image
         Glide.with(activity).load(m.getPic())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.nopic)
                 .into(thumbNail);
 
         // title
@@ -165,6 +161,7 @@ public class MyVillaAdapter extends BaseAdapter {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
 
+                params.put("state", state);
                 params.put("id", id);
                 params.put("owner", mobile);
                 params.put("table", "villas");

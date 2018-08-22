@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.idpz.instacity.R;
 import com.idpz.instacity.models.Video;
 
@@ -59,10 +61,9 @@ public class VideoPostAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_video, null);
 
-        final ImageView imgPlay = convertView.findViewById(R.id.imgPlayVideo);
+        ImageView imgPlay = convertView.findViewById(R.id.imgPlayVideo);
         ImageView thumbNail = convertView.findViewById(R.id.imgVideoLogo);
         TextView txtTitle = convertView.findViewById(R.id.txtVideoTitle);
-        videoView = convertView.findViewById(R.id.vidPostVideo);
         TextView txtComment = convertView.findViewById(R.id.txtVideoComment);
         TextView txtVideoDate = convertView.findViewById(R.id.txtVideoDetail);
 
@@ -70,73 +71,14 @@ public class VideoPostAdapter extends BaseAdapter {
         Video m = videoList.get(position);
 //        detector = new GestureDetector(context, new GestureListener(convertView));
         soid = String.valueOf(m.getId());
-
+        Glide.with(activity).load(m.getPic())
+                .thumbnail(0.5f)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_empty)
+                .into(imgPlay);
         thumbNail.setImageResource(R.drawable.ic_video);
         // title
         txtTitle.setText(m.getTitle());
-
-        // rating
-        Uri uri = Uri.parse(m.getVideoUrl());
-        videoView.setVideoURI(uri);
-        videoView.start();
-        videoView.pause();
-        imgPlay.setTag("1");
-        imgPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (imgPlay.getTag().toString().equals("1")) {
-                    videoView.start();
-                    imgPlay.setTag("0");
-                    imgPlay.setVisibility(View.INVISIBLE);
-                    imgPlay.setImageResource(R.drawable.ic_video);
-                } else {
-                    videoView.pause();
-                    imgPlay.setTag("1");
-                    imgPlay.setVisibility(View.VISIBLE);
-                    imgPlay.setImageResource(R.drawable.ic_pause);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            imgPlay.setVisibility(View.INVISIBLE);
-                            if (videoView.isPlaying()){
-                                imgPlay.setImageResource(R.drawable.ic_pause);
-                            }else {
-                                imgPlay.setImageResource(R.drawable.ic_video);
-                            }
-                        }
-                    }, 2000);
-                }
-            }
-        });
-
-
-
-
-
-
-        videoView.setOnTouchListener(new View.OnTouchListener()
-        {
-            @Override
-            public boolean onTouch(View v, MotionEvent motionEvent)
-            {
-                if (imgPlay.getVisibility()==View.INVISIBLE){
-                    imgPlay.setVisibility(View.VISIBLE);
-                }
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        imgPlay.setVisibility(View.INVISIBLE);
-                        if (videoView.isPlaying()){
-                            imgPlay.setImageResource(R.drawable.ic_pause);
-                        }else {
-                            imgPlay.setImageResource(R.drawable.ic_video);
-                        }
-                    }
-                }, 2000);
-                    return false;
-
-            }
-        });
 
         txtComment.setText(m.getComment());
 

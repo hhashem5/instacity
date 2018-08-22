@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.idpz.instacity">
+
+    <uses-sdk tools:overrideLibrary="co.ronash.pushe" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,10 +11,21 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <permission
+        android:name="com.idpz.instacity.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="com.idpz.instacity.permission.C2D_MESSAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:name=".utils.AppController"
@@ -34,11 +47,9 @@
             android:name=".Home.HomeActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".Search.SearchActivity"
+            android:name=".MapCity.SearchActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_search"
             android:screenOrientation="portrait"
@@ -55,7 +66,8 @@
             android:enabled="true"
             android:exported="true"
             android:permission="" />
-        <activity android:name=".Home.GreenActivity"/>
+
+        <activity android:name=".Home.GreenActivity" />
         <activity
             android:name=".Profile.LikesActivity"
             android:screenOrientation="portrait" />
@@ -75,33 +87,64 @@
             android:name=".Profile.SinglePostActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".utils.Payment"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Home.SingleArtActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
             android:name=".Profile.MyProfileActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Home.LoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible|adjustPan" >
-
+            android:windowSoftInputMode="stateVisible|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".Home.SingleVisitActivity"
-            android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".Home.SignupActivity"
+            android:name=".Home.SingleVisitActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity android:name=".Home.SingleVideoActivity"
+            android:theme="@style/AppTheme.popup"
+            />
+        <activity
+            android:name=".MapCity.StoreRegActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="zarinpalpayment"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Home.MessagesFragment"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".Search.StoreRegActivity"
+            android:name=".Home.HomeFragment"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustPan" />
+        <activity
+            android:name=".MapCity.PlacesActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
             android:name=".Profile.ChangeCityActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Share.FilterCityActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.popup" />
         <activity
             android:name=".Home.LikersActivity"
             android:screenOrientation="portrait" />
@@ -109,15 +152,13 @@
             android:name=".Share.GalleryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Like.TourismActivity"
+            android:name=".Travel.TourismActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".utils.setting" />
         <activity
             android:name=".Home.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
-
-        </activity>
+            android:theme="@style/SplashTheme" />
         <activity
             android:name=".Home.VideoActivity"
             android:screenOrientation="portrait" />
@@ -131,18 +172,69 @@
             android:name=".Home.AboutusActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Like.AdsAddActivity"
+            android:name=".Travel.AdsAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".Like.AddArtActivity"
+            android:name=".Travel.AddArtActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustPan" />
         <activity
-            android:name=".Like.VillaAddActivity"
+            android:name=".Travel.VillaAddActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustPan" />
-        <activity android:name=".Home.NamePlaceActivity"></activity>
+        <activity android:name=".Home.NamePlaceActivity" />
+        <activity android:name=".Home.WeatherActivity" />
+        <activity
+            android:name=".Home.EventActivity"
+            android:theme="@style/AppTheme.popup" />
+        <activity
+            android:name=".Share.SendSocialActivity"
+            android:label="@string/title_activity_send_social"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Share.PopupActivity"
+            android:theme="@style/AppTheme.popup" />
+        <activity android:name=".Home.AddCityActivity" />
+
+        <receiver android:name="co.ronash.pushe.receiver.UpdateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
+                <data
+                    android:path="com.idpz.instacity"
+                    android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.idpz.instacity" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="co.ronash.pushe.token"
+            android:value="PUSHE_158041777402" />
+        <meta-data
+            android:name="co.ronash.pushe.cr"
+            android:value="Tm9uZQ==" />
+
+        <service
+            android:name=".utils.MyPushListener"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="co.ronash.pushe.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".MapCity.SingleShopActivity" />
+        <activity android:name=".Profile.ContactUsActivity"></activity>
     </application>
 
 </manifest>

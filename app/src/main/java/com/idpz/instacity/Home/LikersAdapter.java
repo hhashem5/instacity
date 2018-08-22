@@ -61,8 +61,7 @@ public class LikersAdapter extends BaseAdapter {
         Comment m = postList.get(position);
         Glide.with(activity).load(m.getMycomment())
                 .thumbnail(0.5f)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+
                 .into(thumbNail);
 
 

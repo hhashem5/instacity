@@ -1,10 +1,13 @@
 package com.idpz.instacity.Home;
 
+import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,7 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,47 +51,61 @@ import java.util.regex.Pattern;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class SmsVerificationActivity extends AppCompatActivity {
+public class SmsVerificationActivity extends Activity {
 
     private static final int REQUEST_ACCESS_LOCATION = 1;
     SmsVerifyCatcher smsVerifyCatcher;
     EditText editCode;
-    String REGISTER_URL="http://idpz.ir/i/smssend.php",mob="",code="",server="",ctName;
+    String REGISTER_URL="",mob="",code="",server="",ctName,state="";
     TextView txtResult;
     ProgressBar progressBar;
     GPSTracker gps;
     Location myLocation,mycity;
     Area myArea;
     Boolean areaFlag=false,smsFlag=false,connected=false,gpsFlag=false,remain=true;
-    private static final String AREA_URL = "http://idpz.ir/i/getarea.php";
+    String AREA_URL = "";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ruydad);
+
+        smsFlag=requestSmsPermission();
+        REGISTER_URL=getString(R.string.server)+"/i/smssend.php";
+        AREA_URL = getString(R.string.server)+"/i/getarea.php";
+        SharedPreferences SP1;
+        SP1 = PreferenceManager.getDefaultSharedPreferences(SmsVerificationActivity.this);
+        state = SP1.getString("state", "0");
+
+        Typeface yekan = Typeface.createFromAsset(SmsVerificationActivity.this.getAssets(), "fonts/YEKAN.TTF");
         myArea=new Area();
         mob=getIntent().getStringExtra("mob");
-        smsFlag=getIntent().getBooleanExtra("sms",false);
         gpsFlag=getIntent().getBooleanExtra("gps",true);
         server=getIntent().getStringExtra("server");
         myArea.setServer(server);
         myArea.setAfname(getIntent().getStringExtra("ctname"));
         myArea.setAename(getIntent().getStringExtra("aename"));
         myArea.setAlat(getIntent().getFloatExtra("alat",35.711f));
-        myArea.setAlng(getIntent().getFloatExtra("alng",50.711f));
+        myArea.setAlng(getIntent().getFloatExtra("alng",50.912f));
 
 //        Toast.makeText(getApplicationContext(), " mob="+mob, Toast.LENGTH_SHORT).show();
-        txtResult= findViewById(R.id.txtResult);
-        editCode= findViewById(R.id.edtCode);
-        final Button btnVerify = findViewById(R.id.btnVerify);
-        progressBar= findViewById(R.id.progressReceiveCode);
+        txtResult=(TextView) findViewById(R.id.txtResult);
+        editCode=(EditText) findViewById(R.id.edtCode);
+        final Button btnVerify =(Button) findViewById(R.id.btnVerify);
+        progressBar=(ProgressBar) findViewById(R.id.progressReceiveCode);
+
+        txtResult.setTypeface(yekan);
+        editCode.setTypeface(yekan);
 
         myLocation = new Location("myloc");
         mycity = new Location("city");
 
        
         if (gpsFlag)populateGPS();
+
+
+
         if (smsFlag) {
             smsVerifyCatcher = new SmsVerifyCatcher(this, new OnSmsCatchListener<String>() {
                 @Override
@@ -184,12 +201,14 @@ public class SmsVerificationActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        smsFlag=requestSmsPermission();
         if (smsFlag)smsVerifyCatcher.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        smsFlag=requestSmsPermission();
         if (smsFlag)smsVerifyCatcher.onStop();
     }
 
@@ -202,6 +221,13 @@ public class SmsVerificationActivity extends AppCompatActivity {
         if (smsFlag)smsVerifyCatcher.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    private Boolean requestSmsPermission() {
+        String permission = Manifest.permission.RECEIVE_SMS;
+        int grant = ContextCompat.checkSelfPermission(this, permission);
+        if ( grant != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }else return true;
+    }
 
     public void reqData() {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -336,6 +362,7 @@ public class SmsVerificationActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String>params = new HashMap<String,String>();
                 params.put("mob", mob);
+                params.put("state", state);
                 params.put("cod", editCode.getText().toString());
                 params.put("lat", String.valueOf(myLocation.getLatitude()));
                 params.put("lng", String.valueOf(myLocation.getLongitude()));
@@ -375,7 +402,6 @@ public class SmsVerificationActivity extends AppCompatActivity {
             myLocation.setLongitude(myArea.getAlng());
         }
 
-//        Toast.makeText(MainActivity.this, "location ="+myLocation.getLatitude()+","+myLocation.getLongitude(), Toast.LENGTH_SHORT).show();
 
     }
 
@@ -405,7 +431,7 @@ public class SmsVerificationActivity extends AppCompatActivity {
 
     public void regUserProfile() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url =server+"/i/profile.php";
+        String url =getString(R.string.server)+"/j/profile.php";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>()
                 {

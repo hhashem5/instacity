@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+
+    tools:context="com.idpz.instacity.Share.PopupActivity">
+    <RelativeLayout
+        android:id="@+id/rel1"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:background="@drawable/backcyanround"
+        android:layout_height="40dp">
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/title1"
+        android:text="@string/tanx_social"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rel2"
+        android:layout_below="@id/rel1"
+        android:layout_width="match_parent"
+        android:padding="2dp"
+
+        android:layout_height="wrap_content">
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/body1"
+        android:text="@string/social_help"
+        android:textColor="@color/black"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="14sp"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!--<com.idpz.instacity.utils.CustomTextView-->
+        <!--android:id="@+id/body2"-->
+        <!--android:text="@string/social_help1"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:textSize="14sp"-->
+        <!--android:layout_below="@id/body1"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+    <!--<com.idpz.instacity.utils.CustomTextView-->
+        <!--android:id="@+id/body3"-->
+        <!--android:text="@string/social_help2"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_marginRight="10dp"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:textSize="14sp"-->
+        <!--android:layout_below="@id/body2"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/imgTanx"-->
+        <!--android:src="@drawable/rose"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_below="@id/body3"-->
+        <!--android:layout_margin="15dp"-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp" />-->
+    <Button
+        android:id="@+id/btnPopupClose"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/ok"
+        android:layout_margin="15dp"
+        android:background="@drawable/backblueround"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.idpz.instacity.utils.CustomTextView
+        android:id="@+id/body4"
+        android:text="@string/social_score"
+        android:textColor="@color/black"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:textSize="16sp"
+        android:layout_below="@id/body1"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </RelativeLayout>
+</RelativeLayout>

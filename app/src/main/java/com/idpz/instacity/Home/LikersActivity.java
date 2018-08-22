@@ -1,5 +1,6 @@
 package com.idpz.instacity.Home;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LikersActivity extends AppCompatActivity {
+public class LikersActivity extends Activity {
 
     ListView lvLikers;
     ProgressDialog pd;
@@ -51,7 +51,7 @@ public class LikersActivity extends AppCompatActivity {
         SharedPreferences SP1;
         SP1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         server=SP1.getString("server", "0");
-        fullServer = server+"/i/likers.php";
+        fullServer = getString(R.string.server)+"/j/likers.php";
 
 
         Bundle b = getIntent().getExtras();
@@ -62,7 +62,7 @@ public class LikersActivity extends AppCompatActivity {
         SharedPreferences sp1 = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         myname = sp1.getString("myname", "");
         phone=sp1.getString("mobile", "");
-        lvLikers = findViewById(R.id.lvLikers);
+        lvLikers =(ListView) findViewById(R.id.lvLikers);
         pd = new ProgressDialog(this);
         dataModels = new ArrayList<>();
 //        dbLastData = new DBLastData(this);
